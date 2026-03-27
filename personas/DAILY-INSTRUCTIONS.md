@@ -57,7 +57,7 @@ For each CRITICAL or HIGH threat from Step 1:
 
 **First, search for existing rules:** Use WebSearch to check GitHub (SigmaHQ/sigma repository), SOC Prime, and ReversingLabs for any existing detection rules for this specific CVE or threat. If good rules exist, adapt and credit them in comments.
 
-**Write detection rules for all 9 platforms.** Save each file in the topic folder with the CVE prefix:
+**Write detection rules for all 10 platforms.** Save each file in the topic folder with the CVE prefix:
 
 | Filename | Platform |
 |----------|----------|
@@ -70,10 +70,11 @@ For each CRITICAL or HIGH threat from Step 1:
 | `CVE-XXXX-YYYYY_carbonblack-rules.txt` | VMware Carbon Black |
 | `CVE-XXXX-YYYYY_sentinelone-rules.txt` | SentinelOne Deep Visibility + STAR |
 | `CVE-XXXX-YYYYY_kaspersky-edr-rules.txt` | Kaspersky EDR / KATA |
+| `CVE-XXXX-YYYYY_crowdstrike-rules.txt` | CrowdStrike Falcon NG-SIEM / LogScale (CQL) |
 
 Also copy each rule file to the matching platform library folder:
 - `rules/sigma/`, `rules/yara/`, `rules/kql/`, `rules/xql/`, `rules/splunk/`
-- `rules/qradar/`, `rules/carbonblack/`, `rules/sentinelone/`, `rules/kaspersky-edr/`
+- `rules/qradar/`, `rules/carbonblack/`, `rules/sentinelone/`, `rules/kaspersky-edr/`, `rules/crowdstrike/`
 
 **Each rule must include:**
 - A 1-paragraph description explaining what the rule detects and why it matters
