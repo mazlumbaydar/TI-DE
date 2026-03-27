@@ -76,8 +76,15 @@ Also copy each rule file to the matching platform library folder:
 - `rules/sigma/`, `rules/yara/`, `rules/kql/`, `rules/xql/`, `rules/splunk/`
 - `rules/qradar/`, `rules/carbonblack/`, `rules/sentinelone/`, `rules/kaspersky-edr/`, `rules/crowdstrike/`
 
+**Rule consolidation standard (mandatory):**
+- **4–5 rules per platform maximum** — never write one rule per IOC
+- Combine related detections with OR operators, multi-value selections, or `1 of selection_*`
+- Typical grouping per platform: (1) Process/install, (2) File artifacts, (3) C2/network combined, (4) Kill chain correlation, (5) Composite/catch-all
+- A single rule covering 5 file paths is better than 5 separate rules
+- DNS C2 and IP C2 should always be one combined rule
+
 **Each rule must include:**
-- A 1-paragraph description explaining what the rule detects and why it matters
+- A comment block explaining what the rule detects and why it matters
 - MITRE ATT&CK technique IDs (e.g., T1546.018)
 - Severity level (Critical/High/Medium)
 - Recommended response action (alert/isolate/block/quarantine)
@@ -231,16 +238,17 @@ Write `report.html` in the topic folder. This is a permanent deliverable — kee
 - Footer: `TI-DE · github.com/mazlumbaydar/TI-DE · Prepared by: Mazlum Baydar`
 - No references to AI or automation anywhere in the report
 
-**Generate PDF:**
-The PDF filename must match the topic folder name: `CVE-XXXX-YYYYY_Short-Name.pdf`
+**Filenames — both must match the topic folder name:**
+- HTML: `CVE-XXXX-YYYYY_Short-Name.html`
+- PDF: `CVE-XXXX-YYYYY_Short-Name.pdf`
 
-Write to a temp path first (paths with parentheses cause Chrome access errors), then copy:
+**Generate PDF from HTML** (write to temp first — paths with parentheses cause Chrome access errors):
 ```
-chrome.exe --headless=new --disable-gpu --no-sandbox --print-to-pdf=/tmp/report_out.pdf --print-to-pdf-no-header file:///FULL_PATH/report.html
-cp /tmp/report_out.pdf TOPIC_FOLDER/CVE-XXXX-YYYYY_Short-Name.pdf
+chrome.exe --headless=new --disable-gpu --no-sandbox --print-to-pdf=C:/Temp/report_out.pdf --print-to-pdf-no-header file:///FULL_PATH/CVE-XXXX-YYYYY_Short-Name.html
+cp C:/Temp/report_out.pdf TOPIC_FOLDER/CVE-XXXX-YYYYY_Short-Name.pdf
 ```
 
-Both `report.html` AND the PDF are permanent deliverables — keep both.
+Both the HTML and PDF are permanent deliverables — keep both, never delete either.
 
 ---
 
