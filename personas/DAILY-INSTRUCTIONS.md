@@ -44,7 +44,8 @@ If no CVE number exists, use: `THREAT-Short-Description/`
 
 Save inside the topic folder:
 - `CVE-XXXX-YYYYY_cti-report.md` — Full threat analysis including: executive summary, affected products and versions, MITRE ATT&CK techniques used (with T-IDs), attack chain/stages, recommended immediate actions
-- `CVE-XXXX-YYYYY_ioc-list.csv` — CSV with columns: `type,value,description,confidence,source,first_seen`
+- `CVE-XXXX-YYYYY_ioc-list.csv` — CSV with columns: `type,value,description,confidence,source,first_seen,source_url`
+  - `source_url` is the direct URL to the article/report/advisory where this IOC was published
 
 ---
 
