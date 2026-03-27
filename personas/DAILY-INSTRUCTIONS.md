@@ -9,8 +9,8 @@
 
 Run these via Bash before starting:
 ```
-git config user.email detection-agent@automated.local
-git config user.name TI-DE-Bot
+git config user.email mazlumbaydar@gmail.com
+git config user.name "Mazlum BAYDAR"
 ```
 
 Get today's date in YYYY-MM-DD format.

@@ -7,7 +7,7 @@
 <p>
   <img src="https://img.shields.io/badge/Platforms-9-blue?style=for-the-badge" alt="9 Platforms"/>
   <img src="https://img.shields.io/badge/Schedule-Mon–Fri%2010%3A00%20TR-brightgreen?style=for-the-badge" alt="Daily"/>
-  <img src="https://img.shields.io/badge/Powered%20by-Claude%20AI-7C3AED?style=for-the-badge" alt="Claude AI"/>
+  <img src="https://img.shields.io/badge/TI--DE-Detection%20Engineering-7C3AED?style=for-the-badge" alt="Detection Engineering"/>
   <img src="https://img.shields.io/badge/ATT%26CK-Mapped-FF6B35?style=for-the-badge" alt="MITRE ATT&CK"/>
   <img src="https://img.shields.io/badge/License-MIT-blueviolet?style=for-the-badge" alt="MIT"/>
 </p>
@@ -22,9 +22,9 @@
 
 <br>
 
-> **From threat discovery to 9-platform detection rules in 24 hours — fully automated.**
+> **From threat discovery to 9-platform detection rules in 24 hours.**
 >
-> Every weekday morning, TI-DE wakes up, monitors the global threat landscape,
+> Every weekday morning, TI-DE monitors the global threat landscape
 > and delivers production-ready detection rules before your team starts work.
 
 </div>
@@ -40,7 +40,7 @@ Most detection engineering repos are **static libraries** — you pull rules tha
 | Rules written once, updated occasionally | New rules every weekday morning |
 | Single platform (Sigma, Splunk, or Elastic) | **9 platforms simultaneously** |
 | Detection rules only | Rules + IoC list + red team simulation guide + PDF report |
-| Manual rule writing | Automated threat-to-rule pipeline powered by AI |
+| Manual rule writing | Daily threat-to-rule pipeline — 9 platforms, same morning |
 | GitHub search required to find relevant rules | Rules organized by CVE/threat/date — instantly findable |
 | No validation guidance | Every rule has a paired Atomic Red Team validation scenario |
 
@@ -48,7 +48,7 @@ Most detection engineering repos are **static libraries** — you pull rules tha
 
 ## The Team
 
-Four AI personas, one daily mission:
+Four specialized roles, one daily mission:
 
 | Role | What They Do |
 |------|-------------|
@@ -149,7 +149,7 @@ TI-DE/
 │   ├── sentinelone/    (all S1 rules)
 │   └── kaspersky-edr/  (all KEDR rules)
 │
-├── personas/                             ← AI team persona definitions
+├── personas/                             ← team role definitions
 │   ├── cti-analyst.md
 │   ├── detection-engineer.md
 │   ├── red-team-simulator.md
@@ -237,7 +237,7 @@ Found a threat that was missed? Have a better rule for a specific platform?
 
 <img src="assets/logo-small.svg" width="36" alt="TI-DE"/>
 
-*Automated · Daily · Multi-Platform · Production-Ready*
+*Daily · Multi-Platform · Production-Ready*
 
 [![GitHub Stars](https://img.shields.io/github/stars/mazlumbaydar/TI-DE?style=social)](https://github.com/mazlumbaydar/TI-DE/stargazers)
 &nbsp;&nbsp;
