@@ -29,10 +29,15 @@ Search for today's CRITICAL and HIGH priority threats using WebSearch. Check the
 - NVD (last 24 hours, CVSS 7.0+): https://nvd.nist.gov/vuln/search
 - Mandiant, CrowdStrike, Palo Alto Unit42, Cisco Talos new publications
 
-Priority classification:
+**Pre-filter — only research threats that meet ALL of these:**
+1. **PoC or exploit exists** — confirmed on GitHub, ExploitDB, Metasploit, or published by a reputable researcher. Skip vulnerabilities with no public PoC.
+2. **Widely discussed** — trending on Twitter/X security community, BleepingComputer, THN, or Mandiant/Unit42/Talos publications within the last 48 hours.
+3. No token budget on theoretical/unconfirmed vulnerabilities.
+
+Priority classification (applied only after pre-filter):
 - CRITICAL: CVSS 9.0+ AND (active exploitation OR CISA KEV OR ransomware using it)
 - HIGH: CVSS 7.0-8.9 AND (PoC available OR widespread enterprise product affected)
-- Skip MEDIUM and below for rule generation
+- Skip MEDIUM and below — never write rules for low-impact or unconfirmed threats
 
 **For each CRITICAL or HIGH threat found:**
 
@@ -55,7 +60,18 @@ Save the following **working files** inside the topic folder (they will be delet
 
 For each CRITICAL or HIGH threat from Step 1:
 
-**First, search for existing rules:** Use WebSearch to check GitHub (SigmaHQ/sigma repository), SOC Prime, and ReversingLabs for any existing detection rules for this specific CVE or threat. If good rules exist, adapt and credit them in comments.
+**Before writing any rule:**
+1. **Search for existing rules:** Use WebSearch to check GitHub (SigmaHQ/sigma), SOC Prime, ReversingLabs. Adapt and credit good existing rules.
+2. **Verify platform capability:** Only write a rule for a platform if that platform actually supports detecting the required event type. Example: if the threat is pure network-based and a platform has no network visibility, skip it or note the limitation — never fabricate field names.
+3. **Read official schema before writing:** Use the Platform Syntax Reference section below as authoritative. Never guess field names. If unsure, search official docs first.
+
+**Rule quality mandate (zero false positive tolerance):**
+- Every rule must have at least **2 conditions combined with AND** — single-field rules cause too many FPs
+- Process-spawn rules: require both the parent process path AND the child process name — never just one
+- File-write rules: require both the writing process path AND the file extension/path pattern
+- Network rules: require both the source process AND destination characteristics
+- Use the most specific available field first (e.g., full image path over just process name)
+- Add `filter` blocks to exclude known-good processes (e.g., package managers doing legitimate installs)
 
 **Write detection rules for all 10 platforms.** Save each file **only** in the matching platform library folder — do NOT duplicate them in the daily-reports folder:
 
@@ -220,11 +236,16 @@ After generating the HTML and PDF, **delete all working files** from the topic f
 1. Cover page: TI-DE logo (inline SVG radar/crosshair), threat name, CVSS, threat actor, date, platform count
 2. Table of Contents: clickable anchor links (`href="#section-id"`) that navigate to sections in both HTML and PDF
 3. Executive Summary: 3-5 bullet point threat overview
-4. CVE Details: CVSS score, affected products, attack chain cards (one card per stage), MITRE ATT&CK table
-5. IoC Table: all indicators from the CSV, formatted as a table
-6. Detection Rules: ALL 10 platform rule sets in `<pre>` code blocks with platform headers and 1-paragraph descriptions
-7. Red Team Simulation: steps and validation checklist table
-8. References and sources
+4. CVE Details: CVSS score, affected products, MITRE ATT&CK table
+5. **Attack Visualization (mandatory):** A visual, step-by-step technical explanation of HOW the attack works:
+   - CSS/SVG animated attack chain diagram showing each stage with connecting arrows
+   - Each stage card shows: stage number, technique name (with T-ID), what happens technically, what artifact it leaves
+   - Where relevant, include animated timeline or flow diagram (pure CSS/JS, no external images)
+   - Minimal but accurate: show exactly what the exploit does technically, not just high-level stages
+6. IoC Table: behavioral indicators (process names, file paths, registry keys) — no hardcoded IPs/domains
+7. Detection Rules: ALL 10 platform rule sets in `<pre>` code blocks with platform headers and 1-paragraph descriptions
+8. Red Team Simulation: steps and validation checklist table
+9. References and sources
 
 **Critical CSS rules:**
 ```css
