@@ -163,6 +163,21 @@ Also copy each rule file to the matching platform library folder:
 - **Do NOT use TAA reserved fields**: `IOATechnique`, `IOATactics`, `IOAImportance`, `IOAConfidence`
 - Parentheses required for complex boolean logic: `(A OR B) AND C`
 
+### CrowdStrike Falcon NG-SIEM / LogScale (CQL)
+- Query language: **CQL (CrowdStrike Query Language)** — pipe-based like Unix shell
+- Event name filter required: `event_simpleName=ProcessRollup2`, `event_simpleName=DnsRequest`, `event_simpleName=NetworkConnect`, `event_simpleName=FileCreatedEvent`
+- Process fields: `CommandLine`, `ImageFileName`, `ParentImageFilename`, `TargetProcessId_decimal`, `UserName`, `ComputerName`
+- DNS fields: `DomainName`, `ContextProcessId_decimal`
+- Network fields: `RemoteAddressIP4`, `RemotePort`, `ContextProcessId_decimal`
+- File fields: `FileName`, `TargetProcessId_decimal`
+- **Process ID joins**: `TargetProcessId_decimal` (ProcessRollup2) ↔ `ContextProcessId_decimal` (DnsRequest/NetworkConnect) — always use `_decimal` suffix
+- Regex: `/pattern/` (case-sensitive) or `/pattern/i` (case-insensitive) — RE2J engine, no backreferences
+- Aggregation: `groupBy([field1, field2])`, `count()`, `sort(_count, order=desc)`, `table(field1, field2, ...)`
+- Multi-event OR: `(event_simpleName=X conditionA) OR (event_simpleName=Y conditionB)` then pipe to `table()`
+- Join syntax: `event_simpleName=A | join fieldA=fieldB [event_simpleName=B]`
+- **Write BOTH CQL queries AND Custom IOA rules**: IOA rules are JSON-format behavioral prevention rules that run on the sensor in real time (not in NG-SIEM). Include Section A (CQL) and Section B (IOA) in the crowdstrike rules file.
+- **Rule consolidation**: Combine related detections with OR operators. Target 4-6 total queries per threat, not one query per IOC.
+
 ---
 
 ## STEP 3 — Red Team Simulator
@@ -180,51 +195,52 @@ Include:
 
 ---
 
-## STEP 4 — PDF Report
+## STEP 4 — HTML Report + PDF
 
-Write `report_source.html` in the topic folder. This is a comprehensive detection report.
+Write `report.html` in the topic folder. This is a permanent deliverable — keep it always (do NOT delete it after PDF generation).
 
 **Design requirements:**
-- White/light theme: background `#f7f8fc`, primary blue `#2563eb`, text `#111827`
-- Professional "AI-era" aesthetic — clean, modern, well-structured
-- Reference global security report formats (Mandiant M-Trends, CrowdStrike Global Threat Report, IBM X-Force)
+- Dark full-bleed cover page (A4 exactly: width:210mm, height:297mm), dark navy background `#060d1f`, geometric grid overlay, blue/red glow orbs
+- All other pages: white/light theme, background `#f8fafc`, primary blue `#2563eb`, text `#111827`
+- Professional format — reference Mandiant M-Trends, CrowdStrike Global Threat Report, IBM X-Force
 - Readable typography: sans-serif headings, monospace for code blocks
-- Sections clearly separated with visual hierarchy
 
 **Content that MUST be included:**
-1. Cover page: TI-DE logo (inline SVG — dark blue circle with radar rings and crosshair pupil), report date, threat name(s)
-2. Executive Summary: 3-5 bullet point threat overview
-3. CVE Details: CVSS score, affected products, attack chain cards (one card per stage)
-4. IoC Table: all indicators from the CSV, formatted as a table
-5. Detection Rules: ALL 9 platform rule sets in `<pre>` code blocks with platform headers
-6. Red Team Simulation: steps and validation checklist
-7. References and sources
+1. Cover page: TI-DE logo (inline SVG radar/crosshair), threat name, CVSS, threat actor, date, platform count
+2. Table of Contents: clickable anchor links (`href="#section-id"`) that navigate to sections in both HTML and PDF
+3. Executive Summary: 3-5 bullet point threat overview
+4. CVE Details: CVSS score, affected products, attack chain cards (one card per stage), MITRE ATT&CK table
+5. IoC Table: all indicators from the CSV, formatted as a table
+6. Detection Rules: ALL 10 platform rule sets in `<pre>` code blocks with platform headers and 1-paragraph descriptions
+7. Red Team Simulation: steps and validation checklist table
+8. References and sources
 
-**Branding:**
-- Footer: `TI-DE | github.com/mazlumbaydar/TI-DE`
-- Small text in bottom-right corner: `Prepared by: Mazlum Baydar`
-- No other personal branding
-
-**Include print CSS:**
+**Critical CSS rules:**
 ```css
 @media print {
-  @page { size: A4; margin: 15mm; }
-  pre { page-break-inside: avoid; }
+  @page { size: A4; margin: 0; }
+  .cover { width: 210mm; height: 297mm; page-break-after: always; }
+  .toc-page { padding: 13mm 15mm; page-break-after: always; }
+  .main { padding: 13mm 15mm; }
+  pre { overflow-x: hidden; white-space: pre-wrap; word-break: break-word; }
+  .ph { page-break-after: avoid; }
 }
 ```
+
+**Branding:**
+- Footer: `TI-DE · github.com/mazlumbaydar/TI-DE · Prepared by: Mazlum Baydar`
+- No references to AI or automation anywhere in the report
 
 **Generate PDF:**
 The PDF filename must match the topic folder name: `CVE-XXXX-YYYYY_Short-Name.pdf`
 
-Try these commands via Bash (in order until one succeeds):
+Write to a temp path first (paths with parentheses cause Chrome access errors), then copy:
 ```
-chromium-browser --headless --disable-gpu --no-sandbox --print-to-pdf=TOPIC.pdf file:///FULL_PATH/report_source.html
-google-chrome --headless --disable-gpu --no-sandbox --print-to-pdf=TOPIC.pdf file:///FULL_PATH/report_source.html
-chromium --headless --disable-gpu --no-sandbox --print-to-pdf=TOPIC.pdf file:///FULL_PATH/report_source.html
+chrome.exe --headless=new --disable-gpu --no-sandbox --print-to-pdf=/tmp/report_out.pdf --print-to-pdf-no-header file:///FULL_PATH/report.html
+cp /tmp/report_out.pdf TOPIC_FOLDER/CVE-XXXX-YYYYY_Short-Name.pdf
 ```
 
-If PDF generated successfully (file exists and size > 0), delete `report_source.html`.
-If PDF failed, keep `report_source.html` as the fallback deliverable.
+Both `report.html` AND the PDF are permanent deliverables — keep both.
 
 ---
 
