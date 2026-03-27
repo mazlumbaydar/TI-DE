@@ -38,11 +38,11 @@ Priority classification:
 
 Create a topic folder at:
 ```
-daily-reports/YYYY-MM-DD/CVE-XXXX-YYYYY_Short-Threat-Name/
+daily-reports/YYYY-MM-DD_CVE-XXXX-YYYYY_Short-Threat-Name/
 ```
-If no CVE number exists, use: `THREAT-Short-Description/`
+If no CVE number exists, use: `daily-reports/YYYY-MM-DD_THREAT-Short-Description/`
 
-Save inside the topic folder:
+Save the following **working files** inside the topic folder (they will be deleted after the HTML report is generated — only HTML + PDF remain as permanent deliverables):
 - `CVE-XXXX-YYYYY_cti-report.md` — Full threat analysis including: executive summary, affected products and versions, MITRE ATT&CK techniques used (with T-IDs), attack chain/stages, recommended immediate actions
 - `CVE-XXXX-YYYYY_ioc-list.csv` — CSV with columns: `type,value,description,confidence,source,first_seen,source_url`
   - `source_url` is the direct URL to the article/report/advisory where this IOC was published
@@ -57,24 +57,22 @@ For each CRITICAL or HIGH threat from Step 1:
 
 **First, search for existing rules:** Use WebSearch to check GitHub (SigmaHQ/sigma repository), SOC Prime, and ReversingLabs for any existing detection rules for this specific CVE or threat. If good rules exist, adapt and credit them in comments.
 
-**Write detection rules for all 10 platforms.** Save each file in the topic folder with the CVE prefix:
+**Write detection rules for all 10 platforms.** Save each file **only** in the matching platform library folder — do NOT duplicate them in the daily-reports folder:
 
-| Filename | Platform |
-|----------|----------|
-| `CVE-XXXX-YYYYY_sigma-rules.yml` | Sigma (generic SIEM) |
-| `CVE-XXXX-YYYYY_yara-rules.yar` | YARA file/memory detection |
-| `CVE-XXXX-YYYYY_kql-rules.kql` | Microsoft Defender XDR / Sentinel |
-| `CVE-XXXX-YYYYY_xql-rules.xql` | Palo Alto Cortex XDR |
-| `CVE-XXXX-YYYYY_splunk-spl.spl` | Splunk SPL |
-| `CVE-XXXX-YYYYY_qradar-aql.aql` | IBM QRadar AQL |
-| `CVE-XXXX-YYYYY_carbonblack-rules.txt` | VMware Carbon Black |
-| `CVE-XXXX-YYYYY_sentinelone-rules.txt` | SentinelOne Deep Visibility + STAR |
-| `CVE-XXXX-YYYYY_kaspersky-edr-rules.txt` | Kaspersky EDR / KATA |
-| `CVE-XXXX-YYYYY_crowdstrike-rules.txt` | CrowdStrike Falcon NG-SIEM / LogScale (CQL) |
+| Library Folder | File Name | Platform |
+|----------------|-----------|----------|
+| `rules/Sigma/` | `CVE-XXXX-YYYYY_Short-Threat-Name.yml` | Sigma (generic SIEM) |
+| `rules/YARA/` | `CVE-XXXX-YYYYY_Short-Threat-Name.yar` | YARA file/memory detection |
+| `rules/Microsoft-Sentinel/` | `CVE-XXXX-YYYYY_Short-Threat-Name.kql` | Microsoft Defender XDR / Sentinel |
+| `rules/Palo-Alto-Cortex-XDR/` | `CVE-XXXX-YYYYY_Short-Threat-Name.xql` | Palo Alto Cortex XDR |
+| `rules/Splunk/` | `CVE-XXXX-YYYYY_Short-Threat-Name.spl` | Splunk SPL |
+| `rules/IBM-QRadar/` | `CVE-XXXX-YYYYY_Short-Threat-Name.aql` | IBM QRadar AQL |
+| `rules/VMware-Carbon-Black/` | `CVE-XXXX-YYYYY_Short-Threat-Name.txt` | VMware Carbon Black |
+| `rules/SentinelOne/` | `CVE-XXXX-YYYYY_Short-Threat-Name.txt` | SentinelOne Deep Visibility + STAR |
+| `rules/Kaspersky-EDR/` | `CVE-XXXX-YYYYY_Short-Threat-Name.txt` | Kaspersky EDR / KATA |
+| `rules/CrowdStrike/` | `CVE-XXXX-YYYYY_Short-Threat-Name.txt` | CrowdStrike Falcon NG-SIEM / LogScale (CQL) |
 
-Also copy each rule file to the matching platform library folder:
-- `rules/sigma/`, `rules/yara/`, `rules/kql/`, `rules/xql/`, `rules/splunk/`
-- `rules/qradar/`, `rules/carbonblack/`, `rules/sentinelone/`, `rules/kaspersky-edr/`, `rules/crowdstrike/`
+The file extension is determined by the platform's native format. The folder name already identifies the platform, so filenames use `CVE-XXXX-YYYYY_Short-Threat-Name` without a platform suffix.
 
 **Rule consolidation standard (mandatory):**
 - **4–5 rules per platform maximum** — never write one rule per IOC
@@ -191,7 +189,7 @@ Also copy each rule file to the matching platform library folder:
 
 **Read** `personas/red-team-simulator.md` for full persona instructions.
 
-For each threat, write `CVE-XXXX-YYYYY_red-team-simulation.md` in the topic folder.
+For each threat, write `CVE-XXXX-YYYYY_red-team-simulation.md` temporarily in the topic folder (used to populate the HTML report; deleted after HTML generation).
 
 Include:
 - Prerequisites checklist (lab environment, monitoring active, snapshot taken)
@@ -204,11 +202,17 @@ Include:
 
 ## STEP 4 — HTML Report + PDF
 
-Write `report.html` in the topic folder. This is a permanent deliverable — keep it always (do NOT delete it after PDF generation).
+Write `CVE-XXXX-YYYYY_Short-Threat-Name.html` in the topic folder. This is a permanent deliverable — keep it always (do NOT delete it after PDF generation).
+
+After generating the HTML and PDF, **delete all working files** from the topic folder. Only two files should remain:
+- `CVE-XXXX-YYYYY_Short-Threat-Name.html`
+- `CVE-XXXX-YYYYY_Short-Threat-Name.pdf`
 
 **Design requirements:**
-- Dark full-bleed cover page (A4 exactly: width:210mm, height:297mm), dark navy background `#060d1f`, geometric grid overlay, blue/red glow orbs
-- All other pages: white/light theme, background `#f8fafc`, primary blue `#2563eb`, text `#111827`
+- **Full-bleed cover** (100vh, dark navy `#030712`): TI-DE radar SVG, animated sweep ring, scanline overlay, threat name, CVSS badge, platform counter
+- **Fixed top navbar**: transparent → scrolled state (blur + dark bg); TI-DE brand left; section anchor links center; "Rules ▾" dropdown for all 10 platforms right; CVSS badge right
+- **Single centered column content**: `max-width: 960px; margin: 0 auto; padding: 72px 48px 96px` — no sidebar, no left rail
+- **Animations**: IntersectionObserver fade-in for sections (`.sec` → `.sec.in`), animated counters (`data-t` attribute + requestAnimationFrame), scroll progress bar at top
 - Professional format — reference Mandiant M-Trends, CrowdStrike Global Threat Report, IBM X-Force
 - Readable typography: sans-serif headings, monospace for code blocks
 
@@ -238,9 +242,9 @@ Write `report.html` in the topic folder. This is a permanent deliverable — kee
 - Footer: `TI-DE · github.com/mazlumbaydar/TI-DE · Prepared by: Mazlum Baydar`
 - No references to AI or automation anywhere in the report
 
-**Filenames — both must match the topic folder name:**
-- HTML: `CVE-XXXX-YYYYY_Short-Name.html`
-- PDF: `CVE-XXXX-YYYYY_Short-Name.pdf`
+**Filenames — both must match the topic folder name (without the date prefix):**
+- HTML: `CVE-XXXX-YYYYY_Short-Threat-Name.html`
+- PDF: `CVE-XXXX-YYYYY_Short-Threat-Name.pdf`
 
 **Generate PDF from HTML** (write to temp first — paths with parentheses cause Chrome access errors):
 ```
@@ -256,7 +260,7 @@ Both the HTML and PDF are permanent deliverables — keep both, never delete eit
 
 ```bash
 git add -A
-git commit -m "Daily briefing YYYY-MM-DD — N threats analyzed, rules for 9 platforms"
+git commit -m "Daily briefing YYYY-MM-DD — N threats analyzed, rules for 10 platforms"
 git push origin main
 ```
 
