@@ -705,17 +705,43 @@ const cntObs = new IntersectionObserver(entries => {
 }, { threshold: 0.3 });
 document.querySelectorAll('.hero-meta').forEach(el => cntObs.observe(el));
 
-/* ─── THEME TOGGLE ─── */
+/* ─── THEME & LANG STATE (declare both first to avoid ReferenceError) ─── */
+let currentLang  = localStorage.getItem('ti-de-lang')  || 'en';
 let currentTheme = localStorage.getItem('ti-de-theme') || 'dark';
-applyTheme(currentTheme);
 
-function applyTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
-  currentTheme = theme;
-  localStorage.setItem('ti-de-theme', theme);
+/* ─── LANGUAGE ─── */
+function applyLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('ti-de-lang', lang);
+  document.documentElement.setAttribute('lang', lang);
+
+  // Always use innerHTML — many values contain <strong>, <code>, <br> tags
+  document.querySelectorAll('[data-en]').forEach(el => {
+    const val = lang === 'en' ? el.dataset.en : (el.dataset.tr || el.dataset.en);
+    if (val !== undefined) el.innerHTML = val;
+  });
+
+  // Update button UI
+  const icon  = document.getElementById('langIcon');
+  const label = document.getElementById('langLabel');
+  const btn   = document.getElementById('langBtn');
+  icon.textContent  = lang === 'en' ? '🇬🇧' : '🇹🇷';
+  label.textContent = lang === 'en' ? 'EN' : 'TR';
+  lang === 'tr' ? btn.classList.add('active') : btn.classList.remove('active');
+
+  // Re-sync theme label text in correct language
+  syncThemeLabel();
+}
+
+function toggleLang() {
+  applyLang(currentLang === 'en' ? 'tr' : 'en');
+}
+
+/* ─── THEME ─── */
+function syncThemeLabel() {
   const icon  = document.getElementById('themeIcon');
   const label = document.getElementById('themeLabel');
-  if (theme === 'dark') {
+  if (currentTheme === 'dark') {
     icon.textContent  = '🌙';
     label.textContent = currentLang === 'en' ? 'Dark' : 'Koyu';
   } else {
@@ -724,60 +750,20 @@ function applyTheme(theme) {
   }
 }
 
+function applyTheme(theme) {
+  currentTheme = theme;
+  localStorage.setItem('ti-de-theme', theme);
+  document.documentElement.setAttribute('data-theme', theme);
+  syncThemeLabel();
+}
+
 function toggleTheme() {
   applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
 }
 
-/* ─── LANGUAGE TOGGLE ─── */
-let currentLang = localStorage.getItem('ti-de-lang') || 'en';
+/* ─── INIT ─── */
+applyTheme(currentTheme);
 applyLang(currentLang);
-
-function applyLang(lang) {
-  currentLang = lang;
-  localStorage.setItem('ti-de-lang', lang);
-
-  // Update all [data-en] / [data-tr] elements
-  document.querySelectorAll('[data-en]').forEach(el => {
-    const val = lang === 'en' ? el.dataset.en : el.dataset.tr;
-    if (val) {
-      if (el.tagName === 'H1' || el.dataset.html) {
-        el.innerHTML = val;
-      } else {
-        el.textContent = val;
-      }
-    }
-  });
-
-  // Update lang indicator
-  const btn   = document.getElementById('langBtn');
-  const icon  = document.getElementById('langIcon');
-  const label = document.getElementById('langLabel');
-  if (lang === 'en') {
-    icon.textContent  = '🇬🇧';
-    label.textContent = 'EN';
-    btn.classList.remove('active');
-  } else {
-    icon.textContent  = '🇹🇷';
-    label.textContent = 'TR';
-    btn.classList.add('active');
-  }
-
-  // Update theme label language too
-  applyTheme(currentTheme);
-
-  // Update html lang attribute
-  document.documentElement.setAttribute('lang', lang);
-}
-
-function toggleLang() {
-  applyLang(currentLang === 'en' ? 'tr' : 'en');
-}
-
-// Handle hero title (has <br> tags — needs innerHTML)
-const heroTitle = document.querySelector('.hero-title');
-if (heroTitle) {
-  heroTitle.dataset.html = '1';
-}
 </script>
 
 </body>
