@@ -41,11 +41,16 @@ Priority classification (applied only after pre-filter):
 
 **For each CRITICAL or HIGH threat found:**
 
-Create a topic folder at:
+Create folders with this structure:
 ```
-daily-reports/YYYY-MM-DD_CVE-XXXX-YYYYY_Short-Threat-Name/
+daily-reports/
+  DD-MM-YYYY/                          ← date folder (day-month-year)
+    CVE-XXXX-YYYYY_Short-Threat-Name/  ← topic folder inside date folder
+      CVE-XXXX-YYYYY_Short-Name.html   ← permanent deliverable
+      CVE-XXXX-YYYYY_Short-Name.pdf    ← permanent deliverable
 ```
-If no CVE number exists, use: `daily-reports/YYYY-MM-DD_THREAT-Short-Description/`
+If no CVE number exists, use `THREAT-Short-Description/` as the topic folder name.
+Example: `daily-reports/31-03-2026/THREAT-Axios-npm-Supply-Chain-RAT/`
 
 Save the following **working files** inside the topic folder (they will be deleted after the HTML report is generated — only HTML + PDF remain as permanent deliverables):
 - `CVE-XXXX-YYYYY_cti-report.md` — Full threat analysis including: executive summary, affected products and versions, MITRE ATT&CK techniques used (with T-IDs), attack chain/stages, recommended immediate actions
