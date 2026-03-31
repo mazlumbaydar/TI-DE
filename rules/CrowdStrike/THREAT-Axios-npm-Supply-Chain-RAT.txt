@@ -1,104 +1,80 @@
 # ============================================================
 # Threat  : Axios npm Supply Chain — Cross-Platform RAT Dropper
 # Platform: CrowdStrike Falcon NG-SIEM / LogScale (CQL)
-# TTPs    : T1195.001 / T1059.001 / T1059.004 / T1059.006 / T1036.005
+# TTPs    : T1195.001 / T1059.001 / T1059.004 / T1059.006 / T1036.005 / T1070.004
 # Severity: Critical
-# Section A: CQL hunting queries (NG-SIEM / LogScale)
-# Section B: Custom IOA JSON rules (sensor-level prevention)
+# Rules   : 2 consolidated (Section A CQL) + 2 Custom IOA JSON (Section B)
 # ============================================================
 
 # ════════════════════════════════
 # SECTION A — CQL HUNTING QUERIES
 # ════════════════════════════════
 
-# ── CQL-1: NPM/Node Spawning Network Tool During Postinstall ──
-# ProcessRollup2: parent = npm/node, child = curl/wget/python3.
-# ParentBaseFileName = spawning process; ImageFileName = spawned.
+# ── CQL-1: Package Manager Spawning Network or Scripting Tool ──
+# Covers Linux + Windows in one query. ParentBaseFileName = npm/node;
+# ImageFileName = any network utility or scripting engine.
+# No specific command-line keyword required — parent+child identity is the signal.
 #event_simpleName=ProcessRollup2
-| ParentBaseFileName IN ("node", "npm", "npm-cli.js")
-| CommandLine = /postinstall|setup\.js|node_modules/i
-| ImageFileName IN ("curl", "wget", "python3", "python", "bash", "sh", "nc", "ncat")
+| ParentBaseFileName IN ("node", "npm", "npm-cli.js", "node.exe", "npm.cmd")
+| ImageFileName IN (
+    "curl", "wget", "python3", "python", "bash", "sh", "nc", "ncat",
+    "wscript.exe", "cscript.exe", "powershell.exe", "pwsh.exe"
+  )
 | table(_time, ComputerName, UserName, ParentBaseFileName, CommandLine, ImageFileName)
 | sort(_time, order=desc)
 
-# ── CQL-2: Node Spawning Windows Scripting Engine ──
-#event_simpleName=ProcessRollup2
-| ParentBaseFileName =~ "node.exe"
-| CommandLine = /postinstall|setup\.js/i
-| ImageFileName IN ("wscript.exe", "cscript.exe", "powershell.exe", "pwsh.exe")
-| table(_time, ComputerName, UserName, ParentBaseFileName, CommandLine, ImageFileName)
-| sort(_time, order=desc)
-
-# ── CQL-3: Executable File Written to ProgramData by Node/Script Engine ──
-# FileCreatedEvent: actor process writes .exe to C:\ProgramData\
+# ── CQL-2: Node or Scripting Engine Dropping Payload or Destroying Evidence ──
+# Consolidates: exe/script written to staging path + package.json anti-forensic deletion.
+# Writer process + destination pattern — specific filenames NOT matched.
 #event_simpleName=FileCreatedEvent
-| ContextProcessId_decimal = *
-| TargetFileName = /C:\\ProgramData\\.*\.exe$/i
 | join(ContextProcessId_decimal=TargetProcessId_decimal) [
     #event_simpleName=ProcessRollup2
-    | ImageFileName = /node\.exe|wscript\.exe|powershell\.exe/i
+    | ImageFileName IN ("node", "node.exe", "wscript.exe", "powershell.exe", "pwsh.exe")
 ]
+| TargetFileName = /C:\\ProgramData\\.+\.exe$|\/tmp\/.+\.(py|sh)$|\/Library\/Caches\/com\.apple\./i
 | table(_time, ComputerName, TargetFileName, ImageFileName, CommandLine)
-
-# ── CQL-4: Python File Written to /tmp by Node (Linux) ──
-#event_simpleName=FileCreatedEvent
-| TargetFileName = /^\/tmp\/.*\.py$/i
-| join(ContextProcessId_decimal=TargetProcessId_decimal) [
-    #event_simpleName=ProcessRollup2
-    | ImageFileName = /\/node$/i
-]
-| table(_time, ComputerName, TargetFileName, ImageFileName, CommandLine)
-
 
 # ═══════════════════════════════════════════════
 # SECTION B — CUSTOM IOA RULES (SENSOR PREVENTION)
-# JSON format — load via Falcon UI or API
+# JSON format — load via Falcon UI > Custom IOA Rules
 # ═══════════════════════════════════════════════
 
-# IOA-1: NPM Postinstall Spawning Network/Shell Utility
-# Prevents the postinstall hook execution before OS sees it.
+# IOA-1: Package Manager Spawning Network or Scripting Tool
+# Sensor-level prevention before the child process executes.
 # {
 #   "ruletype_id": 1,
-#   "name": "NPM Postinstall Hook Spawning Network Tool",
-#   "description": "Prevents npm/node spawning curl/wget/python3/bash during package install postinstall hook — supply chain attack vector (T1195.001)",
+#   "name": "NPM/Node Spawning Network or Scripting Tool",
+#   "description": "Prevents npm/node spawning curl/wget/python/bash/wscript/powershell — covers Linux and Windows supply chain RAT dropper vector (T1195.001)",
 #   "pattern_severity": "critical",
 #   "disposition_id": 30,
 #   "field_values": [
 #     {
 #       "name": "GrandparentImageFilename",
-#       "value": ".*[\\\\/](npm|node)$"
-#     },
-#     {
-#       "name": "ParentCommandLine",
-#       "value": ".*(postinstall|setup\\.js|node_modules).*"
+#       "value": ".*[\\\\/](npm|node)(\\.(exe|cmd|js))?$"
 #     },
 #     {
 #       "name": "ImageFilename",
-#       "value": ".*(curl|wget|python3|python|bash|sh|nc|ncat)$"
+#       "value": ".*(curl|wget|python3?|bash|sh|nc|ncat|wscript|cscript|powershell|pwsh)(\\.exe)?$"
 #     }
 #   ]
 # }
 
-# IOA-2: Node.exe Spawning Windows Scripting Engine
-# Prevents node.exe → wscript.exe/powershell.exe chain at sensor level.
+# IOA-2: Node or Scripting Engine Writing to Staging Path
+# Prevents the file drop before the payload lands on disk.
 # {
-#   "ruletype_id": 1,
-#   "name": "Node.exe Spawning Windows Scripting Engine",
-#   "description": "Prevents node.exe spawning wscript.exe or powershell.exe — Windows vector of npm supply chain RAT dropper (T1059.001)",
+#   "ruletype_id": 2,
+#   "name": "Node/Script Engine Writing Executable to Staging Path",
+#   "description": "Prevents node.exe/wscript/powershell writing executables or scripts to ProgramData or /tmp — RAT payload staging vector (T1036.005)",
 #   "pattern_severity": "critical",
 #   "disposition_id": 30,
 #   "field_values": [
 #     {
-#       "name": "ParentImageFilename",
-#       "value": ".*\\\\node\\.exe$"
-#     },
-#     {
-#       "name": "ParentCommandLine",
-#       "value": ".*(postinstall|setup\\.js).*"
-#     },
-#     {
 #       "name": "ImageFilename",
-#       "value": ".*(wscript|cscript|powershell|pwsh)\\.exe$"
+#       "value": ".*(node|wscript|powershell|pwsh)(\\.exe)?$"
+#     },
+#     {
+#       "name": "TargetFilename",
+#       "value": "(?i)(C:\\\\ProgramData\\\\.+\\.exe|/tmp/.+\\.(py|sh)|/Library/Caches/com\\.apple\\.)"
 #     }
 #   ]
 # }

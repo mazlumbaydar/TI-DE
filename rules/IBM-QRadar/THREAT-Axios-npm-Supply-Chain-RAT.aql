@@ -1,52 +1,46 @@
 -- ============================================================
 -- Threat  : Axios npm Supply Chain — Cross-Platform RAT Dropper
 -- Platform: IBM QRadar AQL
--- TTPs    : T1195.001 / T1059.004 / T1059.006 / T1036.005
+-- TTPs    : T1195.001 / T1059.001 / T1059.004 / T1059.006 / T1036.005 / T1070.004
 -- Severity: Critical
--- Note    : QRadar process telemetry depends on endpoint log source
---           (e.g. QRadar EDR / Carbon Black / Sysmon forwarded events).
---           Field availability varies by data source. Verify field
---           names against your specific log source configuration.
+-- Rules   : 2 consolidated (process spawn + file activity)
+-- Note    : Requires Sysmon or QRadar EDR endpoint log source.
+--           Field names vary by log source — verify against your config.
 -- ============================================================
 
--- ── RULE 1: NPM/Node Spawning Network Tool During Install (Linux) ──
--- Requires endpoint log source forwarding process creation events.
--- parent_name = npm/node, child spawns network tool, context = postinstall.
-SELECT sourceip, destinationip, "username", process_name, parent_process_name,
-       "command", DATEFORMAT(devicetime, 'yyyy-MM-dd HH:mm:ss') AS event_time
-FROM events
-WHERE LOGSOURCETYPENAME(devicetype) ILIKE '%sysmon%'
-  AND CATEGORYNAME(category) ILIKE '%process%'
-  AND parent_process_name ILIKE '%node%'
-  AND ("command" ILIKE '%postinstall%' OR "command" ILIKE '%setup.js%')
-  AND process_name IN ('curl', 'wget', 'python3', 'python', 'bash', 'sh', 'nc', 'ncat')
-  AND devicetime > CURRENT_TIMESTAMP - 7 DAYS
-ORDER BY devicetime DESC
-LIMIT 500
-
--- ── RULE 2: Node.exe Spawning Windows Scripting Engine ──
--- Windows Sysmon events forwarded to QRadar.
+-- ── RULE 1: Package Manager Spawning Network or Scripting Tool ──
+-- Covers Linux and Windows in one query.
+-- Parent identity AND child identity — no postinstall keyword required.
 SELECT sourceip, "username", parent_process_name, process_name,
        "command", DATEFORMAT(devicetime, 'yyyy-MM-dd HH:mm:ss') AS event_time
 FROM events
 WHERE LOGSOURCETYPENAME(devicetype) ILIKE '%sysmon%'
-  AND parent_process_name ILIKE '%node.exe%'
-  AND ("command" ILIKE '%postinstall%' OR "command" ILIKE '%setup.js%')
-  AND process_name IN ('wscript.exe', 'cscript.exe', 'powershell.exe', 'pwsh.exe')
+  AND CATEGORYNAME(category) ILIKE '%process%'
+  AND parent_process_name ILIKE ANY ('%node%', '%npm%')
+  AND process_name ILIKE ANY (
+        '%curl%', '%wget%', '%python3%', '%python%', '%bash%', '%sh%', '%nc%',
+        '%wscript.exe%', '%cscript.exe%', '%powershell.exe%', '%pwsh.exe%'
+      )
   AND devicetime > CURRENT_TIMESTAMP - 7 DAYS
 ORDER BY devicetime DESC
-LIMIT 200
+LIMIT 500
 
--- ── RULE 3: Executable Written to ProgramData by Non-System Process ──
--- File creation events (if forwarded) from node.exe or scripting engines
--- writing executables to C:\ProgramData\.
+-- ── RULE 2: Node or Scripting Engine Dropping Payload or Destroying Evidence ──
+-- Covers: exe/script written to staging path + package.json anti-forensic deletion.
+-- Writer process identity + destination path pattern — specific filenames NOT matched.
 SELECT sourceip, "username", process_name, "filename",
        DATEFORMAT(devicetime, 'yyyy-MM-dd HH:mm:ss') AS event_time
 FROM events
 WHERE LOGSOURCETYPENAME(devicetype) ILIKE '%sysmon%'
   AND CATEGORYNAME(category) ILIKE '%file%'
-  AND process_name ILIKE '%node%'
-  AND "filename" ILIKE 'C:\\ProgramData\\%.exe'
+  AND process_name ILIKE ANY ('%node%', '%wscript.exe%', '%powershell.exe%')
+  AND (
+        "filename" ILIKE 'C:\ProgramData\%.exe'
+     OR "filename" ILIKE '/tmp/%.py'
+     OR "filename" ILIKE '/tmp/%.sh'
+     OR "filename" ILIKE '/Library/Caches/com.apple.%'
+     OR ("filename" ILIKE '%node_modules%' AND "filename" ILIKE '%package.json')
+      )
   AND devicetime > CURRENT_TIMESTAMP - 7 DAYS
 ORDER BY devicetime DESC
-LIMIT 200
+LIMIT 500

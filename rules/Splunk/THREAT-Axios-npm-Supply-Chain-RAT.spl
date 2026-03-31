@@ -1,42 +1,41 @@
 | ============================================================
 | Threat  : Axios npm Supply Chain — Cross-Platform RAT Dropper
-| Platform: Splunk SPL (Sysmon for Linux + Windows Sysmon)
+| Platform: Splunk SPL (Sysmon Linux + Windows Sysmon)
 | TTPs    : T1195.001 / T1059.001 / T1059.004 / T1059.006 / T1036.005 / T1070.004
 | Severity: Critical
-| Sources : Sysmon EventCode 1 (process), EventCode 11 (file create)
+| Rules   : 2 consolidated (process spawn + file activity)
+| Sources : EventCode 1 (process creation), EventCode 11 (file create), EventCode 23 (file delete)
 | ============================================================
 
-| ── RULE 1: NPM/Node Spawning Network Tool (Linux, Sysmon EventCode 1) ──
-| Parent = npm/node running postinstall; child = curl/wget/python3/shell.
-| Two conditions AND-ed: parent identity + child identity.
+| ── RULE 1: Package Manager Spawning Network or Scripting Tool ──
+| Covers Linux and Windows in one query using sourcetype OR.
+| Parent = npm/node; Child = network tool (Linux) or scripting engine (Windows).
+| No postinstall keyword required — parent+child identity is sufficient signal.
 
-index=* (sourcetype=sysmon_linux OR sourcetype="sysmon:linux") EventCode=1
-  ParentImage IN ("*/npm", "*/npm-cli.js", "*/node")
-  ParentCommandLine IN ("*postinstall*", "*setup.js*", "*node_modules*")
-  Image IN ("*/curl", "*/wget", "*/python3", "*/python", "*/bash", "*/sh", "*/nc", "*/ncat")
+index=* (sourcetype=sysmon_linux OR sourcetype="sysmon:linux"
+       OR sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational") EventCode=1
+| where (
+    match(ParentImage, "(?i)[\\/](node|npm|npm-cli\.js)(\.exe|\.cmd)?$")
+    AND match(Image, "(?i)[\\/](curl|wget|python3?|bash|sh|nc|ncat|wscript|cscript|powershell|pwsh)(\.exe)?$")
+  )
 | table _time, host, User, ParentImage, ParentCommandLine, Image, CommandLine
 
-| ── RULE 2: Node.exe Spawning Windows Scripting Engine (Windows Sysmon EventCode 1) ──
-| node.exe → wscript.exe or powershell.exe during npm install.
+| ── RULE 2: Node or Scripting Engine Dropping Payload or Destroying Evidence ──
+| Covers: exe/script written to staging path (EventCode 11) AND
+|          package.json deletion for anti-forensic cleanup (EventCode 23).
+| Specific filenames NOT matched — writer process + destination pattern is the signal.
 
-index=* sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
-  ParentImage="*\\node.exe"
-  (ParentCommandLine="*postinstall*" OR ParentCommandLine="*setup.js*")
-  Image IN ("*\\wscript.exe", "*\\cscript.exe", "*\\powershell.exe", "*\\pwsh.exe")
-| table _time, host, User, ParentCommandLine, Image, CommandLine
-
-| ── RULE 3: Node/Script Engine Writing .exe to ProgramData (Sysmon EventCode 11) ──
-| Detects wt.exe masquerade: executable dropped in C:\ProgramData\ by node/wscript.
-
-index=* sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=11
-  Image IN ("*\\node.exe", "*\\wscript.exe", "*\\powershell.exe", "*\\pwsh.exe")
-  TargetFilename="C:\\ProgramData\\*.exe"
-| table _time, host, User, Image, CommandLine, TargetFilename
-
-| ── RULE 4: Node Deleting package.json in node_modules (Sysmon EventCode 23 = FileDelete) ──
-| Anti-forensic self-destruct: node deletes setup.js and package.json (T1070.004).
-
-index=* sourcetype="sysmon:linux" EventCode=23
-  Image="*/node"
-  TargetFilename IN ("*/node_modules/*/package.json", "*/node_modules/*/setup.js")
-| table _time, host, User, Image, TargetFilename
+index=* (sourcetype=sysmon_linux OR sourcetype="sysmon:linux"
+       OR sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational") EventCode IN (11, 23)
+| where match(Image, "(?i)[\\/](node|wscript|powershell|pwsh)(\.exe)?$")
+| where (
+    (EventCode=11 AND (
+        match(TargetFilename, "(?i)^C:\\\\ProgramData\\\\.+\\.exe$")
+     OR match(TargetFilename, "^/tmp/.+\.(py|sh)$")
+     OR match(TargetFilename, "^/Library/Caches/com\.apple\.")
+    ))
+ OR (EventCode=23 AND
+        TargetFilename LIKE "%node_modules%" AND
+        (TargetFilename LIKE "%package.json" OR TargetFilename LIKE "%setup.js"))
+  )
+| table _time, host, User, Image, CommandLine, TargetFilename, EventCode

@@ -1,46 +1,27 @@
 # ============================================================
 # Threat  : Axios npm Supply Chain — Cross-Platform RAT Dropper
 # Platform: VMware Carbon Black CBC (Cloud)
-# TTPs    : T1195.001 / T1059.004 / T1059.006 / T1036.005
+# TTPs    : T1195.001 / T1059.001 / T1059.004 / T1059.006 / T1036.005
 # Severity: Critical
-# Note    : CBC Lucene syntax. All field values lowercase in index.
-#           childproc_name requires CBC EDR with process tree visibility.
-#           File creation visibility: CBC does NOT provide general file
-#           creation events (filemod_name is for file modifications by
-#           running processes, not arbitrary drops). File-drop rules
-#           for this platform require CBC's Audit & Remediation (LiveResponse).
+# Rules   : 2 consolidated (process spawn + process-from-staging-path)
+# Syntax  : CBC Lucene. All field values lowercase in index.
+# Note    : CBC does NOT provide general file creation events.
+#           File-drop detection requires CBC Audit & Remediation (LiveResponse).
+#           Rule 2 detects execution FROM staging path (post-drop signal).
 # ============================================================
 
-# ── RULE 1: NPM/Node Spawning Network Tool as Child Process ──
-# Parent = npm or node process; child = curl/wget/python3/shell.
-# childproc_name is the spawned child process name (lowercase).
-parent_name:node AND childproc_name:curl
-OR parent_name:node AND childproc_name:wget
-OR parent_name:node AND childproc_name:python3
-OR parent_name:npm AND childproc_name:curl
-OR parent_name:npm AND childproc_name:wget
-OR parent_name:npm AND childproc_name:python3
+# ── RULE 1: Package Manager Spawning Network or Scripting Tool ──
+# Covers Linux and Windows child process types in one query.
+# parent_name = npm or node; childproc_name = network/scripting tool.
+# Values must be lowercase — CBC indexes are case-insensitive via lowercase.
+(parent_name:node OR parent_name:npm OR parent_name:node.exe)
+AND childproc_name:(curl OR wget OR python3 OR python OR bash OR sh OR nc OR ncat
+                    OR wscript.exe OR cscript.exe OR powershell.exe OR pwsh.exe)
 
-# ── RULE 2: Node.exe Spawning Windows Scripting Engines ──
-# Windows vector: node spawning wscript or powershell.
-# All values must be lowercase in CBC Lucene index.
-parent_name:node.exe AND childproc_name:wscript.exe
-OR parent_name:node.exe AND childproc_name:powershell.exe
-OR parent_name:node.exe AND childproc_name:pwsh.exe
-
-# ── RULE 3: Node Spawning Suspicious Long-Running Background Process ──
-# Linux: nohup python3 launched by node — the Linux RAT persistence vector.
-# CBC detects this as node spawning nohup, which then spawns python3.
-parent_name:node AND childproc_name:nohup
-OR parent_name:nohup AND childproc_name:python3 AND cmdline:*tmp*
-
-# ── RULE 4: Suspicious Process Running from ProgramData (Windows) ──
-# The Windows RAT masquerades as wt.exe and runs from C:\ProgramData\.
-# Detect: any process executing from ProgramData that is NOT a known
-# legitimate installer.
-process_name:wt.exe AND process_path:c\:\\programdata\\*
-OR (process_path:c\:\\programdata\\* AND process_name:*.exe AND NOT parent_name:msiexec.exe)
-
-# NOTE: File creation events (detecting wt.exe being written) require
-# CBC LiveResponse or Audit & Remediation — not available in standard
-# process/network queries. Use file integrity monitoring for drop detection.
+# ── RULE 2: Suspicious Execution from OS Staging Paths ──
+# CBC cannot detect file creation events directly (no FileCreatedEvent).
+# Instead, detect execution OF a process from the staging path.
+# Any process running from ProgramData (not msiexec-installed) is suspicious.
+# Linux /tmp execution also covered via process_path pattern.
+(process_path:c\:\\programdata\\* AND process_name:*.exe AND NOT parent_name:msiexec.exe)
+OR (process_path:/tmp/* AND process_name:(*.py OR *.sh))

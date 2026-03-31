@@ -1,63 +1,47 @@
 // ============================================================
 // Threat  : Axios npm Supply Chain — Cross-Platform RAT Dropper
 // Platform: Microsoft Defender XDR / Sentinel (KQL)
-// TTPs    : T1195.001 / T1059.001 / T1059.004 / T1059.006
-//           T1036.005 / T1070.004
+// TTPs    : T1195.001 / T1059.001 / T1059.004 / T1059.006 / T1036.005 / T1070.004
 // Severity: Critical
+// Rules   : 2 consolidated (process spawn + file activity)
 // Tables  : DeviceProcessEvents, DeviceFileEvents
 // ============================================================
 
-// ── RULE 1: NPM/Node Spawning Network or Shell Tool (Linux/macOS) ──
-// Detects npm or node spawning a network utility as a child process
-// during a postinstall hook. This is the core execution vector.
-// Legitimate npm installs do NOT spawn curl/wget/python as direct children.
+// ── RULE 1: Package Manager Spawning Network or Scripting Tool ──
+// Covers Linux (curl/wget/python3/bash) and Windows (wscript/powershell) in one query.
+// Parent identity AND child identity — no specific command-line string required.
+// Legitimate npm installs do not spawn these tools as direct children.
 DeviceProcessEvents
 | where TimeGenerated > ago(7d)
-| where InitiatingProcessFileName in~ ("node", "npm", "npm-cli.js")
-| where InitiatingProcessCommandLine has_any ("postinstall", "setup.js", "node_modules")
-| where FileName in~ ("curl", "wget", "python3", "python", "bash", "sh", "nc", "ncat")
+| where InitiatingProcessFileName in~ ("node", "node.exe", "npm", "npm-cli.js", "npm.cmd")
+| where FileName in~ (
+    "curl", "wget", "python3", "python", "bash", "sh", "nc", "ncat",
+    "wscript.exe", "cscript.exe", "powershell.exe", "pwsh.exe"
+  )
 | project TimeGenerated, DeviceName, AccountName,
           InitiatingProcessFileName, InitiatingProcessCommandLine,
           FileName, ProcessCommandLine, FolderPath
 
-// ── RULE 2: Node.exe Spawning Windows Scripting Engine ──
-// Windows vector: node.exe → wscript.exe → powershell.exe chain.
-// Node has no legitimate reason to spawn wscript during npm install.
-// Uncomment to run:
-/*
-DeviceProcessEvents
-| where TimeGenerated > ago(7d)
-| where InitiatingProcessFileName =~ "node.exe"
-| where InitiatingProcessCommandLine has_any ("postinstall", "setup.js")
-| where FileName in~ ("wscript.exe", "cscript.exe", "powershell.exe", "pwsh.exe")
-| project TimeGenerated, DeviceName, AccountName,
-          InitiatingProcessCommandLine, FileName, ProcessCommandLine
-*/
-
-// ── RULE 3: Executable Written to ProgramData by Node/Script Engine ──
-// Detects node.exe or wscript/powershell writing an executable to
-// %PROGRAMDATA% — the Windows persistence path for the RAT (wt.exe masquerade).
-// T1036.005 masquerade as Windows Terminal.
+// ── RULE 2: Node or Scripting Engine Dropping Payload or Destroying Evidence ──
+// Consolidates: exe/script written to staging path (T1036.005) +
+//               package.json deletion as anti-forensic cleanup (T1070.004).
+// Writer process + destination pattern — specific filenames NOT matched.
 DeviceFileEvents
 | where TimeGenerated > ago(7d)
-| where InitiatingProcessFileName in~ ("node.exe", "wscript.exe", "powershell.exe", "pwsh.exe")
-| where FolderPath startswith @"C:\ProgramData\"
-| where FileName endswith ".exe"
+| where InitiatingProcessFileName in~ ("node", "node.exe", "wscript.exe", "powershell.exe", "pwsh.exe")
 | where not (InitiatingProcessFolderPath startswith @"C:\Windows\"
           or InitiatingProcessFolderPath startswith @"C:\Program Files\")
+| where (
+    // Windows: executable dropped in ProgramData
+    (FolderPath startswith @"C:\ProgramData\" and FileName endswith ".exe")
+    // Linux: script dropped in /tmp
+    or (FolderPath startswith "/tmp/" and (FileName endswith ".py" or FileName endswith ".sh"))
+    // macOS: binary in /Library/Caches spoofing Apple daemon
+    or (FolderPath startswith "/Library/Caches/" and InitiatingProcessFileName =~ "node")
+    // Anti-forensic: package.json deleted/modified in node_modules
+    or (FolderPath contains "node_modules" and FileName =~ "package.json"
+        and ActionType in ("FileDeleted", "FileModified"))
+  )
 | project TimeGenerated, DeviceName, AccountName,
           InitiatingProcessFileName, InitiatingProcessCommandLine,
-          FolderPath, FileName, SHA256, ActionType
-
-// ── RULE 4: Node Process Deleting package.json During Install ──
-// Detects node deleting its own package.json inside node_modules —
-// the anti-forensic self-destruct behaviour of the dropper (T1070.004).
-// Legitimate npm does not delete package.json during install.
-DeviceFileEvents
-| where TimeGenerated > ago(1d)
-| where InitiatingProcessFileName =~ "node"
-| where FolderPath contains "node_modules"
-| where FileName =~ "package.json"
-| where ActionType in ("FileDeleted", "FileModified")
-| project TimeGenerated, DeviceName, AccountName,
-          InitiatingProcessCommandLine, FolderPath, FileName, ActionType
+          ActionType, FolderPath, FileName, SHA256
