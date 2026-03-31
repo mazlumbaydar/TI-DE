@@ -5,363 +5,437 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>TI-DE — Threat Intelligence & Detection Engineering</title>
 <style>
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════
    THEME TOKENS
-═══════════════════════════════════════════ */
+═══════════════════════════════════ */
 :root {
+  /* Brand */
   --accent:  #e85d04;
   --accent2: #f48c06;
-  --accent3: #ffba08;
-  --red:     #ef233c;
-  --green:   #06d6a0;
-  --blue:    #4cc9f0;
-  --purple:  #a855f7;
+  --red:     #dc2626;
+  --blue:    #3b82f6;
+  --purple:  #8b5cf6;
+  --green:   #10b981;
+  --cyan:    #06b6d4;
 
-  /* dark (default) */
-  --bg:       #090b0f;
-  --bg2:      #0e1117;
-  --surface:  #12161e;
-  --surface2: #1a1f2b;
-  --border:   #242b38;
-  --text:     #e8edf5;
-  --muted:    #7b889e;
-  --muted2:   #4f5c6e;
-  --invert:   0;
-  --shadow:   0 4px 24px rgba(0,0,0,0.4);
+  /* Dark theme (default) */
+  --bg:       #080a0d;
+  --bg2:      #0d1018;
+  --surface:  #111520;
+  --surface2: #161b28;
+  --border:   #1e2535;
+  --border2:  #2a3347;
+  --text:     #eef2f8;
+  --text2:    #c8d0de;
+  --muted:    #7a8899;
+  --muted2:   #4a5568;
+  --shadow:   rgba(0,0,0,0.5);
 }
 [data-theme="light"] {
-  --bg:       #f5f6f8;
+  --bg:       #f8f9fb;
   --bg2:      #ffffff;
   --surface:  #ffffff;
-  --surface2: #f0f2f5;
-  --border:   #dce1ea;
-  --text:     #111827;
-  --muted:    #6b7280;
-  --muted2:   #9ca3af;
-  --invert:   1;
-  --shadow:   0 4px 24px rgba(0,0,0,0.10);
+  --surface2: #f1f4f8;
+  --border:   #e2e8f0;
+  --border2:  #cbd5e1;
+  --text:     #0f172a;
+  --text2:    #334155;
+  --muted:    #64748b;
+  --muted2:   #94a3b8;
+  --shadow:   rgba(0,0,0,0.08);
 }
 
-/* ═══════════════════════════════════════════
-   RESET & BASE
-═══════════════════════════════════════════ */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: var(--bg); color: var(--text);
-  line-height: 1.7; overflow-x: hidden;
-  transition: background 0.3s, color 0.3s;
+/* ═══════════════════════════════════
+   RESET
+═══════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  background:var(--bg);color:var(--text);
+  line-height:1.6;overflow-x:hidden;
+  transition:background .25s,color .25s;
 }
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════
    SCROLL PROGRESS
-═══════════════════════════════════════════ */
-#prog {
-  position: fixed; top: 0; left: 0; height: 2px; width: 0%;
-  background: linear-gradient(90deg, var(--accent), var(--accent2));
-  z-index: 9999; transition: width 0.08s;
+═══════════════════════════════════ */
+#prog{
+  position:fixed;top:0;left:0;height:2px;width:0%;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  z-index:9999;transition:width .08s;
 }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════
    NAVBAR
-═══════════════════════════════════════════ */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-  height: 60px; padding: 0 32px;
-  display: flex; align-items: center; justify-content: space-between;
-  background: transparent; backdrop-filter: blur(0);
-  border-bottom: 1px solid transparent;
-  transition: background 0.35s, backdrop-filter 0.35s, border-color 0.35s;
+═══════════════════════════════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  height:64px;padding:0 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:background .3s,box-shadow .3s,border-color .3s;
+  border-bottom:1px solid transparent;
 }
-nav.scrolled {
-  background: color-mix(in srgb, var(--bg) 92%, transparent);
-  backdrop-filter: blur(18px);
-  border-bottom-color: var(--border);
+nav.scrolled{
+  background:color-mix(in srgb,var(--bg) 95%,transparent);
+  backdrop-filter:blur(20px);
+  border-bottom-color:var(--border);
+  box-shadow:0 1px 20px var(--shadow);
 }
-.nav-left { display: flex; align-items: center; gap: 12px; }
-.nav-logo {
-  width: 32px; height: 32px; border-radius: 8px;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.78rem; font-weight: 900; color: #fff;
-  flex-shrink: 0;
-}
-.nav-wordmark { font-size: 0.95rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
-.nav-tagline { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.04em; display: none; }
-@media(min-width:700px){ .nav-tagline { display: block; } }
 
-.nav-right { display: flex; align-items: center; gap: 8px; }
-.nav-link {
-  font-size: 0.75rem; font-weight: 600; color: var(--muted);
-  text-decoration: none; padding: 5px 12px; border-radius: 6px;
-  letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap;
-  transition: color 0.2s, background 0.2s;
+/* Logo */
+.nav-logo{display:flex;align-items:center;gap:11px}
+.logo-svg{flex-shrink:0}
+.logo-text{display:flex;flex-direction:column;line-height:1}
+.logo-name{
+  font-size:1.05rem;font-weight:800;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--text);
 }
-.nav-link:hover { color: var(--text); background: rgba(128,128,128,0.1); }
+.logo-sub{
+  font-size:.6rem;font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--muted);margin-top:1px;
+}
+
+/* Nav links */
+.nav-links{display:flex;align-items:center;gap:2px}
+@media(max-width:680px){.nav-links .nav-lnk{display:none}}
+.nav-lnk{
+  font-size:.75rem;font-weight:600;color:var(--muted);
+  padding:5px 13px;border-radius:7px;
+  letter-spacing:.05em;text-transform:uppercase;
+  transition:color .2s,background .2s;
+}
+.nav-lnk:hover{color:var(--text);background:rgba(128,128,128,.08)}
 
 /* Controls */
-.nav-controls { display: flex; align-items: center; gap: 6px; margin-left: 12px; }
-.ctrl-btn {
-  display: flex; align-items: center; justify-content: center; gap: 5px;
-  padding: 5px 11px; border-radius: 7px; border: 1px solid var(--border);
-  background: var(--surface); color: var(--muted); cursor: pointer;
-  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
-  transition: all 0.2s; white-space: nowrap;
+.nav-controls{display:flex;align-items:center;gap:5px;margin-left:10px}
+.ctrl{
+  display:flex;align-items:center;gap:5px;
+  padding:5px 12px;border-radius:8px;
+  border:1px solid var(--border);background:var(--surface);
+  color:var(--muted);cursor:pointer;
+  font-size:.69rem;font-weight:700;letter-spacing:.05em;
+  transition:all .2s;white-space:nowrap;
 }
-.ctrl-btn:hover { color: var(--text); border-color: var(--accent); }
-.ctrl-btn.active { color: var(--accent2); border-color: var(--accent2); background: rgba(244,140,6,0.08); }
+.ctrl:hover{color:var(--text);border-color:var(--accent)}
+.ctrl.on{color:var(--accent2);border-color:var(--accent2);background:rgba(232,93,4,.07)}
 
-/* ═══════════════════════════════════════════
-   HERO
-═══════════════════════════════════════════ */
-.hero {
-  min-height: 100vh;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center; padding: 100px 24px 70px;
-  position: relative; overflow: hidden;
+/* ═══════════════════════════════════
+   HERO — EDITORIAL STYLE
+═══════════════════════════════════ */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:100px 24px 72px;
+  position:relative;overflow:hidden;
 }
-/* grid lines */
-.hero::before {
-  content: '';
-  position: absolute; inset: 0; pointer-events: none;
+/* Subtle grid */
+.hero::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
   background:
-    repeating-linear-gradient(0deg, transparent, transparent 47px, color-mix(in srgb, var(--text) 3%, transparent) 48px),
-    repeating-linear-gradient(90deg, transparent, transparent 47px, color-mix(in srgb, var(--text) 3%, transparent) 48px);
+    repeating-linear-gradient(0deg,transparent,transparent 59px,
+      color-mix(in srgb,var(--text) 2.5%,transparent) 60px),
+    repeating-linear-gradient(90deg,transparent,transparent 59px,
+      color-mix(in srgb,var(--text) 2.5%,transparent) 60px);
 }
-/* glow orbs */
-.hero-orb {
-  position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none;
-  opacity: 0.35; animation: orb-float 8s ease-in-out infinite;
-}
-.hero-orb-1 { width: 500px; height: 500px; background: var(--accent); top: -100px; left: -60px; animation-delay: 0s; }
-.hero-orb-2 { width: 400px; height: 400px; background: var(--purple); bottom: -80px; right: -80px; animation-delay: 3s; }
-[data-theme="light"] .hero-orb { opacity: 0.12; }
-@keyframes orb-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-30px)} }
+/* Glow spots */
+.glow{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none}
+.glow-1{width:460px;height:460px;background:var(--accent);opacity:.1;top:-100px;left:-60px;animation:drift 10s ease-in-out infinite}
+.glow-2{width:380px;height:380px;background:var(--purple);opacity:.07;bottom:-80px;right:-60px;animation:drift 13s ease-in-out infinite reverse}
+[data-theme="light"] .glow-1{opacity:.07}
+[data-theme="light"] .glow-2{opacity:.05}
+@keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-25px)}}
 
-.hero-content { position: relative; z-index: 1; max-width: 720px; }
+.hero-inner{position:relative;z-index:1;max-width:760px}
 
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 5px 16px; border-radius: 999px; margin-bottom: 26px;
-  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
-  border: 1px solid rgba(232,93,4,0.35); background: rgba(232,93,4,0.08); color: var(--accent2);
+/* Kicker */
+.kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:5px 16px;border-radius:999px;margin-bottom:28px;
+  font-size:.66rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  border:1px solid rgba(232,93,4,.28);background:rgba(232,93,4,.07);color:var(--accent2);
 }
-.hero-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); animation: blink 1s step-end infinite; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.live-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--accent2);
+  animation:blink 1s step-end infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
-.hero-title {
-  font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 800;
-  line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 20px;
-  background: linear-gradient(135deg, var(--text) 0%, color-mix(in srgb, var(--accent2) 70%, var(--text)) 60%, var(--accent) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+/* Headline */
+.hero-h{
+  font-size:clamp(2.6rem,7vw,4.4rem);
+  font-weight:800;line-height:1.08;letter-spacing:-.03em;
+  margin-bottom:22px;
 }
-[data-theme="light"] .hero-title {
-  background: linear-gradient(135deg, #111827 0%, #e85d04 60%, #f48c06 100%);
-  -webkit-background-clip: text; background-clip: text;
+.hero-h em{font-style:normal;color:var(--accent2)}
+[data-theme="dark"] .hero-h{
+  background:linear-gradient(160deg,#fff 30%,#d0d8e8 65%,color-mix(in srgb,var(--accent) 60%,#fff) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
-.hero-sub {
-  font-size: 1.05rem; color: var(--muted); max-width: 580px;
-  margin: 0 auto 36px; line-height: 1.75;
-}
-.hero-sub strong { color: var(--text); }
+[data-theme="light"] .hero-h{color:var(--text)}
 
-.hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-.btn-primary {
-  padding: 10px 24px; border-radius: 8px; font-size: 0.82rem; font-weight: 700;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  color: #fff; text-decoration: none; border: none;
-  box-shadow: 0 4px 20px rgba(232,93,4,0.35);
-  transition: transform 0.2s, box-shadow 0.2s;
-  letter-spacing: 0.04em;
-}
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(232,93,4,0.45); }
-.btn-outline {
-  padding: 10px 24px; border-radius: 8px; font-size: 0.82rem; font-weight: 700;
-  border: 1px solid var(--border); color: var(--muted); text-decoration: none;
-  background: var(--surface); letter-spacing: 0.04em;
-  transition: border-color 0.2s, color 0.2s;
-}
-.btn-outline:hover { border-color: var(--accent); color: var(--text); }
+.hero-p{font-size:1.05rem;color:var(--muted);max-width:580px;margin:0 auto 36px;line-height:1.75}
+.hero-p strong{color:var(--text2)}
 
-.hero-meta { margin-top: 48px; display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; }
-.hero-stat { text-align: center; }
-.hero-stat-val { font-size: 1.6rem; font-weight: 800; color: var(--accent2); line-height: 1; }
-.hero-stat-lbl { font-size: 0.68rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 3px; }
-
-.scroll-hint {
-  position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  color: var(--muted2); font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+/* CTA buttons */
+.ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:52px}
+.cta-primary{
+  padding:11px 26px;border-radius:9px;font-size:.82rem;font-weight:700;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;border:none;letter-spacing:.03em;
+  box-shadow:0 4px 18px rgba(232,93,4,.3);
+  transition:transform .2s,box-shadow .2s;
 }
-.chevron { width: 14px; height: 14px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); animation: bounce 1.8s ease-in-out infinite; }
-@keyframes bounce { 0%,100%{transform:rotate(45deg) translate(0,0)} 50%{transform:rotate(45deg) translate(3px,3px)} }
+.cta-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(232,93,4,.4)}
+.cta-ghost{
+  padding:11px 26px;border-radius:9px;font-size:.82rem;font-weight:700;
+  border:1px solid var(--border2);color:var(--muted);background:var(--surface);
+  letter-spacing:.03em;transition:border-color .2s,color .2s;
+}
+.cta-ghost:hover{border-color:var(--accent);color:var(--text)}
 
-/* ═══════════════════════════════════════════
+/* Stats row */
+.stats-row{
+  display:inline-flex;gap:0;
+  border:1px solid var(--border);border-radius:12px;overflow:hidden;
+  background:color-mix(in srgb,var(--surface) 80%,transparent);
+  backdrop-filter:blur(8px);
+}
+.stat-box{
+  padding:14px 24px;text-align:center;
+  border-right:1px solid var(--border);
+  cursor:default;transition:background .2s;
+}
+.stat-box:last-child{border-right:none}
+.stat-box:hover{background:rgba(128,128,128,.05)}
+.stat-n{font-size:1.5rem;font-weight:800;color:var(--accent2);line-height:1}
+.stat-l{font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:3px}
+
+/* Scroll cue */
+.scroll-cue{
+  position:absolute;bottom:28px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  color:var(--muted2);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
+}
+.arr{width:13px;height:13px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);animation:bob 2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:rotate(45deg)}50%{transform:rotate(45deg) translate(2px,2px)}}
+
+/* ═══════════════════════════════════
+   TICKER STRIP
+═══════════════════════════════════ */
+.strip{
+  padding:14px 0;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  background:var(--surface);overflow:hidden;position:relative;
+}
+.strip::before,.strip::after{
+  content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;
+  pointer-events:none;
+}
+.strip::before{left:0;background:linear-gradient(to right,var(--surface),transparent)}
+.strip::after{right:0;background:linear-gradient(to left,var(--surface),transparent)}
+.strip-track{display:flex;gap:36px;width:max-content;animation:ticker 30s linear infinite}
+.strip-track:hover{animation-play-state:paused}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.strip-item{
+  display:flex;align-items:center;gap:7px;
+  font-size:.7rem;font-weight:600;color:var(--muted);white-space:nowrap;letter-spacing:.04em;
+}
+.strip-item span{font-size:.95rem}
+
+/* ═══════════════════════════════════
    SECTIONS
-═══════════════════════════════════════════ */
-.section { max-width: 1000px; margin: 0 auto; padding: 80px 24px; }
-.section-hd { margin-bottom: 40px; }
-.section-eye { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
-.section-title { font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight: 700; color: var(--text); padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+═══════════════════════════════════ */
+.section{max-width:1040px;margin:0 auto;padding:72px 24px}
+.sec-hd{margin-bottom:36px}
+.sec-eye{font-size:.65rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.sec-title{font-size:clamp(1.3rem,2.5vw,1.75rem);font-weight:700;color:var(--text);padding-bottom:14px;border-bottom:1px solid var(--border)}
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════
    REVEAL
-═══════════════════════════════════════════ */
-.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.55s ease, transform 0.55s ease; }
-.reveal.visible { opacity: 1; transform: none; }
+═══════════════════════════════════ */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s}
+.reveal.in{opacity:1;transform:none}
 
-/* ═══════════════════════════════════════════
-   PLATFORM STRIP
-═══════════════════════════════════════════ */
-.platform-strip {
-  padding: 20px 0; overflow: hidden;
-  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-  background: var(--surface);
+/* ═══════════════════════════════════
+   FEATURED REPORT  (big card on top)
+═══════════════════════════════════ */
+.featured{
+  display:grid;grid-template-columns:1fr 340px;gap:0;
+  background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  overflow:hidden;margin-bottom:20px;
+  box-shadow:0 4px 32px var(--shadow);
+  transition:border-color .25s,box-shadow .25s;
+  text-decoration:none;
 }
-.platform-track {
-  display: flex; gap: 40px; width: max-content;
-  animation: ticker 28s linear infinite;
+.featured:hover{border-color:rgba(232,93,4,.35);box-shadow:0 8px 48px var(--shadow)}
+@media(max-width:720px){.featured{grid-template-columns:1fr}}
+.featured-body{padding:32px 36px;display:flex;flex-direction:column;justify-content:space-between;gap:16px}
+.featured-label{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:3px 12px;border-radius:5px;font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  background:rgba(232,93,4,.12);color:var(--accent2);border:1px solid rgba(232,93,4,.2);
+  width:fit-content;
 }
-.platform-track:hover { animation-play-state: paused; }
-@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-.platform-item {
-  display: flex; align-items: center; gap: 7px;
-  font-size: 0.73rem; font-weight: 600; color: var(--muted);
-  white-space: nowrap; padding: 0 4px; letter-spacing: 0.03em;
+.featured-label .dot{width:5px;height:5px;border-radius:50%;background:var(--accent2);animation:blink 1s step-end infinite}
+.featured-cve{font-size:.78rem;font-weight:700;color:var(--accent2);font-family:'Cascadia Code','Courier New',monospace;margin-bottom:4px}
+.featured-title{font-size:1.5rem;font-weight:800;color:var(--text);line-height:1.25}
+.featured-desc{font-size:.87rem;color:var(--muted);line-height:1.7}
+.featured-meta{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.featured-date{font-size:.7rem;color:var(--muted2);font-weight:600}
+.featured-tags{display:flex;gap:6px;flex-wrap:wrap}
+.ftag{padding:3px 8px;border-radius:4px;font-size:.62rem;font-weight:700;letter-spacing:.04em;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+.featured-arrow{font-size:.85rem;font-weight:800;color:var(--accent2);white-space:nowrap}
+
+/* Visual panel */
+.featured-visual{
+  background:linear-gradient(140deg,var(--bg2) 0%,rgba(232,93,4,.06) 50%,rgba(139,92,246,.08) 100%);
+  display:flex;align-items:center;justify-content:center;
+  border-left:1px solid var(--border);min-height:240px;
+  position:relative;overflow:hidden;
 }
-.platform-item span { font-size: 1rem; }
+@media(max-width:720px){.featured-visual{display:none}}
+.featured-visual svg{opacity:.7}
 
-/* ═══════════════════════════════════════════
-   REPORT CARDS
-═══════════════════════════════════════════ */
-.reports-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 16px; }
-@media(max-width:540px){ .reports-grid { grid-template-columns: 1fr; } }
+/* ═══════════════════════════════════
+   REPORT GRID
+═══════════════════════════════════ */
+.rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(450px,1fr));gap:16px}
+@media(max-width:560px){.rg{grid-template-columns:1fr}}
 
-.report-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
-  padding: 24px; text-decoration: none; display: flex; flex-direction: column; gap: 12px;
-  position: relative; overflow: hidden;
-  box-shadow: var(--shadow);
-  transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+.rcard{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:22px 24px;display:flex;flex-direction:column;gap:11px;
+  box-shadow:0 2px 12px var(--shadow);
+  transition:border-color .25s,transform .25s,box-shadow .25s;
+  position:relative;overflow:hidden;
+  text-decoration:none;
 }
-.report-card::after {
-  content: ''; position: absolute; inset: 0; border-radius: 14px;
-  background: linear-gradient(135deg, rgba(232,93,4,0.04), transparent);
-  opacity: 0; transition: opacity 0.25s;
+/* severity left accent */
+.rcard[data-sev="critical"]{border-left:3px solid var(--red)}
+.rcard[data-sev="high"]{border-left:3px solid var(--accent)}
+.rcard:hover{transform:translateY(-3px);border-color:rgba(232,93,4,.35);box-shadow:0 10px 32px var(--shadow)}
+
+.rcard-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.rcard-badges{display:flex;gap:5px;flex-wrap:wrap}
+.badge{
+  padding:2px 8px;border-radius:4px;
+  font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;
 }
-.report-card:hover { transform: translateY(-4px); border-color: rgba(232,93,4,0.4); box-shadow: 0 16px 48px rgba(0,0,0,0.25); }
-.report-card:hover::after { opacity: 1; }
-[data-theme="light"] .report-card:hover { box-shadow: 0 16px 48px rgba(0,0,0,0.12); }
+.b-crit{background:rgba(220,38,38,.12);color:#f87171}
+.b-kev{background:rgba(220,38,38,.07);border:1px solid rgba(220,38,38,.2);color:#fca5a5}
+.b-supply{background:rgba(59,130,246,.12);color:#93c5fd}
+.b-actor{background:rgba(139,92,246,.12);color:#c4b5fd}
+.rcard-date{font-size:.67rem;font-weight:600;color:var(--muted2);flex-shrink:0;margin-top:3px}
 
-.card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-.card-badges { display: flex; gap: 6px; flex-wrap: wrap; }
-.badge {
-  padding: 2px 9px; border-radius: 4px;
-  font-size: 0.63rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap;
+.rcard-cve{font-size:.72rem;font-weight:700;color:var(--accent2);font-family:monospace;margin-bottom:2px}
+.rcard-title{font-size:.98rem;font-weight:700;color:var(--text);line-height:1.3}
+.rcard-desc{font-size:.81rem;color:var(--muted);line-height:1.65}
+.rcard-tags{display:flex;gap:5px;flex-wrap:wrap}
+.tag{padding:2px 8px;border-radius:4px;border:1px solid var(--border);font-size:.6rem;font-weight:600;color:var(--muted2);background:var(--surface2)}
+.rcard-foot{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border);font-size:.68rem}
+.rcard-foot-l{color:var(--muted2)}
+.rcard-arr{color:var(--accent2);font-weight:800;font-size:.82rem}
+
+/* ═══════════════════════════════════
+   METHODOLOGY PILLARS
+═══════════════════════════════════ */
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.pillar{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:22px 20px;transition:border-color .2s,transform .2s;
 }
-.badge-critical { background: rgba(239,35,60,0.12); color: var(--red); }
-.badge-cvss10   { background: rgba(239,35,60,0.12); color: var(--red); }
-.badge-supply   { background: rgba(76,201,240,0.12); color: var(--blue); }
-.badge-kev      { background: rgba(239,35,60,0.08); border: 1px solid rgba(239,35,60,0.2); color: #ff6b6b; }
-.badge-actor    { background: rgba(168,85,247,0.12); color: var(--purple); }
+.pillar:hover{border-color:rgba(232,93,4,.28);transform:translateY(-2px)}
+.p-ico{font-size:1.5rem;margin-bottom:12px}
+.p-num{font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.p-title{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:7px}
+.p-desc{font-size:.78rem;color:var(--muted);line-height:1.65}
 
-.card-date { font-size: 0.69rem; font-weight: 600; color: var(--muted2); white-space: nowrap; flex-shrink: 0; margin-top: 3px; }
+/* Principles */
+.prin-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:24px}
+@media(max-width:600px){.prin-grid{grid-template-columns:1fr}}
+.prin{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px}
+.prin-hd{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.prin-ico{font-size:1rem}
+.prin-t{font-size:.86rem;font-weight:700;color:var(--text)}
+.prin-b{font-size:.79rem;color:var(--muted);line-height:1.65}
+.prin-b code{font-family:monospace;font-size:.82em;color:var(--accent2);background:rgba(232,93,4,.08);padding:1px 6px;border-radius:4px}
 
-.card-title { font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1.35; }
-.card-cve { font-size: 0.72rem; font-weight: 700; color: var(--accent2); font-family: monospace; margin-bottom: 2px; }
+/* ═══════════════════════════════════
+   DIVIDER
+═══════════════════════════════════ */
+.divider{border:none;border-top:1px solid var(--border);margin:0}
 
-.card-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.65; }
-
-.card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-.tag {
-  padding: 3px 9px; border-radius: 4px; border: 1px solid var(--border);
-  font-size: 0.63rem; font-weight: 600; color: var(--muted2); letter-spacing: 0.04em;
-  background: var(--surface2);
-}
-.card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 6px; border-top: 1px solid var(--border); }
-.card-footer-left { font-size: 0.7rem; color: var(--muted2); }
-.card-arrow { font-size: 0.78rem; font-weight: 700; color: var(--accent2); }
-
-/* Severity left bar */
-.report-card[data-sev="critical"] { border-left: 3px solid var(--red); }
-.report-card[data-sev="high"]     { border-left: 3px solid var(--accent); }
-
-/* ═══════════════════════════════════════════
-   PILLARS
-═══════════════════════════════════════════ */
-.pillars-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
-.pillar {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-  padding: 22px 20px;
-  transition: border-color 0.25s, transform 0.25s;
-}
-.pillar:hover { border-color: rgba(232,93,4,0.3); transform: translateY(-2px); }
-.pillar-icon { font-size: 1.6rem; margin-bottom: 12px; }
-.pillar-num { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
-.pillar-title { font-size: 0.92rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-.pillar-desc { font-size: 0.79rem; color: var(--muted); line-height: 1.65; }
-
-/* ═══════════════════════════════════════════
-   RULE PRINCIPLE SECTION
-═══════════════════════════════════════════ */
-.principles { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-@media(max-width:620px){ .principles { grid-template-columns: 1fr; } }
-.principle-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-  padding: 20px;
-}
-.principle-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-.principle-ico { font-size: 1.1rem; }
-.principle-title { font-size: 0.86rem; font-weight: 700; color: var(--text); }
-.principle-body { font-size: 0.79rem; color: var(--muted); line-height: 1.65; }
-.principle-body code { font-family: monospace; font-size: 0.82em; color: var(--accent2); background: rgba(244,140,6,0.08); padding: 1px 6px; border-radius: 4px; }
-
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════
    FOOTER
-═══════════════════════════════════════════ */
-footer {
-  border-top: 1px solid var(--border); padding: 36px 24px;
-  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
-  gap: 16px; max-width: 1000px; margin: 0 auto; font-size: 0.76rem; color: var(--muted);
+═══════════════════════════════════ */
+.footer-wrap{max-width:1040px;margin:0 auto;padding:32px 24px}
+.footer-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:16px;
+  padding:24px 0;border-top:1px solid var(--border);
+  font-size:.74rem;color:var(--muted);
 }
-.footer-brand { display: flex; align-items: center; gap: 8px; }
-.footer-logo { width: 24px; height: 24px; border-radius: 5px; background: linear-gradient(135deg,var(--accent),var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 900; color: #fff; }
-.footer-text strong { color: var(--text); }
-.footer-links { display: flex; gap: 18px; }
-.footer-links a { color: var(--muted); text-decoration: none; transition: color 0.2s; font-size: 0.76rem; }
-.footer-links a:hover { color: var(--text); }
+.f-brand{display:flex;align-items:center;gap:9px}
+.f-logo-svg{flex-shrink:0}
+.f-brand-text strong{color:var(--text)}
+.f-links{display:flex;gap:20px;flex-wrap:wrap}
+.f-links a{color:var(--muted);transition:color .2s}
+.f-links a:hover{color:var(--text)}
 </style>
 </head>
 <body>
-
 <div id="prog"></div>
 
 <!-- ══ NAVBAR ══ -->
 <nav id="nav">
-  <div class="nav-left">
-    <div class="nav-logo">T</div>
-    <div>
-      <div class="nav-wordmark">TI-DE</div>
-      <div class="nav-tagline">Threat Intelligence &amp; Detection Engineering</div>
+  <a class="nav-logo" href="#">
+    <!-- Shield + radar logo -->
+    <svg class="logo-svg" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="lg" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#e85d04"/>
+          <stop offset="100%" stop-color="#f48c06"/>
+        </linearGradient>
+        <clipPath id="shield-clip">
+          <path d="M18 2L4 7v10c0 8.5 5.9 16.4 14 18.5C26.1 33.4 32 25.5 32 17V7L18 2Z"/>
+        </clipPath>
+      </defs>
+      <!-- Shield body -->
+      <path d="M18 2L4 7v10c0 8.5 5.9 16.4 14 18.5C26.1 33.4 32 25.5 32 17V7L18 2Z" fill="url(#lg)" opacity=".15"/>
+      <path d="M18 2L4 7v10c0 8.5 5.9 16.4 14 18.5C26.1 33.4 32 25.5 32 17V7L18 2Z" stroke="url(#lg)" stroke-width="1.5" fill="none"/>
+      <!-- Radar rings inside shield -->
+      <g clip-path="url(#shield-clip)">
+        <circle cx="18" cy="18" r="5" stroke="#e85d04" stroke-width="1" fill="none" opacity=".6"/>
+        <circle cx="18" cy="18" r="9" stroke="#e85d04" stroke-width=".8" fill="none" opacity=".35"/>
+        <circle cx="18" cy="18" r="13" stroke="#e85d04" stroke-width=".6" fill="none" opacity=".2"/>
+        <!-- Crosshair -->
+        <line x1="18" y1="8" x2="18" y2="28" stroke="#f48c06" stroke-width=".8" opacity=".4"/>
+        <line x1="8" y1="18" x2="28" y2="18" stroke="#f48c06" stroke-width=".8" opacity=".4"/>
+        <!-- Dot -->
+        <circle cx="18" cy="18" r="2" fill="#f48c06" opacity=".9"/>
+      </g>
+    </svg>
+    <div class="logo-text">
+      <span class="logo-name">TI-DE</span>
+      <span class="logo-sub">Threat Intel &amp; Detection</span>
     </div>
-  </div>
+  </a>
 
-  <div class="nav-right">
-    <a class="nav-link" href="#reports" data-en="Reports" data-tr="Raporlar">Reports</a>
-    <a class="nav-link" href="#methodology" data-en="Methodology" data-tr="Metodoloji">Methodology</a>
-
+  <div style="display:flex;align-items:center">
+    <div class="nav-links">
+      <a class="nav-lnk" href="#reports" data-en="Reports" data-tr="Raporlar">Reports</a>
+      <a class="nav-lnk" href="#methodology" data-en="Methodology" data-tr="Metodoloji">Methodology</a>
+      <a class="nav-lnk" href="https://github.com/mazlumbaydar/TI-DE" target="_blank" rel="noopener">GitHub</a>
+    </div>
     <div class="nav-controls">
-      <!-- Language toggle -->
-      <button class="ctrl-btn" id="langBtn" onclick="toggleLang()" title="Toggle language">
-        <span id="langIcon">🇬🇧</span>
-        <span id="langLabel">EN</span>
+      <button class="ctrl" id="langBtn" onclick="toggleLang()">
+        <span id="langIcon">🇬🇧</span><span id="langLabel">EN</span>
       </button>
-
-      <!-- Theme toggle -->
-      <button class="ctrl-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">
-        <span id="themeIcon">🌙</span>
-        <span id="themeLabel">Dark</span>
+      <button class="ctrl" id="themeBtn" onclick="toggleTheme()">
+        <span id="themeIcon">🌙</span><span id="themeLabel">Dark</span>
       </button>
     </div>
   </div>
@@ -369,402 +443,391 @@ footer {
 
 <!-- ══ HERO ══ -->
 <section class="hero">
-  <div class="hero-orb hero-orb-1"></div>
-  <div class="hero-orb hero-orb-2"></div>
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
 
-  <div class="hero-content">
-    <div class="hero-badge">
-      <span class="hero-dot"></span>
-      <span data-en="Daily Threat Intelligence · Detection Engineering" data-tr="Günlük Tehdit İstihbaratı · Tespit Mühendisliği">
-        Daily Threat Intelligence · Detection Engineering
-      </span>
+  <div class="hero-inner">
+    <div class="kicker">
+      <span class="live-dot"></span>
+      <span data-en="Daily Threat Intelligence · TTP-Based Detection Rules" data-tr="Günlük Tehdit İstihbaratı · TTP Tabanlı Tespit Kuralları">Daily Threat Intelligence · TTP-Based Detection Rules</span>
     </div>
 
-    <h1 class="hero-title" data-en="Detect Threats.<br>Not Just Indicators." data-tr="Tehditleri Tespit Et.<br>Sadece Göstergeleri Değil.">
-      Detect Threats.<br>Not Just Indicators.
+    <h1 class="hero-h" data-en="Where Intelligence<br><em>Becomes Detection</em>" data-tr="İstihbaratın<br><em>Tespite Dönüştüğü Yer</em>">
+      Where Intelligence<br><em>Becomes Detection</em>
     </h1>
 
-    <p class="hero-sub">
-      <span data-en="TTP-based detection rules for emerging threats — published daily. Coverage across <strong>10 security platforms</strong>. No hardcoded IPs or domains. Rules that survive attacker infrastructure rotation."
-            data-tr="Ortaya çıkan tehditler için günlük yayınlanan TTP tabanlı tespit kuralları. <strong>10 güvenlik platformu</strong> kapsamı. Hardcoded IP veya domain yok. Saldırgan altyapı rotasyonuna dayanıklı kurallar.">
-        TTP-based detection rules for emerging threats — published daily. Coverage across <strong>10 security platforms</strong>. No hardcoded IPs or domains. Rules that survive attacker infrastructure rotation.
+    <p class="hero-p">
+      <span data-en="TTP-based detection rules for emerging threats — published daily across <strong>10 security platforms</strong>. No hardcoded IPs or domains. Rules built to survive infrastructure rotation."
+            data-tr="Ortaya çıkan tehditler için günlük yayınlanan TTP tabanlı tespit kuralları — <strong>10 güvenlik platformunda</strong> kapsamı var. Hardcoded IP veya domain yok. Altyapı rotasyonuna dayanıklı kurallar.">
+        TTP-based detection rules for emerging threats — published daily across <strong>10 security platforms</strong>. No hardcoded IPs or domains. Rules built to survive infrastructure rotation.
       </span>
     </p>
 
-    <div class="hero-actions">
-      <a class="btn-primary" href="#reports" data-en="Browse Reports" data-tr="Raporlara Git">Browse Reports</a>
-      <a class="btn-outline" href="https://github.com/mazlumbaydar/TI-DE" target="_blank" rel="noopener" data-en="GitHub Repo" data-tr="GitHub Deposu">GitHub Repo</a>
+    <div class="ctas">
+      <a class="cta-primary" href="#reports" data-en="Browse Reports" data-tr="Raporları İncele">Browse Reports</a>
+      <a class="cta-ghost" href="https://github.com/mazlumbaydar/TI-DE" target="_blank" rel="noopener" data-en="GitHub Repository" data-tr="GitHub Deposu">GitHub Repository</a>
     </div>
 
-    <div class="hero-meta">
-      <div class="hero-stat"><div class="hero-stat-val" data-t="4">0</div><div class="hero-stat-lbl" data-en="Reports" data-tr="Rapor">Reports</div></div>
-      <div class="hero-stat"><div class="hero-stat-val" data-t="10">0</div><div class="hero-stat-lbl" data-en="Platforms" data-tr="Platform">Platforms</div></div>
-      <div class="hero-stat"><div class="hero-stat-val" data-t="40">0</div><div class="hero-stat-lbl" data-en="Detection Rules" data-tr="Tespit Kuralı">Detection Rules</div></div>
-      <div class="hero-stat"><div class="hero-stat-val" data-t="3">0</div><div class="hero-stat-lbl" data-en="CISA KEV Covered" data-tr="CISA KEV Kapsam">CISA KEV Covered</div></div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-n" data-t="4">0</div><div class="stat-l" data-en="Reports" data-tr="Rapor">Reports</div></div>
+      <div class="stat-box"><div class="stat-n" data-t="10">0</div><div class="stat-l" data-en="Platforms" data-tr="Platform">Platforms</div></div>
+      <div class="stat-box"><div class="stat-n" data-t="40">0</div><div class="stat-l" data-en="Rules" data-tr="Kural">Rules</div></div>
+      <div class="stat-box"><div class="stat-n" data-t="3">0</div><div class="stat-l" data-en="CISA KEV" data-tr="CISA KEV">CISA KEV</div></div>
     </div>
   </div>
 
-  <div class="scroll-hint">
-    <div class="chevron"></div>
+  <div class="scroll-cue">
+    <div class="arr"></div>
     <span data-en="Scroll" data-tr="Kaydır">Scroll</span>
   </div>
 </section>
 
 <!-- ══ PLATFORM TICKER ══ -->
-<div class="platform-strip reveal">
-  <div class="platform-track" id="ticker">
-    <span class="platform-item"><span>⚔️</span> Sigma</span>
-    <span class="platform-item"><span>🔬</span> YARA</span>
-    <span class="platform-item"><span>☁️</span> Microsoft Sentinel (KQL)</span>
-    <span class="platform-item"><span>🦅</span> CrowdStrike Falcon</span>
-    <span class="platform-item"><span>🔥</span> Palo Alto Cortex XDR (BIOC)</span>
-    <span class="platform-item"><span>📊</span> Splunk SPL</span>
-    <span class="platform-item"><span>🔵</span> IBM QRadar (AQL)</span>
-    <span class="platform-item"><span>⬛</span> VMware Carbon Black</span>
-    <span class="platform-item"><span>🟣</span> SentinelOne Deep Visibility</span>
-    <span class="platform-item"><span>🟢</span> Kaspersky EDR Expert</span>
-    <!-- duplicate for seamless loop -->
-    <span class="platform-item"><span>⚔️</span> Sigma</span>
-    <span class="platform-item"><span>🔬</span> YARA</span>
-    <span class="platform-item"><span>☁️</span> Microsoft Sentinel (KQL)</span>
-    <span class="platform-item"><span>🦅</span> CrowdStrike Falcon</span>
-    <span class="platform-item"><span>🔥</span> Palo Alto Cortex XDR (BIOC)</span>
-    <span class="platform-item"><span>📊</span> Splunk SPL</span>
-    <span class="platform-item"><span>🔵</span> IBM QRadar (AQL)</span>
-    <span class="platform-item"><span>⬛</span> VMware Carbon Black</span>
-    <span class="platform-item"><span>🟣</span> SentinelOne Deep Visibility</span>
-    <span class="platform-item"><span>🟢</span> Kaspersky EDR Expert</span>
+<div class="strip reveal">
+  <div class="strip-track">
+    <span class="strip-item"><span>⚔️</span> Sigma</span>
+    <span class="strip-item"><span>🔬</span> YARA</span>
+    <span class="strip-item"><span>☁️</span> Microsoft Sentinel</span>
+    <span class="strip-item"><span>🦅</span> CrowdStrike Falcon</span>
+    <span class="strip-item"><span>🔥</span> Cortex XDR / BIOC</span>
+    <span class="strip-item"><span>📊</span> Splunk SPL</span>
+    <span class="strip-item"><span>🔵</span> IBM QRadar</span>
+    <span class="strip-item"><span>⬛</span> VMware Carbon Black</span>
+    <span class="strip-item"><span>🟣</span> SentinelOne</span>
+    <span class="strip-item"><span>🟢</span> Kaspersky EDR</span>
+    <!-- duplicate -->
+    <span class="strip-item"><span>⚔️</span> Sigma</span>
+    <span class="strip-item"><span>🔬</span> YARA</span>
+    <span class="strip-item"><span>☁️</span> Microsoft Sentinel</span>
+    <span class="strip-item"><span>🦅</span> CrowdStrike Falcon</span>
+    <span class="strip-item"><span>🔥</span> Cortex XDR / BIOC</span>
+    <span class="strip-item"><span>📊</span> Splunk SPL</span>
+    <span class="strip-item"><span>🔵</span> IBM QRadar</span>
+    <span class="strip-item"><span>⬛</span> VMware Carbon Black</span>
+    <span class="strip-item"><span>🟣</span> SentinelOne</span>
+    <span class="strip-item"><span>🟢</span> Kaspersky EDR</span>
   </div>
 </div>
 
 <!-- ══ REPORTS ══ -->
 <div class="section" id="reports">
-  <div class="section-hd reveal">
-    <div class="section-eye" data-en="Latest Intelligence" data-tr="Son İstihbarat">Latest Intelligence</div>
-    <h2 class="section-title" data-en="Daily Detection Reports" data-tr="Günlük Tespit Raporları">Daily Detection Reports</h2>
+  <div class="sec-hd reveal">
+    <div class="sec-eye" data-en="Latest Intelligence" data-tr="Son İstihbarat">Latest Intelligence</div>
+    <h2 class="sec-title" data-en="Detection Reports" data-tr="Tespit Raporları">Detection Reports</h2>
   </div>
 
-  <div class="reports-grid">
-
-    <a class="report-card reveal" href="daily-reports/31-03-2026/THREAT-Axios-npm-Supply-Chain-RAT.html" data-sev="critical">
-      <div class="card-top">
-        <div class="card-badges">
-          <span class="badge badge-critical" data-en="Critical" data-tr="Kritik">Critical</span>
-          <span class="badge badge-supply" data-en="Supply Chain" data-tr="Tedarik Zinciri">Supply Chain</span>
+  <!-- Featured -->
+  <a class="featured reveal" href="daily-reports/31-03-2026/THREAT-Axios-npm-Supply-Chain-RAT.html">
+    <div class="featured-body">
+      <div>
+        <div class="featured-label"><span class="dot"></span><span data-en="Latest Report" data-tr="Son Rapor">Latest Report</span></div>
+        <div style="margin-top:14px">
+          <div class="featured-cve">THREAT — npm Supply Chain · 31 March 2026</div>
+          <div class="featured-title" data-en="Axios npm Supply Chain RAT Dropper" data-tr="Axios npm Tedarik Zinciri RAT Dropper">Axios npm Supply Chain RAT Dropper</div>
         </div>
-        <span class="card-date">31 Mar 2026</span>
+        <p class="featured-desc" style="margin-top:12px"
+          data-en="Malicious axios@1.14.1 and @0.30.4 deliver a cross-platform Remote Access Trojan via XOR-obfuscated postinstall hooks. The payload fingerprints the host OS and deploys platform-specific binaries across Windows, Linux, and macOS. C2 beacon to sfrclak.com:8000 using a fake IE8 User-Agent."
+          data-tr="Kötü amaçlı axios@1.14.1 ve @0.30.4, XOR ile gizlenmiş postinstall hook'lar aracılığıyla çapraz platform Uzaktan Erişim Trojanı iletir. Payload, host OS'u tespit ederek Windows, Linux ve macOS'a özel ikili dosyalar dağıtır. Sahte IE8 User-Agent kullanarak sfrclak.com:8000'e C2 beacon gönderir.">
+          Malicious axios@1.14.1 and @0.30.4 deliver a cross-platform Remote Access Trojan via XOR-obfuscated postinstall hooks. The payload fingerprints the host OS and deploys platform-specific binaries across Windows, Linux, and macOS. C2 beacon to sfrclak.com:8000 using a fake IE8 User-Agent.
+        </p>
+      </div>
+      <div class="featured-meta">
+        <div class="featured-tags">
+          <span class="ftag">T1195.001</span>
+          <span class="ftag">T1140</span>
+          <span class="ftag">T1059</span>
+          <span class="ftag">npm</span>
+          <span class="ftag">10 Platforms</span>
+        </div>
+        <span class="featured-arrow" data-en="Read report →" data-tr="Raporu Oku →">Read report →</span>
+      </div>
+    </div>
+    <div class="featured-visual">
+      <!-- Radar SVG decoration -->
+      <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="80" stroke="#e85d04" stroke-width=".8" opacity=".2"/>
+        <circle cx="100" cy="100" r="58" stroke="#e85d04" stroke-width=".8" opacity=".3"/>
+        <circle cx="100" cy="100" r="36" stroke="#e85d04" stroke-width=".8" opacity=".4"/>
+        <circle cx="100" cy="100" r="14" stroke="#e85d04" stroke-width=".8" opacity=".6"/>
+        <line x1="100" y1="20" x2="100" y2="180" stroke="#e85d04" stroke-width=".6" opacity=".25"/>
+        <line x1="20" y1="100" x2="180" y2="100" stroke="#e85d04" stroke-width=".6" opacity=".25"/>
+        <line x1="43" y1="43" x2="157" y2="157" stroke="#e85d04" stroke-width=".4" opacity=".15"/>
+        <line x1="157" y1="43" x2="43" y2="157" stroke="#e85d04" stroke-width=".4" opacity=".15"/>
+        <!-- sweep -->
+        <path d="M100 100 L100 20 A80 80 0 0 1 180 100 Z" fill="rgba(232,93,4,0.07)">
+          <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="5s" repeatCount="indefinite"/>
+        </path>
+        <!-- threat dots -->
+        <circle cx="140" cy="55" r="4" fill="#ef233c" opacity=".8">
+          <animate attributeName="opacity" values="0.8;0.2;0.8" dur="1.5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="68" cy="130" r="3" fill="#ef233c" opacity=".6">
+          <animate attributeName="opacity" values="0.6;0.1;0.6" dur="2s" begin=".7s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="115" cy="78" r="2.5" fill="#f48c06" opacity=".7">
+          <animate attributeName="opacity" values="0.7;0.15;0.7" dur="1.8s" begin=".3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="100" cy="100" r="4" fill="#f48c06"/>
+      </svg>
+    </div>
+  </a>
+
+  <!-- Report grid -->
+  <div class="rg">
+
+    <a class="rcard reveal" href="daily-reports/27-03-2026/CVE-2026-20131_Cisco-FMC-Interlock-RCE.html" data-sev="critical">
+      <div class="rcard-top">
+        <div class="rcard-badges">
+          <span class="badge b-crit">CVSS 10.0</span>
+          <span class="badge b-kev">CISA KEV</span>
+          <span class="badge b-actor" data-en="Ransomware" data-tr="Fidye Yazılımı">Ransomware</span>
+        </div>
+        <span class="rcard-date">27 Mar 2026</span>
       </div>
       <div>
-        <div class="card-cve">THREAT — npm Supply Chain</div>
-        <div class="card-title" data-en="Axios npm Supply Chain RAT Dropper" data-tr="Axios npm Tedarik Zinciri RAT Dropper">Axios npm Supply Chain RAT Dropper</div>
+        <div class="rcard-cve">CVE-2026-20131</div>
+        <div class="rcard-title" data-en="Cisco Secure FMC — Unauthenticated RCE (Interlock Ransomware)" data-tr="Cisco Secure FMC — Kimlik Doğrulamasız RCE (Interlock Fidye Yazılımı)">Cisco Secure FMC — Unauthenticated RCE (Interlock Ransomware)</div>
       </div>
-      <div class="card-desc"
-        data-en="Malicious axios@1.14.1 and @0.30.4 deliver a cross-platform RAT via XOR-obfuscated postinstall hooks. OS-fingerprinting branches execution to Windows, Linux, and macOS-specific payloads. C2: sfrclak.com:8000."
-        data-tr="Kötü amaçlı axios@1.14.1 ve @0.30.4, XOR ile gizlenmiş postinstall hook aracılığıyla çapraz platform RAT iletir. OS tespiti yaparak Windows, Linux ve macOS'a özel payload'ları çalıştırır. C2: sfrclak.com:8000.">
-        Malicious axios@1.14.1 and @0.30.4 deliver a cross-platform RAT via XOR-obfuscated postinstall hooks. OS-fingerprinting branches execution to Windows, Linux, and macOS-specific payloads. C2: sfrclak.com:8000.
+      <div class="rcard-desc"
+        data-en="Java deserialization zero-day exploited 36 days before public disclosure. Root RCE with no authentication — complete firewall policy control enables lateral movement across all managed network segments."
+        data-tr="Kamuya açıklanmadan 36 gün önce sömürülen Java deserialization zero-day. Kimlik doğrulamasız root RCE — tam güvenlik duvarı politika kontrolü, tüm yönetilen ağ segmentlerinde yanal hareketi mümkün kılar.">
+        Java deserialization zero-day exploited 36 days before public disclosure. Root RCE with no authentication — complete firewall policy control enables lateral movement across all managed network segments.
       </div>
-      <div class="card-tags">
-        <span class="tag">T1195.001</span>
-        <span class="tag">T1140</span>
-        <span class="tag">T1059.001</span>
-        <span class="tag">npm</span>
-        <span class="tag">RAT</span>
-        <span class="tag">10 Platforms</span>
+      <div class="rcard-tags">
+        <span class="tag">T1190</span><span class="tag">T1486</span><span class="tag">T1562.004</span>
+        <span class="tag">Cisco FMC</span><span class="tag">Zero-Day</span>
       </div>
-      <div class="card-footer">
-        <span class="card-footer-left" data-en="2 detection rules per platform" data-tr="Platform başına 2 tespit kuralı">2 detection rules per platform</span>
-        <span class="card-arrow">→</span>
+      <div class="rcard-foot">
+        <span class="rcard-foot-l" data-en="YARA + 9 platform rules" data-tr="YARA + 9 platform kuralı">YARA + 9 platform rules</span>
+        <span class="rcard-arr">→</span>
       </div>
     </a>
 
-    <a class="report-card reveal" href="daily-reports/27-03-2026/CVE-2026-20131_Cisco-FMC-Interlock-RCE.html" data-sev="critical">
-      <div class="card-top">
-        <div class="card-badges">
-          <span class="badge badge-cvss10">CVSS 10.0</span>
-          <span class="badge badge-kev">CISA KEV</span>
-          <span class="badge badge-actor" data-en="Ransomware" data-tr="Fidye Yazılımı">Ransomware</span>
+    <a class="rcard reveal" href="daily-reports/27-03-2026/CVE-2026-33017_Langflow-AI-RCE.html" data-sev="critical">
+      <div class="rcard-top">
+        <div class="rcard-badges">
+          <span class="badge b-crit">CVSS 9.8</span>
+          <span class="badge b-kev">CISA KEV</span>
         </div>
-        <span class="card-date">27 Mar 2026</span>
+        <span class="rcard-date">27 Mar 2026</span>
       </div>
       <div>
-        <div class="card-cve">CVE-2026-20131</div>
-        <div class="card-title" data-en="Cisco Secure FMC — Unauthenticated RCE (Interlock)" data-tr="Cisco Secure FMC — Kimlik Doğrulamasız RCE (Interlock)">Cisco Secure FMC — Unauthenticated RCE (Interlock)</div>
+        <div class="rcard-cve">CVE-2026-33017</div>
+        <div class="rcard-title" data-en="Langflow AI Pipeline — Unauthenticated RCE" data-tr="Langflow AI Pipeline — Kimlik Doğrulamasız RCE">Langflow AI Pipeline — Unauthenticated RCE</div>
       </div>
-      <div class="card-desc"
-        data-en="Java deserialization zero-day weaponized by Interlock ransomware 36 days before public disclosure. Root RCE with no authentication — full firewall policy control enables unchallenged lateral movement across all managed segments."
-        data-tr="Interlock fidye yazılımı tarafından kamuya duyurulmadan 36 gün önce kullanılan Java deserialization zero-day. Kimlik doğrulama gerektirmeden root RCE — yönetilen tüm segmentlerde engellemesiz yanal hareket.">
-        Java deserialization zero-day weaponized by Interlock ransomware 36 days before public disclosure. Root RCE with no authentication — full firewall policy control enables unchallenged lateral movement across all managed segments.
+      <div class="rcard-desc"
+        data-en="Python exec() code injection via unauthenticated build endpoint. Exploited within 20 hours of advisory publication by automated Nuclei scanners targeting OpenAI, Anthropic &amp; AWS API keys."
+        data-tr="Kimlik doğrulamasız build endpoint üzerinden Python exec() kod enjeksiyonu. Güvenlik bülteni yayınlanmasından 20 saat sonra otomatik Nuclei tarayıcıları tarafından OpenAI, Anthropic ve AWS API anahtarlarını hedef alarak sömürüldü.">
+        Python exec() code injection via unauthenticated build endpoint. Exploited within 20 hours of advisory publication by automated Nuclei scanners targeting OpenAI, Anthropic &amp; AWS API keys.
       </div>
-      <div class="card-tags">
-        <span class="tag">T1190</span>
-        <span class="tag">T1486</span>
-        <span class="tag">T1562.004</span>
-        <span class="tag">Cisco FMC</span>
-        <span class="tag">Zero-Day</span>
-        <span class="tag">10 Platforms</span>
+      <div class="rcard-tags">
+        <span class="tag">T1059.006</span><span class="tag">T1552.001</span><span class="tag">T1041</span>
+        <span class="tag">Langflow</span><span class="tag">AI Infrastructure</span>
       </div>
-      <div class="card-footer">
-        <span class="card-footer-left" data-en="YARA + 9 platform rules" data-tr="YARA + 9 platform kuralı">YARA + 9 platform rules</span>
-        <span class="card-arrow">→</span>
+      <div class="rcard-foot">
+        <span class="rcard-foot-l" data-en="YARA + 9 platform rules" data-tr="YARA + 9 platform kuralı">YARA + 9 platform rules</span>
+        <span class="rcard-arr">→</span>
       </div>
     </a>
 
-    <a class="report-card reveal" href="daily-reports/27-03-2026/CVE-2026-33017_Langflow-AI-RCE.html" data-sev="critical">
-      <div class="card-top">
-        <div class="card-badges">
-          <span class="badge badge-critical">CVSS 9.8</span>
-          <span class="badge badge-kev">CISA KEV</span>
+    <a class="rcard reveal" href="daily-reports/26-03-2026/CVE-2026-33634_LiteLLM-PyPI-Supply-Chain-TeamPCP.html" data-sev="critical">
+      <div class="rcard-top">
+        <div class="rcard-badges">
+          <span class="badge b-crit">CVSS 9.4</span>
+          <span class="badge b-supply" data-en="Supply Chain" data-tr="Tedarik Zinciri">Supply Chain</span>
+          <span class="badge b-actor">TeamPCP</span>
         </div>
-        <span class="card-date">27 Mar 2026</span>
+        <span class="rcard-date">26 Mar 2026</span>
       </div>
       <div>
-        <div class="card-cve">CVE-2026-33017</div>
-        <div class="card-title" data-en="Langflow AI Pipeline — Unauthenticated RCE" data-tr="Langflow AI Pipeline — Kimlik Doğrulamasız RCE">Langflow AI Pipeline — Unauthenticated RCE</div>
+        <div class="rcard-cve">CVE-2026-33634</div>
+        <div class="rcard-title" data-en="LiteLLM PyPI Supply Chain — TeamPCP Persistent Backdoor" data-tr="LiteLLM PyPI Tedarik Zinciri — TeamPCP Kalıcı Arka Kapı">LiteLLM PyPI Supply Chain — TeamPCP Persistent Backdoor</div>
       </div>
-      <div class="card-desc"
-        data-en="Python exec() code injection via unauthenticated build endpoint — exploited within 20 hours of advisory publication. Mass scanning via Nuclei targeting OpenAI, Anthropic &amp; AWS API keys. Version 1.8.2 remains vulnerable."
-        data-tr="Kimlik doğrulama gerektirmeyen build endpoint üzerinden Python exec() kod enjeksiyonu — güvenlik bülteni yayınlanmasından 20 saat içinde sömürüldü. Nuclei ile kitlesel tarama; OpenAI, Anthropic ve AWS API anahtarları hedefleniyor. Sürüm 1.8.2 hâlâ açık.">
-        Python exec() code injection via unauthenticated build endpoint — exploited within 20 hours of advisory publication. Mass scanning via Nuclei targeting OpenAI, Anthropic &amp; AWS API keys. Version 1.8.2 remains vulnerable.
+      <div class="rcard-desc"
+        data-en="TeamPCP backdoor in LiteLLM 1.82.7/1.82.8 (95M monthly downloads). Python .pth hook auto-executes at every interpreter startup. Systemd masquerade persistence. IOC table with VirusTotal query links."
+        data-tr="LiteLLM 1.82.7/1.82.8 içindeki TeamPCP arka kapısı (aylık 95M indirme). Python .pth hook, her yorumlayıcı başlangıcında otomatik çalışır. Systemd maskeli kalıcılık. VirusTotal sorgu linkleriyle IOC tablosu.">
+        TeamPCP backdoor in LiteLLM 1.82.7/1.82.8 (95M monthly downloads). Python .pth hook auto-executes at every interpreter startup. Systemd masquerade persistence. IOC table with VirusTotal query links.
       </div>
-      <div class="card-tags">
-        <span class="tag">T1059.006</span>
-        <span class="tag">T1552.001</span>
-        <span class="tag">T1041</span>
-        <span class="tag">Langflow</span>
-        <span class="tag">AI Infra</span>
-        <span class="tag">10 Platforms</span>
+      <div class="rcard-tags">
+        <span class="tag">T1195.001</span><span class="tag">T1546.018</span><span class="tag">T1543.002</span>
+        <span class="tag">PyPI</span><span class="tag">AI Infrastructure</span>
       </div>
-      <div class="card-footer">
-        <span class="card-footer-left" data-en="YARA + 9 platform rules" data-tr="YARA + 9 platform kuralı">YARA + 9 platform rules</span>
-        <span class="card-arrow">→</span>
-      </div>
-    </a>
-
-    <a class="report-card reveal" href="daily-reports/26-03-2026/CVE-2026-33634_LiteLLM-PyPI-Supply-Chain-TeamPCP.html" data-sev="critical">
-      <div class="card-top">
-        <div class="card-badges">
-          <span class="badge badge-critical">CVSS 9.4</span>
-          <span class="badge badge-supply" data-en="Supply Chain" data-tr="Tedarik Zinciri">Supply Chain</span>
-          <span class="badge badge-actor">TeamPCP</span>
-        </div>
-        <span class="card-date">26 Mar 2026</span>
-      </div>
-      <div>
-        <div class="card-cve">CVE-2026-33634</div>
-        <div class="card-title" data-en="LiteLLM PyPI Supply Chain — TeamPCP Backdoor" data-tr="LiteLLM PyPI Tedarik Zinciri — TeamPCP Arka Kapısı">LiteLLM PyPI Supply Chain — TeamPCP Backdoor</div>
-      </div>
-      <div class="card-desc"
-        data-en="TeamPCP injects persistent Python backdoor into LiteLLM 1.82.7/1.82.8 (95M monthly downloads). .pth hook auto-executes at every Python startup. Systemd user-service masquerades as Sysinternals Sysmon. Stage 3 of broader campaign."
-        data-tr="TeamPCP, LiteLLM 1.82.7/1.82.8 içine (aylık 95M indirme) kalıcı Python arka kapısı yerleştiriyor. .pth hook her Python başlangıcında otomatik çalışıyor. Systemd kullanıcı servisi Sysinternals Sysmon'u taklit ediyor. Daha geniş kampanyanın 3. aşaması.">
-        TeamPCP injects persistent Python backdoor into LiteLLM 1.82.7/1.82.8 (95M monthly downloads). .pth hook auto-executes at every Python startup. Systemd user-service masquerades as Sysinternals Sysmon. Stage 3 of broader campaign.
-      </div>
-      <div class="card-tags">
-        <span class="tag">T1195.001</span>
-        <span class="tag">T1546.018</span>
-        <span class="tag">T1543.002</span>
-        <span class="tag">PyPI</span>
-        <span class="tag">AI Infra</span>
-        <span class="tag">10 Platforms</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-footer-left" data-en="IOC table + VT links + 10 platform rules" data-tr="IOC tablosu + VT linkleri + 10 platform kuralı">IOC table + VT links + 10 platform rules</span>
-        <span class="card-arrow">→</span>
+      <div class="rcard-foot">
+        <span class="rcard-foot-l" data-en="IOC table + VT links + 10 platform rules" data-tr="IOC tablosu + VT linkleri + 10 platform kuralı">IOC table + VT links + 10 platform rules</span>
+        <span class="rcard-arr">→</span>
       </div>
     </a>
 
   </div>
 </div>
 
+<hr class="divider">
+
 <!-- ══ METHODOLOGY ══ -->
 <div class="section" id="methodology">
-  <div class="section-hd reveal">
-    <div class="section-eye" data-en="Engineering Process" data-tr="Mühendislik Süreci">Engineering Process</div>
-    <h2 class="section-title" data-en="Detection Methodology" data-tr="Tespit Metodolojisi">Detection Methodology</h2>
+  <div class="sec-hd reveal">
+    <div class="sec-eye" data-en="Engineering Standards" data-tr="Mühendislik Standartları">Engineering Standards</div>
+    <h2 class="sec-title" data-en="Detection Methodology" data-tr="Tespit Metodolojisi">Detection Methodology</h2>
   </div>
 
-  <div class="pillars-grid reveal">
+  <div class="pillars reveal">
     <div class="pillar">
-      <div class="pillar-icon">🎯</div>
-      <div class="pillar-num" data-en="Principle 01" data-tr="İlke 01">Principle 01</div>
-      <div class="pillar-title" data-en="TTP Over IOC" data-tr="IOC Yerine TTP">TTP Over IOC</div>
-      <div class="pillar-desc" data-en="Detections are behavioral — never hardcoded IPs or domains. Attacker infrastructure rotates in hours; adversary TTPs persist for years." data-tr="Tespitler davranışsaldır — asla hardcoded IP veya domain yoktur. Saldırgan altyapısı saatler içinde değişir; TTP'ler yıllarca geçerlidir.">Detections are behavioral — never hardcoded IPs or domains. Attacker infrastructure rotates in hours; adversary TTPs persist for years.</div>
+      <div class="p-ico">🎯</div>
+      <div class="p-num" data-en="Rule 01" data-tr="Kural 01">Rule 01</div>
+      <div class="p-title" data-en="TTP Over IOC" data-tr="IOC Yerine TTP">TTP Over IOC</div>
+      <div class="p-desc" data-en="Never hardcoded IPs or domains. Attacker infrastructure rotates in hours; adversary TTPs persist for years." data-tr="Asla hardcoded IP veya domain yok. Saldırgan altyapısı saatler içinde değişir; TTP'ler yıllarca geçerlidir.">Never hardcoded IPs or domains. Attacker infrastructure rotates in hours; adversary TTPs persist for years.</div>
     </div>
     <div class="pillar">
-      <div class="pillar-icon">🔗</div>
-      <div class="pillar-num" data-en="Principle 02" data-tr="İlke 02">Principle 02</div>
-      <div class="pillar-title" data-en="Minimum 2 AND Conditions" data-tr="En Az 2 AND Koşulu">Minimum 2 AND Conditions</div>
-      <div class="pillar-desc" data-en="Every rule requires at least 2 correlated conditions. Single-signal rules produce noise. Correlation reduces false positives without sacrificing coverage." data-tr="Her kural en az 2 ilişkili koşul gerektirir. Tek sinyalli kurallar gürültü üretir. Korelasyon, kapsamdan ödün vermeden yanlış pozitifi azaltır.">Every rule requires at least 2 correlated conditions. Single-signal rules produce noise. Correlation reduces false positives without sacrificing coverage.</div>
+      <div class="p-ico">🔗</div>
+      <div class="p-num" data-en="Rule 02" data-tr="Kural 02">Rule 02</div>
+      <div class="p-title" data-en="Min. 2 AND Conditions" data-tr="Min. 2 AND Koşulu">Min. 2 AND Conditions</div>
+      <div class="p-desc" data-en="Every rule requires at least 2 correlated conditions. Single-signal detections produce excessive noise." data-tr="Her kural en az 2 ilişkili koşul gerektirir. Tek sinyalli tespitler aşırı gürültü üretir.">Every rule requires at least 2 correlated conditions. Single-signal detections produce excessive noise.</div>
     </div>
     <div class="pillar">
-      <div class="pillar-icon">📐</div>
-      <div class="pillar-num" data-en="Principle 03" data-tr="İlke 03">Principle 03</div>
-      <div class="pillar-title" data-en="Max 2 Rules per Threat" data-tr="Tehdit Başına Maks 2 Kural">Max 2 Rules per Threat</div>
-      <div class="pillar-desc" data-en="Rule 1: process chain (parent → child spawn). Rule 2: artifact/file activity. Consolidation prevents alert fatigue and simplifies triage." data-tr="Kural 1: süreç zinciri (parent → child spawn). Kural 2: artefakt/dosya aktivitesi. Konsolidasyon uyarı yorgunluğunu önler ve triyajı basitleştirir.">Rule 1: process chain (parent → child spawn). Rule 2: artifact/file activity. Consolidation prevents alert fatigue and simplifies triage.</div>
+      <div class="p-ico">📐</div>
+      <div class="p-num" data-en="Rule 03" data-tr="Kural 03">Rule 03</div>
+      <div class="p-title" data-en="Max 2 Rules / Threat" data-tr="Tehdit Başına Maks 2 Kural">Max 2 Rules / Threat</div>
+      <div class="p-desc" data-en="Rule 1 targets process chain. Rule 2 targets artifact/file activity. Consolidation prevents alert fatigue." data-tr="Kural 1 süreç zincirini hedefler. Kural 2 artefakt/dosya aktivitesini. Konsolidasyon uyarı yorgunluğunu önler.">Rule 1 targets process chain. Rule 2 targets artifact/file activity. Consolidation prevents alert fatigue.</div>
     </div>
     <div class="pillar">
-      <div class="pillar-icon">🔍</div>
-      <div class="pillar-num" data-en="Principle 04" data-tr="İlke 04">Principle 04</div>
-      <div class="pillar-title" data-en="Platform Field Verification" data-tr="Platform Alanı Doğrulama">Platform Field Verification</div>
-      <div class="pillar-desc" data-en="All field names are verified against official documentation per platform. Cortex XDR rules are BIOC-compatible. No copy-paste without testing field validity." data-tr="Tüm alan adları platform başına resmi dokümantasyona göre doğrulanır. Cortex XDR kuralları BIOC uyumludur. Alan geçerliliği test edilmeden kopyala-yapıştır yapılmaz.">All field names are verified against official documentation per platform. Cortex XDR rules are BIOC-compatible. No copy-paste without testing field validity.</div>
+      <div class="p-ico">✅</div>
+      <div class="p-num" data-en="Rule 04" data-tr="Kural 04">Rule 04</div>
+      <div class="p-title" data-en="Platform Field Verified" data-tr="Platform Alanı Doğrulama">Platform Field Verified</div>
+      <div class="p-desc" data-en="All field names verified against official docs. Cortex XDR rules are BIOC-compatible — no joins, one event_type per rule." data-tr="Tüm alan adları resmi dokümantasyona göre doğrulanır. Cortex XDR kuralları BIOC uyumludur — join yok, kural başına bir event_type.">All field names verified against official docs. Cortex XDR rules are BIOC-compatible — no joins, one event_type per rule.</div>
     </div>
     <div class="pillar">
-      <div class="pillar-icon">⚡</div>
-      <div class="pillar-num" data-en="Principle 05" data-tr="İlke 05">Principle 05</div>
-      <div class="pillar-title" data-en="KEV &amp; Active Exploitation First" data-tr="KEV ve Aktif Sömürü Önceliği">KEV &amp; Active Exploitation First</div>
-      <div class="pillar-desc" data-en="Priority: CISA KEV entries and actively exploited vulnerabilities. Detection published within 24 hours of reliable intelligence confirming active exploitation." data-tr="Öncelik: CISA KEV kayıtları ve aktif olarak sömürülen güvenlik açıkları. Tespit, aktif sömürüyü doğrulayan güvenilir istihbarattan 24 saat içinde yayınlanır.">Priority: CISA KEV entries and actively exploited vulnerabilities. Detection published within 24 hours of reliable intelligence confirming active exploitation.</div>
+      <div class="p-ico">⚡</div>
+      <div class="p-num" data-en="Rule 05" data-tr="Kural 05">Rule 05</div>
+      <div class="p-title" data-en="KEV Priority" data-tr="KEV Önceliği">KEV Priority</div>
+      <div class="p-desc" data-en="CISA KEV entries and actively exploited CVEs processed within 24 hours of confirmed exploitation intelligence." data-tr="CISA KEV kayıtları ve aktif olarak sömürülen CVE'ler, onaylı sömürü istihbaratından 24 saat içinde işlenir.">CISA KEV entries and actively exploited CVEs processed within 24 hours of confirmed exploitation intelligence.</div>
     </div>
     <div class="pillar">
-      <div class="pillar-icon">🌍</div>
-      <div class="pillar-num" data-en="Principle 06" data-tr="İlke 06">Principle 06</div>
-      <div class="pillar-title" data-en="Open Source — TLP:WHITE" data-tr="Açık Kaynak — TLP:WHITE">Open Source — TLP:WHITE</div>
-      <div class="pillar-desc" data-en="All rules are freely available on GitHub. No paywalls, no registration. The security community improves collectively when detection logic is shared openly." data-tr="Tüm kurallar GitHub'da özgürce erişilebilir. Ücretli engel yok, kayıt yok. Tespit mantığı açıkça paylaşıldığında güvenlik topluluğu birlikte gelişir.">All rules are freely available on GitHub. No paywalls, no registration. The security community improves collectively when detection logic is shared openly.</div>
+      <div class="p-ico">🌍</div>
+      <div class="p-num" data-en="Rule 06" data-tr="Kural 06">Rule 06</div>
+      <div class="p-title" data-en="Open Source · TLP:WHITE" data-tr="Açık Kaynak · TLP:WHITE">Open Source · TLP:WHITE</div>
+      <div class="p-desc" data-en="All detection rules freely available on GitHub. No paywalls. The community grows stronger when detection logic is shared openly." data-tr="Tüm tespit kuralları GitHub'da özgürce erişilebilir. Ücretli engel yok. Tespit mantığı açıkça paylaşıldığında topluluk güçlenir.">All detection rules freely available on GitHub. No paywalls. The community grows stronger when detection logic is shared openly.</div>
     </div>
   </div>
 
-  <!-- Rule principles detail -->
-  <div class="section-hd reveal" style="margin-top:56px">
-    <div class="section-eye" data-en="Rule Standards" data-tr="Kural Standartları">Rule Standards</div>
-    <h2 class="section-title" data-en="What Every Rule Must Have" data-tr="Her Kuralın Sahip Olması Gerekenler">What Every Rule Must Have</h2>
-  </div>
-  <div class="principles reveal">
-    <div class="principle-card">
-      <div class="principle-head"><span class="principle-ico">✅</span><span class="principle-title" data-en="Parent-Child Process Correlation" data-tr="Parent-Child Süreç Korelasyonu">Parent-Child Process Correlation</span></div>
-      <div class="principle-body" data-en="Rules target the spawning relationship, not just the child process. <code>langflow → bash</code> is a detection; <code>bash alone</code> is noise." data-tr="Kurallar yalnızca child süreci değil, spawn ilişkisini hedefler. <code>langflow → bash</code> bir tespittir; <code>tek başına bash</code> gürültüdür.">Rules target the spawning relationship, not just the child process. <code>langflow → bash</code> is a detection; <code>bash alone</code> is noise.</div>
+  <div class="prin-grid reveal">
+    <div class="prin">
+      <div class="prin-hd"><span class="prin-ico">🔗</span><span class="prin-t" data-en="Parent-Child Process Correlation" data-tr="Parent-Child Süreç Korelasyonu">Parent-Child Process Correlation</span></div>
+      <div class="prin-b" data-en="Target the spawn relationship, not just the child. <code>langflow → bash</code> is a detection; <code>bash</code> alone is noise." data-tr="Sadece child süreci değil, spawn ilişkisini hedefle. <code>langflow → bash</code> bir tespittir; <code>bash</code> tek başına gürültüdür.">Target the spawn relationship, not just the child. <code>langflow → bash</code> is a detection; <code>bash</code> alone is noise.</div>
     </div>
-    <div class="principle-card">
-      <div class="principle-head"><span class="principle-ico">🚫</span><span class="principle-title" data-en="No Specific Filenames as IOCs" data-tr="IOC Olarak Özel Dosya Adı Yok">No Specific Filenames as IOCs</span></div>
-      <div class="principle-body" data-en="Not <code>wt.exe</code> or <code>ld.py</code> — the signal is <em>writer process + destination path pattern</em>. Attackers rename files trivially; directory staging patterns are durable." data-tr="<code>wt.exe</code> veya <code>ld.py</code> değil — sinyal, <em>yazan süreç + hedef yol deseni</em>'dir. Saldırganlar dosyaları kolayca yeniden adlandırır; dizin düzenleme desenleri kalıcıdır.">Not <code>wt.exe</code> or <code>ld.py</code> — the signal is <em>writer process + destination path pattern</em>. Attackers rename files trivially; directory staging patterns are durable.</div>
+    <div class="prin">
+      <div class="prin-hd"><span class="prin-ico">🚫</span><span class="prin-t" data-en="No Specific Filenames as IOCs" data-tr="IOC Olarak Özel Dosya Adı Yok">No Specific Filenames as IOCs</span></div>
+      <div class="prin-b" data-en="Not <code>wt.exe</code> — the signal is writer process + staging directory. Attackers rename trivially; path patterns are durable." data-tr="<code>wt.exe</code> değil — sinyal yazan süreç + staging dizinidir. Saldırganlar dosyaları kolayca yeniden adlandırır; yol desenleri kalıcıdır.">Not <code>wt.exe</code> — the signal is writer process + staging directory. Attackers rename trivially; path patterns are durable.</div>
     </div>
-    <div class="principle-card">
-      <div class="principle-head"><span class="principle-ico">🔒</span><span class="principle-title" data-en="Platform Capability Checks" data-tr="Platform Kapasite Kontrolü">Platform Capability Checks</span></div>
-      <div class="principle-body" data-en="Rules are only written if the platform can realistically collect the required telemetry. Cortex XDR BIOC uses <code>event_type = ENUM.PROCESS</code> — not joins." data-tr="Kurallar yalnızca platform gerekli telemetriyi gerçekçi biçimde toplayabiliyorsa yazılır. Cortex XDR BIOC, join değil <code>event_type = ENUM.PROCESS</code> kullanır.">Rules are only written if the platform can realistically collect the required telemetry. Cortex XDR BIOC uses <code>event_type = ENUM.PROCESS</code> — not joins.</div>
+    <div class="prin">
+      <div class="prin-hd"><span class="prin-ico">📌</span><span class="prin-t" data-en="MITRE ATT&amp;CK Mapped" data-tr="MITRE ATT&amp;CK Eşlemeli">MITRE ATT&amp;CK Mapped</span></div>
+      <div class="prin-b" data-en="Every rule maps to ≥1 MITRE technique. Enables correlation with actor profiles and coverage gap analysis." data-tr="Her kural ≥1 MITRE tekniğiyle eşleşir. Aktör profilleriyle korelasyon ve kapsam boşluğu analizini mümkün kılar.">Every rule maps to ≥1 MITRE technique. Enables correlation with actor profiles and coverage gap analysis.</div>
     </div>
-    <div class="principle-card">
-      <div class="principle-head"><span class="principle-ico">📌</span><span class="principle-title" data-en="MITRE ATT&CK Mapping" data-tr="MITRE ATT&CK Eşleme">MITRE ATT&amp;CK Mapping</span></div>
-      <div class="principle-body" data-en="Every rule maps to at least one MITRE technique. Enables correlation with threat actor profiles, campaign tracking, and coverage gap analysis." data-tr="Her kural en az bir MITRE tekniğiyle eşleşir. Tehdit aktör profilleriyle korelasyon, kampanya takibi ve kapsam boşluğu analizi sağlar.">Every rule maps to at least one MITRE technique. Enables correlation with threat actor profiles, campaign tracking, and coverage gap analysis.</div>
+    <div class="prin">
+      <div class="prin-hd"><span class="prin-ico">🛡️</span><span class="prin-t" data-en="BIOC-Compatible XDR Rules" data-tr="BIOC Uyumlu XDR Kuralları">BIOC-Compatible XDR Rules</span></div>
+      <div class="prin-b" data-en="Cortex XDR rules use <code>xdr_data</code> with single <code>event_type</code> per rule — no joins. Ready to import as Behavioral Indicators." data-tr="Cortex XDR kuralları kural başına tek <code>event_type</code> ile <code>xdr_data</code> kullanır — join yok. Davranışsal Göstergeler olarak içe aktarmaya hazır.">Cortex XDR rules use <code>xdr_data</code> with single <code>event_type</code> per rule — no joins. Ready to import as Behavioral Indicators.</div>
     </div>
   </div>
 </div>
 
 <!-- ══ FOOTER ══ -->
-<footer>
-  <div class="footer-brand">
-    <div class="footer-logo">T</div>
-    <div class="footer-text">
-      <div><strong>TI-DE</strong> — <span data-en="Threat Intelligence &amp; Detection Engineering" data-tr="Tehdit İstihbaratı ve Tespit Mühendisliği">Threat Intelligence &amp; Detection Engineering</span></div>
-      <div style="font-size:0.7rem;margin-top:2px" data-en="All rules TTP-based · TLP:WHITE · Open Source" data-tr="Tüm kurallar TTP tabanlı · TLP:WHITE · Açık Kaynak">All rules TTP-based · TLP:WHITE · Open Source</div>
+<hr class="divider">
+<div class="footer-wrap">
+  <div class="footer-inner">
+    <div class="f-brand">
+      <svg class="f-logo-svg" width="28" height="28" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="flg" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#e85d04"/><stop offset="100%" stop-color="#f48c06"/></linearGradient><clipPath id="fsc"><path d="M18 2L4 7v10c0 8.5 5.9 16.4 14 18.5C26.1 33.4 32 25.5 32 17V7L18 2Z"/></clipPath></defs>
+        <path d="M18 2L4 7v10c0 8.5 5.9 16.4 14 18.5C26.1 33.4 32 25.5 32 17V7L18 2Z" fill="url(#flg)" opacity=".15"/>
+        <path d="M18 2L4 7v10c0 8.5 5.9 16.4 14 18.5C26.1 33.4 32 25.5 32 17V7L18 2Z" stroke="url(#flg)" stroke-width="1.5" fill="none"/>
+        <g clip-path="url(#fsc)"><circle cx="18" cy="18" r="5" stroke="#e85d04" stroke-width="1" fill="none" opacity=".6"/><circle cx="18" cy="18" r="9" stroke="#e85d04" stroke-width=".8" fill="none" opacity=".3"/><line x1="18" y1="8" x2="18" y2="28" stroke="#f48c06" stroke-width=".8" opacity=".4"/><line x1="8" y1="18" x2="28" y2="18" stroke="#f48c06" stroke-width=".8" opacity=".4"/><circle cx="18" cy="18" r="2" fill="#f48c06" opacity=".9"/></g>
+      </svg>
+      <div class="f-brand-text">
+        <div><strong>TI-DE</strong> — <span data-en="Threat Intelligence &amp; Detection Engineering" data-tr="Tehdit İstihbaratı ve Tespit Mühendisliği">Threat Intelligence &amp; Detection Engineering</span></div>
+        <div style="font-size:.67rem;margin-top:1px;color:var(--muted2)" data-en="All rules TTP-based · TLP:WHITE · Open Source" data-tr="Tüm kurallar TTP tabanlı · TLP:WHITE · Açık Kaynak">All rules TTP-based · TLP:WHITE · Open Source</div>
+      </div>
+    </div>
+    <div class="f-links">
+      <a href="https://github.com/mazlumbaydar/TI-DE" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://linkedin.com/in/mazlumbaydar/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="#reports" data-en="Reports" data-tr="Raporlar">Reports</a>
+      <a href="#methodology" data-en="Methodology" data-tr="Metodoloji">Methodology</a>
     </div>
   </div>
-  <div class="footer-links">
-    <a href="https://github.com/mazlumbaydar/TI-DE" target="_blank" rel="noopener">GitHub</a>
-    <a href="https://linkedin.com/in/mazlumbaydar/" target="_blank" rel="noopener">LinkedIn</a>
-    <a href="#reports" data-en="Reports" data-tr="Raporlar">Reports</a>
-    <a href="#methodology" data-en="Methodology" data-tr="Metodoloji">Methodology</a>
-  </div>
-</footer>
+</div>
 
-<!-- ══ JAVASCRIPT ══ -->
+<!-- ══ SCRIPT ══ -->
 <script>
-/* ─── PROGRESS BAR ─── */
+/* ─── STATE ─── */
+let currentLang  = localStorage.getItem('ti-de-lang')  || 'en';
+let currentTheme = localStorage.getItem('ti-de-theme') || 'dark';
+
+/* ─── PROGRESS ─── */
 window.addEventListener('scroll', () => {
   const h = document.documentElement;
   const pct = h.scrollHeight - h.clientHeight;
-  document.getElementById('prog').style.width = (pct ? (h.scrollTop / pct * 100) : 0) + '%';
+  document.getElementById('prog').style.width = (pct ? h.scrollTop/pct*100 : 0)+'%';
 });
 
-/* ─── NAV SCROLL ─── */
-const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 50);
-});
+/* ─── NAV ─── */
+const navEl = document.getElementById('nav');
+window.addEventListener('scroll', () => navEl.classList.toggle('scrolled', window.scrollY > 40));
 
 /* ─── REVEAL ─── */
-const revObs = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revObs.unobserve(e.target); } });
-}, { threshold: 0.07 });
-document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+const rObs = new IntersectionObserver(es => {
+  es.forEach(e => { if(e.isIntersecting){e.target.classList.add('in');rObs.unobserve(e.target);} });
+},{threshold:0.06});
+document.querySelectorAll('.reveal').forEach(el => rObs.observe(el));
 
-/* ─── STAT COUNTERS ─── */
-const cntObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (!e.isIntersecting) return;
+/* ─── COUNTERS ─── */
+const cObs = new IntersectionObserver(es => {
+  es.forEach(e => {
+    if(!e.isIntersecting) return;
     e.target.querySelectorAll('[data-t]').forEach(el => {
-      const target = parseFloat(el.dataset.t);
-      const isFloat = String(el.dataset.t).includes('.');
-      const dur = 1300, s = performance.now();
-      const tick = now => {
-        const p = Math.min((now - s) / dur, 1);
-        const v = target * (1 - Math.pow(1 - p, 3));
-        el.textContent = isFloat ? v.toFixed(1) : Math.round(v);
-        if (p < 1) requestAnimationFrame(tick);
-      };
+      const t=parseFloat(el.dataset.t), s=performance.now();
+      const tick=now=>{ const p=Math.min((now-s)/1200,1),v=t*(1-Math.pow(1-p,3)); el.textContent=Math.round(v); if(p<1)requestAnimationFrame(tick); };
       requestAnimationFrame(tick);
     });
-    cntObs.unobserve(e.target);
+    cObs.unobserve(e.target);
   });
-}, { threshold: 0.3 });
-document.querySelectorAll('.hero-meta').forEach(el => cntObs.observe(el));
-
-/* ─── THEME & LANG STATE (declare both first to avoid ReferenceError) ─── */
-let currentLang  = localStorage.getItem('ti-de-lang')  || 'en';
-let currentTheme = localStorage.getItem('ti-de-theme') || 'dark';
+},{threshold:0.3});
+document.querySelectorAll('.stats-row').forEach(el=>cObs.observe(el));
 
 /* ─── LANGUAGE ─── */
 function applyLang(lang) {
   currentLang = lang;
   localStorage.setItem('ti-de-lang', lang);
   document.documentElement.setAttribute('lang', lang);
-
-  // Always use innerHTML — many values contain <strong>, <code>, <br> tags
   document.querySelectorAll('[data-en]').forEach(el => {
     const val = lang === 'en' ? el.dataset.en : (el.dataset.tr || el.dataset.en);
     if (val !== undefined) el.innerHTML = val;
   });
-
-  // Update button UI
   const icon  = document.getElementById('langIcon');
   const label = document.getElementById('langLabel');
   const btn   = document.getElementById('langBtn');
   icon.textContent  = lang === 'en' ? '🇬🇧' : '🇹🇷';
   label.textContent = lang === 'en' ? 'EN' : 'TR';
-  lang === 'tr' ? btn.classList.add('active') : btn.classList.remove('active');
-
-  // Re-sync theme label text in correct language
+  lang === 'tr' ? btn.classList.add('on') : btn.classList.remove('on');
   syncThemeLabel();
 }
-
-function toggleLang() {
-  applyLang(currentLang === 'en' ? 'tr' : 'en');
-}
+function toggleLang() { applyLang(currentLang === 'en' ? 'tr' : 'en'); }
 
 /* ─── THEME ─── */
 function syncThemeLabel() {
-  const icon  = document.getElementById('themeIcon');
-  const label = document.getElementById('themeLabel');
-  if (currentTheme === 'dark') {
-    icon.textContent  = '🌙';
-    label.textContent = currentLang === 'en' ? 'Dark' : 'Koyu';
-  } else {
-    icon.textContent  = '☀️';
-    label.textContent = currentLang === 'en' ? 'Light' : 'Açık';
-  }
+  document.getElementById('themeIcon').textContent  = currentTheme==='dark' ? '🌙' : '☀️';
+  document.getElementById('themeLabel').textContent = currentTheme==='dark'
+    ? (currentLang==='en'?'Dark':'Koyu')
+    : (currentLang==='en'?'Light':'Açık');
 }
-
 function applyTheme(theme) {
   currentTheme = theme;
   localStorage.setItem('ti-de-theme', theme);
   document.documentElement.setAttribute('data-theme', theme);
   syncThemeLabel();
 }
-
-function toggleTheme() {
-  applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
-}
+function toggleTheme() { applyTheme(currentTheme==='dark'?'light':'dark'); }
 
 /* ─── INIT ─── */
 applyTheme(currentTheme);
 applyLang(currentLang);
 </script>
-
 </body>
 </html>
