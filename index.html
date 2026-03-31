@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TI-DE — Threat Intel & Detection Engineering</title>
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111418;
+    --border: #232834;
+    --accent: #e85d04;
+    --accent2: #f48c06;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --red: #ef233c;
+    --green: #06d6a0;
+    --blue: #4cc9f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* NAVBAR */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 14px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(10,12,16,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-brand { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; }
+  .nav-sub { font-size: 0.78rem; color: var(--muted); }
+
+  /* HERO */
+  .hero {
+    padding: 140px 24px 80px;
+    text-align: center;
+    background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(232,93,4,0.10) 0%, transparent 70%);
+    position: relative;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.015) 40px),
+                repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.015) 40px);
+    pointer-events: none;
+  }
+  .hero h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 14px;
+    background: linear-gradient(135deg, #fff 40%, var(--accent2) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .hero p { font-size: 1rem; color: var(--muted); max-width: 520px; margin: 0 auto 32px; line-height: 1.7; }
+  .stat-row { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; }
+  .stat-item { text-align: center; }
+  .stat-n { font-size: 1.8rem; font-weight: 800; color: var(--accent2); }
+  .stat-l { font-size: 0.72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* MAIN */
+  main { max-width: 900px; margin: 0 auto; padding: 60px 24px 100px; }
+
+  .section-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+  h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+
+  /* DATE GROUP */
+  .date-group { margin-bottom: 48px; }
+  .date-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 16px;
+  }
+  .date-pill {
+    padding: 4px 14px;
+    background: rgba(232,93,4,0.12);
+    border: 1px solid rgba(232,93,4,0.25);
+    border-radius: 999px;
+    font-size: 0.78rem; font-weight: 700; color: var(--accent2);
+    letter-spacing: 0.06em; white-space: nowrap;
+  }
+  .date-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* REPORT CARD */
+  .report-card {
+    display: flex; align-items: center; gap: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .report-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2));
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .report-card:hover { border-color: rgba(232,93,4,0.4); transform: translateX(4px); }
+  .report-card:hover::before { opacity: 1; }
+
+  .card-icon { font-size: 1.6rem; flex-shrink: 0; }
+  .card-body { flex: 1; min-width: 0; }
+  .card-title { font-size: 0.97rem; font-weight: 600; color: var(--text); margin-bottom: 4px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-meta { display: flex; flex-wrap: wrap; gap: 8px; }
+  .card-badge {
+    padding: 2px 9px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .cb-crit { background: rgba(239,35,60,0.15); color: var(--red); }
+  .cb-high { background: rgba(232,93,4,0.15); color: var(--accent); }
+  .cb-supply { background: rgba(76,201,240,0.12); color: var(--blue); }
+  .cb-rce { background: rgba(6,214,160,0.12); color: var(--green); }
+
+  .card-arrow { color: var(--muted); font-size: 1rem; flex-shrink: 0; transition: color 0.2s; }
+  .report-card:hover .card-arrow { color: var(--accent2); }
+
+  /* FADE IN */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s, transform 0.5s; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* FOOTER */
+  footer { text-align: center; padding: 32px; font-size: 0.78rem; color: var(--muted); border-top: 1px solid var(--border); }
+  footer a { color: var(--accent2); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">TI-DE</div>
+  <div class="nav-sub">Threat Intelligence &amp; Detection Engineering</div>
+</nav>
+
+<section class="hero">
+  <h1>Threat Intel &amp; Detection Engineering</h1>
+  <p>Daily critical threat research with TTP-based detection rules across 10 security platforms. No IOC-only rules — behavior-first detection.</p>
+  <div class="stat-row">
+    <div class="stat-item"><div class="stat-n">10</div><div class="stat-l">Platforms</div></div>
+    <div class="stat-item"><div class="stat-n">4</div><div class="stat-l">Reports</div></div>
+    <div class="stat-item"><div class="stat-n">100%</div><div class="stat-l">TTP-Based</div></div>
+  </div>
+</section>
+
+<main>
+  <div class="section-label">Daily Reports</div>
+  <h2>All Threat Reports</h2>
+
+  <!-- 31-03-2026 -->
+  <div class="date-group reveal">
+    <div class="date-header">
+      <div class="date-pill">31 March 2026</div>
+      <div class="date-line"></div>
+    </div>
+    <a class="report-card" href="daily-reports/31-03-2026/THREAT-Axios-npm-Supply-Chain-RAT/THREAT-Axios-npm-Supply-Chain-RAT.html">
+      <div class="card-icon">📦</div>
+      <div class="card-body">
+        <div class="card-title">Axios npm Supply Chain — Cross-Platform RAT Dropper</div>
+        <div class="card-meta">
+          <span class="card-badge cb-crit">Critical</span>
+          <span class="card-badge cb-supply">Supply Chain</span>
+          <span class="card-badge" style="background:rgba(124,45,190,0.15);color:#c9a0dc;">RAT</span>
+          <span class="card-badge" style="background:rgba(255,186,8,0.12);color:#ffba08;">T1195.001</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+  </div>
+
+  <!-- 27-03-2026 -->
+  <div class="date-group reveal">
+    <div class="date-header">
+      <div class="date-pill">27 March 2026</div>
+      <div class="date-line"></div>
+    </div>
+    <a class="report-card" href="daily-reports/27-03-2026/CVE-2026-20131_Cisco-FMC-Interlock-RCE/CVE-2026-20131_Cisco-FMC-Interlock-RCE.html">
+      <div class="card-icon">🔥</div>
+      <div class="card-body">
+        <div class="card-title">CVE-2026-20131 — Cisco FMC Interlock RCE</div>
+        <div class="card-meta">
+          <span class="card-badge cb-crit">Critical</span>
+          <span class="card-badge cb-rce">RCE</span>
+          <span class="card-badge" style="background:rgba(255,186,8,0.12);color:#ffba08;">T1190</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="report-card" href="daily-reports/27-03-2026/CVE-2026-33017_Langflow-AI-RCE-TeamPCP/CVE-2026-33017_Langflow-AI-RCE.html">
+      <div class="card-icon">🤖</div>
+      <div class="card-body">
+        <div class="card-title">CVE-2026-33017 — Langflow AI RCE (TeamPCP)</div>
+        <div class="card-meta">
+          <span class="card-badge cb-crit">Critical</span>
+          <span class="card-badge cb-rce">RCE</span>
+          <span class="card-badge" style="background:rgba(255,186,8,0.12);color:#ffba08;">T1190</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+  </div>
+
+  <!-- 26-03-2026 -->
+  <div class="date-group reveal">
+    <div class="date-header">
+      <div class="date-pill">26 March 2026</div>
+      <div class="date-line"></div>
+    </div>
+    <a class="report-card" href="daily-reports/26-03-2026/CVE-2026-33634_LiteLLM-PyPI-Supply-Chain-TeamPCP/CVE-2026-33634_LiteLLM-PyPI-Supply-Chain-TeamPCP.html">
+      <div class="card-icon">🐍</div>
+      <div class="card-body">
+        <div class="card-title">CVE-2026-33634 — LiteLLM PyPI Supply Chain (TeamPCP)</div>
+        <div class="card-meta">
+          <span class="card-badge cb-crit">Critical</span>
+          <span class="card-badge cb-supply">Supply Chain</span>
+          <span class="card-badge" style="background:rgba(255,186,8,0.12);color:#ffba08;">T1195.001</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+  </div>
+
+</main>
+
+<footer>
+  <a href="https://github.com/mazlumbaydar/TI-DE" target="_blank">github.com/mazlumbaydar/TI-DE</a>
+  &nbsp;·&nbsp; TTP-based detection rules for 10 platforms &nbsp;·&nbsp; TLP:WHITE
+</footer>
+
+<script>
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
