@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Axios npm Supply Chain RAT | TI-DE Report</title>
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111418;
+    --surface2: #181c23;
+    --border: #232834;
+    --accent: #e85d04;
+    --accent2: #f48c06;
+    --accent3: #ffba08;
+    --red: #ef233c;
+    --green: #06d6a0;
+    --blue: #4cc9f0;
+    --purple: #7b2fbe;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --code-bg: #0d1117;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NAVBAR ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 14px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: transparent;
+    backdrop-filter: blur(0px);
+    border-bottom: 1px solid transparent;
+    transition: all 0.4s ease;
+  }
+  nav.scrolled {
+    background: rgba(10,12,16,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom-color: var(--border);
+  }
+  .nav-brand {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    transition: color 0.2s;
+    text-transform: uppercase;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 100px 24px 60px;
+    position: relative;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(232,93,4,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(124,45,190,0.08) 0%, transparent 60%);
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 39px,
+      rgba(255,255,255,0.015) 40px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 39px,
+      rgba(255,255,255,0.015) 40px
+    );
+    pointer-events: none;
+  }
+  .badge-critical {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 18px;
+    background: rgba(239,35,60,0.15);
+    border: 1px solid rgba(239,35,60,0.4);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--red);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    animation: pulse-badge 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse-badge {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239,35,60,0.3); }
+    50% { box-shadow: 0 0 0 8px rgba(239,35,60,0); }
+  }
+  .badge-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--red);
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .hero-title {
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #ffffff 30%, var(--accent2) 70%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 640px;
+    margin: 0 auto 40px;
+  }
+
+  .meta-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 12px;
+  }
+  .meta-chip {
+    padding: 5px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.77rem;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+  .meta-chip span { color: var(--text); }
+
+  /* ── MAIN COLUMN ── */
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 80px 24px 120px;
+  }
+
+  /* ── SECTION TITLES ── */
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  h2 {
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 28px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 24px 0 10px;
+  }
+
+  /* ── FADE-IN ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── STAT CARDS ── */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 60px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .stat-num {
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: var(--accent2);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── ATTACK CHAIN ── */
+  .chain-section {
+    margin-bottom: 72px;
+  }
+  .chain-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+  .chain-container::before {
+    content: '';
+    position: absolute;
+    left: 28px;
+    top: 28px;
+    bottom: 28px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2), var(--blue), var(--green));
+    border-radius: 2px;
+  }
+  .chain-step {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    padding: 20px 0;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .chain-step.visible {
+    opacity: 1;
+    transform: none;
+  }
+  .chain-step:nth-child(1) { transition-delay: 0.0s; }
+  .chain-step:nth-child(2) { transition-delay: 0.18s; }
+  .chain-step:nth-child(3) { transition-delay: 0.36s; }
+  .chain-step:nth-child(4) { transition-delay: 0.54s; }
+  .chain-step:nth-child(5) { transition-delay: 0.72s; }
+  .chain-step:nth-child(6) { transition-delay: 0.90s; }
+
+  .chain-icon {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    border: 2px solid;
+    background: var(--bg);
+    position: relative;
+    z-index: 1;
+  }
+  .step-1 .chain-icon { border-color: var(--accent); color: var(--accent); }
+  .step-2 .chain-icon { border-color: var(--accent2); color: var(--accent2); }
+  .step-3 .chain-icon { border-color: var(--accent3); color: var(--accent3); }
+  .step-4 .chain-icon { border-color: #a8dadc; color: #a8dadc; }
+  .step-5 .chain-icon { border-color: var(--blue); color: var(--blue); }
+  .step-6 .chain-icon { border-color: var(--green); color: var(--green); }
+
+  .chain-content {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+  }
+  .chain-title {
+    font-size: 0.97rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .chain-desc {
+    font-size: 0.87rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .chain-ttp {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 2px 10px;
+    background: rgba(232,93,4,0.12);
+    border: 1px solid rgba(232,93,4,0.25);
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent2);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── PAYLOAD GRID ── */
+  .payload-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+    margin-bottom: 60px;
+  }
+  .payload-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .payload-card::after {
+    content: attr(data-os);
+    position: absolute;
+    top: 16px; right: 16px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0.5;
+  }
+  .payload-os {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .os-win { color: #4cc9f0; }
+  .os-lin { color: var(--green); }
+  .os-mac { color: #c9a0dc; }
+  .payload-item {
+    font-size: 0.83rem;
+    color: var(--muted);
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .payload-item:last-child { border-bottom: none; }
+  .pi-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    min-width: 80px;
+    margin-top: 1px;
+    opacity: 0.6;
+  }
+  .pi-val { color: var(--text); font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 0.82rem; word-break: break-all; }
+
+  /* ── CODE BLOCKS ── */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 20px 0;
+  }
+  .code-header {
+    padding: 10px 18px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .code-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .code-body {
+    padding: 20px 22px;
+    font-family: 'Cascadia Code', 'Fira Code', 'Courier New', monospace;
+    font-size: 0.82rem;
+    color: #c9d1d9;
+    line-height: 1.8;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .kw { color: #ff7b72; }
+  .str { color: #a5d6ff; }
+  .cmt { color: #8b949e; font-style: italic; }
+  .num { color: #79c0ff; }
+  .fn  { color: var(--accent2); }
+
+  /* ── MITRE TABLE ── */
+  .mitre-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 60px;
+    font-size: 0.87rem;
+  }
+  .mitre-table th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .mitre-table td {
+    padding: 13px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+  }
+  .mitre-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .mitre-id {
+    font-family: 'Cascadia Code', monospace;
+    font-size: 0.82rem;
+    color: var(--accent2);
+    white-space: nowrap;
+    font-weight: 600;
+  }
+  .tactic-badge {
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .tb-red { background: rgba(239,35,60,0.15); color: var(--red); }
+  .tb-orange { background: rgba(232,93,4,0.15); color: var(--accent); }
+  .tb-yellow { background: rgba(255,186,8,0.15); color: var(--accent3); }
+  .tb-blue { background: rgba(76,201,240,0.15); color: var(--blue); }
+  .tb-green { background: rgba(6,214,160,0.15); color: var(--green); }
+
+  /* ── RULE ACCORDION ── */
+  .rules-section { margin-bottom: 72px; }
+  .rule-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .rule-card:hover { border-color: rgba(232,93,4,0.35); }
+  .rule-header {
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    gap: 14px;
+  }
+  .rule-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .platform-badge {
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: rgba(232,93,4,0.12);
+    color: var(--accent2);
+    border: 1px solid rgba(232,93,4,0.2);
+    white-space: nowrap;
+  }
+  .rule-toggle {
+    flex-shrink: 0;
+    font-size: 1rem;
+    color: var(--muted);
+    transition: transform 0.25s;
+  }
+  .rule-card.open .rule-toggle { transform: rotate(180deg); }
+  .rule-body {
+    display: none;
+    padding: 0 22px 20px;
+  }
+  .rule-card.open .rule-body { display: block; }
+
+  /* ── TIMELINE ── */
+  .timeline {
+    position: relative;
+    padding-left: 28px;
+    margin-bottom: 60px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px; top: 8px; bottom: 8px;
+    width: 2px;
+    background: var(--border);
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 24px;
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -26px;
+    top: 7px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+  }
+  .tl-time {
+    font-size: 0.73rem;
+    font-weight: 700;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+  }
+  .tl-text {
+    font-size: 0.88rem;
+    color: var(--text);
+  }
+
+  /* ── RECOMMENDATIONS ── */
+  .rec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 60px;
+  }
+  .rec-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px;
+  }
+  .rec-icon { font-size: 1.5rem; margin-bottom: 12px; }
+  .rec-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .rec-desc {
+    font-size: 0.83rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 40px 24px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
+  footer strong { color: var(--text); }
+
+  /* ── DIVIDER ── */
+  .section-divider { margin: 64px 0; }
+
+  p { font-size: 0.93rem; color: var(--muted); line-height: 1.8; margin-bottom: 16px; }
+  strong { color: var(--text); }
+
+  .info-box {
+    background: rgba(76,201,240,0.06);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 20px 0;
+    font-size: 0.87rem;
+    color: var(--muted);
+  }
+  .warn-box {
+    background: rgba(239,35,60,0.06);
+    border-left: 3px solid var(--red);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 20px 0;
+    font-size: 0.87rem;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR ══ -->
+<nav id="nav">
+  <div class="nav-brand">TI-DE // Detection Engineering</div>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#attack-chain">Attack Chain</a></li>
+    <li><a href="#payloads">Payloads</a></li>
+    <li><a href="#mitre">MITRE</a></li>
+    <li><a href="#detection">Detection</a></li>
+    <li><a href="#recommendations">Response</a></li>
+  </ul>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="badge-critical">
+    <span class="badge-dot"></span>
+    Critical — Supply Chain Attack — Active Exploitation
+  </div>
+  <h1 class="hero-title">Axios npm Supply Chain<br>Cross-Platform RAT Dropper</h1>
+  <p class="hero-sub">
+    Malicious versions of the world's most popular HTTP client library weaponized
+    to deliver a remote access trojan across Windows, Linux, and macOS.
+  </p>
+  <div class="meta-strip">
+    <div class="meta-chip">Date: <span>31 March 2026</span></div>
+    <div class="meta-chip">Packages: <span>axios@1.14.1 · axios@0.30.4</span></div>
+    <div class="meta-chip">Platforms: <span>Windows · Linux · macOS</span></div>
+    <div class="meta-chip">Severity: <span>CRITICAL</span></div>
+    <div class="meta-chip">Status: <span>Packages Removed</span></div>
+  </div>
+</section>
+
+<!-- ══ MAIN ══ -->
+<main>
+
+  <!-- STATS -->
+  <div class="stat-grid reveal" id="overview">
+    <div class="stat-card">
+      <div class="stat-num" data-t="2">0</div>
+      <div class="stat-label">Malicious Versions</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-t="3">0</div>
+      <div class="stat-label">OS Platforms Targeted</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-t="7">0</div>
+      <div class="stat-label">MITRE Techniques</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-t="10">0</div>
+      <div class="stat-label">Detection Rules</div>
+    </div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="reveal">
+    <div class="section-label">Background</div>
+    <h2>What Happened</h2>
+
+    <p>
+      On 31 March 2026, security researchers at StepSecurity disclosed that two versions of the
+      <strong>axios</strong> npm package — one of the most downloaded JavaScript libraries with
+      over 60 million weekly downloads — had been quietly replaced with malicious builds.
+      The compromised versions were <strong>axios@1.14.1</strong> and <strong>axios@0.30.4</strong>.
+      The legitimate previous versions (1.14.0 and 0.30.3) remained unaffected.
+    </p>
+
+    <p>
+      The attack worked by injecting a dependency on <strong>plain-crypto-js@4.2.1</strong>
+      into the malicious axios builds. This package executed an obfuscated postinstall hook
+      (<code style="font-family:monospace;color:var(--accent2)">node setup.js</code>) the moment
+      any developer ran <code style="font-family:monospace;color:var(--accent2)">npm install</code>.
+      The hook detected the host operating system and dropped a platform-specific RAT payload,
+      then erased its own traces.
+    </p>
+
+    <div class="warn-box">
+      <strong>Safe versions:</strong> axios@1.14.0 and axios@0.30.3 are clean.
+      Versions axios@1.14.1 and axios@0.30.4 are malicious — remove immediately and audit any
+      environment that had these versions installed.
+    </div>
+  </div>
+
+  <!-- ATTACK CHAIN -->
+  <div class="chain-section reveal" id="attack-chain">
+    <div class="section-label">Attack Flow</div>
+    <h2>Attack Chain</h2>
+
+    <div class="chain-container" id="chainSteps">
+
+      <div class="chain-step step-1">
+        <div class="chain-icon">📦</div>
+        <div class="chain-content">
+          <div class="chain-title">Stage 1 — Poisoned Package Published</div>
+          <div class="chain-desc">
+            Attacker gains access to the axios npm account and publishes axios@1.14.1 and axios@0.30.4.
+            Both versions add a hidden dependency: <strong>plain-crypto-js@4.2.1</strong>,
+            which carries the malicious postinstall hook. The package diff is minimal and
+            passes casual visual inspection.
+          </div>
+          <span class="chain-ttp">T1195.001 — Compromise Software Supply Chain</span>
+        </div>
+      </div>
+
+      <div class="chain-step step-2">
+        <div class="chain-icon">⚙️</div>
+        <div class="chain-content">
+          <div class="chain-title">Stage 2 — Postinstall Hook Executes</div>
+          <div class="chain-desc">
+            When the developer runs <code style="font-family:monospace">npm install</code>,
+            npm executes the <strong>postinstall</strong> script: <code style="font-family:monospace">node setup.js</code>.
+            The script uses a custom XOR decoder with key <code style="font-family:monospace">OrDeR_7077</code>,
+            index formula <code style="font-family:monospace">7*i*i % 10</code>, and constant 333
+            to reconstruct the payload URLs from reversed, padded base64 strings — bypassing
+            static signature scanners that rely on readable URLs.
+          </div>
+          <span class="chain-ttp">T1140 — Deobfuscate/Decode Files or Information</span>
+        </div>
+      </div>
+
+      <div class="chain-step step-3">
+        <div class="chain-icon">🖥️</div>
+        <div class="chain-content">
+          <div class="chain-title">Stage 3 — OS Fingerprinting</div>
+          <div class="chain-desc">
+            The setup.js script calls <code style="font-family:monospace">os.platform()</code> to
+            branch execution: <strong>win32</strong> → VBScript dropper,
+            <strong>darwin</strong> → macOS LaunchAgent with AppleScript,
+            <strong>linux</strong> → Python3 script in /tmp with nohup persistence.
+            Each branch uses a different stealth technique suited to its target OS.
+          </div>
+          <span class="chain-ttp">T1059.001 / T1059.004 / T1059.006</span>
+        </div>
+      </div>
+
+      <div class="chain-step step-4">
+        <div class="chain-icon">💉</div>
+        <div class="chain-content">
+          <div class="chain-title">Stage 4 — Payload Delivery &amp; Masquerade</div>
+          <div class="chain-desc">
+            <strong>Windows:</strong> VBScript spawns PowerShell to download a binary to
+            <code style="font-family:monospace">%PROGRAMDATA%\wt.exe</code> — masquerading as
+            the legitimate Windows Terminal executable.<br/>
+            <strong>macOS:</strong> Binary copied to
+            <code style="font-family:monospace">/Library/Caches/com.apple.act.mond</code>
+            — spoofing an Apple system daemon. AppleScript used for execution.<br/>
+            <strong>Linux:</strong> Python3 script written to
+            <code style="font-family:monospace">/tmp/ld.py</code>, launched via
+            <code style="font-family:monospace">nohup</code> to survive terminal closure.
+          </div>
+          <span class="chain-ttp">T1036.005 — Match Legitimate Name or Location</span>
+        </div>
+      </div>
+
+      <div class="chain-step step-5">
+        <div class="chain-icon">📡</div>
+        <div class="chain-content">
+          <div class="chain-title">Stage 5 — C2 Beacon</div>
+          <div class="chain-desc">
+            The RAT establishes command-and-control with a 60-second polling interval.
+            It uses a fake User-Agent string
+            <code style="font-family:monospace">mozilla/4.0 (compatible; msie 8.0; windows nt 5.1; trident/4.0)</code>
+            to blend with legacy enterprise traffic. Supported commands include
+            <strong>peinject</strong>, <strong>runscript</strong>, <strong>rundir</strong>, and <strong>kill</strong>.
+          </div>
+          <span class="chain-ttp">T1071.001 — Web Protocols C2</span>
+        </div>
+      </div>
+
+      <div class="chain-step step-6">
+        <div class="chain-icon">🧹</div>
+        <div class="chain-content">
+          <div class="chain-title">Stage 6 — Anti-Forensic Cleanup</div>
+          <div class="chain-desc">
+            After payload delivery, setup.js deletes itself via <code style="font-family:monospace">fs.unlink</code>
+            and replaces <code style="font-family:monospace">package.json</code> inside node_modules
+            with a clean stub, removing the postinstall field. This makes post-infection forensics
+            harder — the install log may show nothing suspicious by the time the analyst looks.
+          </div>
+          <span class="chain-ttp">T1070.004 — File Deletion</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DEOBFUSCATION -->
+  <div class="reveal">
+    <div class="section-label">Obfuscation Technique</div>
+    <h2>XOR Payload Decoding</h2>
+    <p>
+      The dropper did not store payload URLs as plaintext. Instead it used a custom XOR cipher
+      combined with reversed, padding-altered base64 strings. Below is the reconstructed
+      decode logic from the setup.js artifact:
+    </p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-dot" style="background:#ff5f57"></span>
+        <span class="code-dot" style="background:#febc2e"></span>
+        <span class="code-dot" style="background:#28c840"></span>
+        setup.js — XOR decoder (reconstructed)
+      </div>
+      <div class="code-body"><span class="kw">const</span> <span class="fn">xorKey</span> = <span class="str">"OrDeR_7077"</span>;      <span class="cmt">// key extracted from artifact</span>
+<span class="kw">const</span> CONSTANT = <span class="num">333</span>;
+
+<span class="kw">function</span> <span class="fn">decode</span>(encoded) {
+  <span class="cmt">// 1. Reverse the string; replace '_' back to '=' padding</span>
+  <span class="kw">const</span> b64 = encoded.split(<span class="str">''</span>).reverse().join(<span class="str">''</span>).replace(<span class="str">/_/g</span>, <span class="str">'='</span>);
+  <span class="kw">const</span> buf = Buffer.from(b64, <span class="str">'base64'</span>);
+
+  <span class="cmt">// 2. XOR each byte using rolling key + position formula</span>
+  <span class="kw">return</span> Buffer.from(
+    buf.map((byte, i) => {
+      <span class="kw">const</span> keyChar = xorKey.charCodeAt((<span class="num">7</span> * i * i % <span class="num">10</span>) % xorKey.length);
+      <span class="kw">return</span> byte ^ keyChar ^ (CONSTANT % <span class="num">256</span>);
+    })
+  ).toString(<span class="str">'utf8'</span>);
+}
+
+<span class="cmt">// os.platform() branch selects Windows / Linux / macOS payload</span>
+<span class="kw">const</span> platform = require(<span class="str">'os'</span>).platform();
+<span class="kw">const</span> payloadUrl = <span class="fn">decode</span>(ENCODED_URLS[platform] ?? ENCODED_URLS.linux);</div>
+    </div>
+    <div class="info-box">
+      The non-standard index formula <code style="font-family:monospace">7*i*i % 10</code> and
+      the reversed base64 with underscore padding substitution are strong behavioral signatures
+      for YARA detection, as they are unlikely to appear in legitimate packages.
+    </div>
+  </div>
+
+  <!-- PAYLOADS -->
+  <div class="reveal" id="payloads">
+    <div class="section-label">Platform Payloads</div>
+    <h2>OS-Specific RAT Delivery</h2>
+    <div class="payload-grid">
+
+      <div class="payload-card">
+        <div class="payload-os os-win">🪟 Windows</div>
+        <div class="payload-item"><div class="pi-label">Dropper</div><div class="pi-val">VBScript → PowerShell download cradle</div></div>
+        <div class="payload-item"><div class="pi-label">RAT Path</div><div class="pi-val">%PROGRAMDATA%\wt.exe</div></div>
+        <div class="payload-item"><div class="pi-label">Masquerade</div><div class="pi-val">Windows Terminal (wt.exe)</div></div>
+        <div class="payload-item"><div class="pi-label">Execution</div><div class="pi-val">node.exe → wscript.exe → powershell.exe</div></div>
+        <div class="payload-item"><div class="pi-label">Persistence</div><div class="pi-val">Process running; no registry/task observed</div></div>
+      </div>
+
+      <div class="payload-card">
+        <div class="payload-os os-lin">🐧 Linux</div>
+        <div class="payload-item"><div class="pi-label">RAT Script</div><div class="pi-val">/tmp/ld.py (Python3)</div></div>
+        <div class="payload-item"><div class="pi-label">Execution</div><div class="pi-val">nohup python3 /tmp/ld.py &amp;</div></div>
+        <div class="payload-item"><div class="pi-label">Masquerade</div><div class="pi-val">ld (linker) naming convention</div></div>
+        <div class="payload-item"><div class="pi-label">Persistence</div><div class="pi-val">Orphaned process (nohup detached)</div></div>
+        <div class="payload-item"><div class="pi-label">C2 Beacon</div><div class="pi-val">60s poll, fake IE8 UA</div></div>
+      </div>
+
+      <div class="payload-card">
+        <div class="payload-os os-mac">🍎 macOS</div>
+        <div class="payload-item"><div class="pi-label">RAT Path</div><div class="pi-val">/Library/Caches/com.apple.act.mond</div></div>
+        <div class="payload-item"><div class="pi-label">Execution</div><div class="pi-val">AppleScript osascript</div></div>
+        <div class="payload-item"><div class="pi-label">Masquerade</div><div class="pi-val">Apple Activity Monitor daemon</div></div>
+        <div class="payload-item"><div class="pi-label">Persistence</div><div class="pi-val">LaunchAgent / 60s beacon loop</div></div>
+        <div class="payload-item"><div class="pi-label">Commands</div><div class="pi-val">peinject, runscript, rundir, kill</div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="reveal">
+    <div class="section-label">Incident Timeline</div>
+    <h2>Key Events</h2>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-time">Prior to 31 March 2026</div>
+        <div class="tl-text">Attacker obtains unauthorized access to the axios npm account. Malicious <strong>plain-crypto-js@4.2.1</strong> package prepared and staged.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-time">31 March 2026</div>
+        <div class="tl-text"><strong>axios@1.14.1</strong> and <strong>axios@0.30.4</strong> published to the npm registry with the injected dependency. Millions of installations begin executing the postinstall hook.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-time">31 March 2026 — Discovery</div>
+        <div class="tl-text">StepSecurity researchers identify the malicious postinstall behavior during routine supply chain monitoring. Responsible disclosure initiated.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-time">31 March 2026 — Remediation</div>
+        <div class="tl-text">npm security team removes the malicious versions. Axios maintainers publish clean axios@1.14.2 (or equivalent). Public advisory released.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MITRE -->
+  <div class="reveal" id="mitre">
+    <div class="section-label">Threat Intelligence</div>
+    <h2>MITRE ATT&amp;CK Mapping</h2>
+    <table class="mitre-table">
+      <thead>
+        <tr>
+          <th>Technique ID</th>
+          <th>Tactic</th>
+          <th>Name</th>
+          <th>Observed Behavior</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mitre-id">T1195.001</td>
+          <td><span class="tactic-badge tb-red">Initial Access</span></td>
+          <td>Compromise Software Supply Chain</td>
+          <td>Malicious axios versions injected into npm registry</td>
+        </tr>
+        <tr>
+          <td class="mitre-id">T1059.001</td>
+          <td><span class="tactic-badge tb-orange">Execution</span></td>
+          <td>Command &amp; Scripting — PowerShell</td>
+          <td>PowerShell download cradle on Windows</td>
+        </tr>
+        <tr>
+          <td class="mitre-id">T1059.004</td>
+          <td><span class="tactic-badge tb-orange">Execution</span></td>
+          <td>Command &amp; Scripting — Unix Shell</td>
+          <td>bash/sh execution on Linux, nohup orphan process</td>
+        </tr>
+        <tr>
+          <td class="mitre-id">T1059.006</td>
+          <td><span class="tactic-badge tb-orange">Execution</span></td>
+          <td>Command &amp; Scripting — Python</td>
+          <td>Python3 RAT at /tmp/ld.py on Linux</td>
+        </tr>
+        <tr>
+          <td class="mitre-id">T1036.005</td>
+          <td><span class="tactic-badge tb-yellow">Defense Evasion</span></td>
+          <td>Match Legitimate Name or Location</td>
+          <td>wt.exe (Windows Terminal), com.apple.act.mond (Apple daemon)</td>
+        </tr>
+        <tr>
+          <td class="mitre-id">T1070.004</td>
+          <td><span class="tactic-badge tb-yellow">Defense Evasion</span></td>
+          <td>File Deletion</td>
+          <td>setup.js deletes itself; package.json replaced with clean stub</td>
+        </tr>
+        <tr>
+          <td class="mitre-id">T1140</td>
+          <td><span class="tactic-badge tb-yellow">Defense Evasion</span></td>
+          <td>Deobfuscate/Decode</td>
+          <td>XOR cipher + reversed base64 with padding substitution</td>
+        </tr>
+        <tr>
+          <td class="mitre-id">T1071.001</td>
+          <td><span class="tactic-badge tb-blue">C2</span></td>
+          <td>Application Layer Protocol — Web</td>
+          <td>60s HTTP beacon with fake IE8 User-Agent</td>
+        </tr>
+        <tr>
+          <td class="mitre-id">T1057</td>
+          <td><span class="tactic-badge tb-green">Discovery</span></td>
+          <td>Process Discovery</td>
+          <td>RAT supports kill command; implies process enumeration</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- DETECTION RULES -->
+  <div class="rules-section reveal" id="detection">
+    <div class="section-label">Detection Engineering</div>
+    <h2>Detection Rules — 10 Platforms</h2>
+    <p>All rules are TTP-based (behavioral), require minimum 2 AND-conditions, and contain no hardcoded IOCs (IPs, domains). Platform field names verified against official documentation.</p>
+
+    <!-- Sigma -->
+    <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-header">
+        <div class="rule-title">
+          <span class="platform-badge">Sigma</span>
+          npm/Node Spawning Network Tool or Scripting Engine
+        </div>
+        <div class="rule-toggle">▼</div>
+      </div>
+      <div class="rule-body">
+        <div class="code-block">
+          <div class="code-header">THREAT-Axios-npm-Supply-Chain-RAT.yml</div>
+          <div class="code-body"><span class="kw">title</span>: <span class="str">npm Postinstall Hook Spawning Network or Scripting Tool</span>
+<span class="kw">logsource</span>:
+  category: process_creation
+<span class="kw">detection</span>:
+  parent_npm:
+    ParentImage|endswith:
+      - '/node'
+      - '/npm'
+      - '\node.exe'
+  postinstall_context:
+    CommandLine|contains:
+      - 'postinstall'
+      - 'setup.js'
+      - 'node_modules'
+  child_tool:
+    Image|endswith:
+      - '/curl'
+      - '/wget'
+      - '/python3'
+      - '/bash'
+      - '/sh'
+      - '\wscript.exe'
+      - '\powershell.exe'
+      - '\pwsh.exe'
+  condition: parent_npm AND postinstall_context AND child_tool</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- YARA -->
+    <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-header">
+        <div class="rule-title">
+          <span class="platform-badge">YARA</span>
+          Postinstall Dropper Structure + XOR Key Artifact
+        </div>
+        <div class="rule-toggle">▼</div>
+      </div>
+      <div class="rule-body">
+        <div class="code-block">
+          <div class="code-header">THREAT-Axios-npm-Supply-Chain-RAT.yar</div>
+          <div class="code-body"><span class="kw">rule</span> <span class="fn">Axios_npm_RAT_Dropper_Obfuscation</span> {
+  <span class="kw">strings</span>:
+    $xor_key  = <span class="str">"OrDeR_7077"</span>  <span class="kw">nocase</span>
+    $formula  = <span class="str">"7*i*i % 10"</span>  <span class="kw">nocase</span>
+    $const    = { 4F 72 44 }  <span class="cmt">// XOR constant anchor</span>
+  <span class="kw">condition</span>:
+    $xor_key <span class="kw">and</span> ($formula <span class="kw">or</span> $const)
+}
+
+<span class="kw">rule</span> <span class="fn">Axios_npm_RAT_Postinstall_Dropper</span> {
+  <span class="kw">strings</span>:
+    $postinstall = <span class="str">"postinstall"</span>
+    $platform    = <span class="str">"os.platform()"</span>
+    $http        = <span class="str">"http.request"</span>
+    $unlink      = <span class="str">"fs.unlink"</span>
+    $rename      = <span class="str">"fs.rename"</span>
+  <span class="kw">condition</span>:
+    $postinstall <span class="kw">and</span> $platform <span class="kw">and</span>
+    $http <span class="kw">and</span> ($unlink <span class="kw">or</span> $rename)
+}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Microsoft Sentinel / KQL -->
+    <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-header">
+        <div class="rule-title">
+          <span class="platform-badge">Microsoft Sentinel</span>
+          Node Spawning Scripting Engine or Writing Executable
+        </div>
+        <div class="rule-toggle">▼</div>
+      </div>
+      <div class="rule-body">
+        <div class="code-block">
+          <div class="code-header">THREAT-Axios-npm-Supply-Chain-RAT.kql</div>
+          <div class="code-body"><span class="cmt">// Node/npm spawning scripting engine or network tool</span>
+DeviceProcessEvents
+| <span class="kw">where</span> InitiatingProcessFileName <span class="kw">in~</span> (<span class="str">"node.exe"</span>, <span class="str">"npm"</span>, <span class="str">"node"</span>)
+    <span class="kw">and</span> InitiatingProcessCommandLine <span class="kw">has_any</span> (<span class="str">"postinstall"</span>, <span class="str">"setup.js"</span>, <span class="str">"node_modules"</span>)
+    <span class="kw">and</span> FileName <span class="kw">in~</span> (<span class="str">"wscript.exe"</span>, <span class="str">"powershell.exe"</span>, <span class="str">"curl"</span>, <span class="str">"wget"</span>, <span class="str">"python3"</span>)
+| <span class="kw">project</span> Timestamp, DeviceName, AccountName,
+          InitiatingProcessFileName, InitiatingProcessCommandLine, FileName
+| <span class="kw">union</span> (
+  <span class="cmt">// Executable written to ProgramData by node/scripting process</span>
+  DeviceFileEvents
+  | <span class="kw">where</span> InitiatingProcessFileName <span class="kw">in~</span> (<span class="str">"node.exe"</span>, <span class="str">"wscript.exe"</span>, <span class="str">"powershell.exe"</span>)
+      <span class="kw">and</span> FolderPath <span class="kw">startswith</span> <span class="str">@"C:\ProgramData\"</span>
+      <span class="kw">and</span> FileName <span class="kw">endswith</span> <span class="str">".exe"</span>
+  | <span class="kw">project</span> Timestamp, DeviceName, AccountName,
+            InitiatingProcessFileName, FolderPath, FileName
+)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Palo Alto XDR -->
+    <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-header">
+        <div class="rule-title">
+          <span class="platform-badge">Palo Alto Cortex XDR</span>
+          npm Postinstall Spawning Tool + File Drop in Temp/ProgramData
+        </div>
+        <div class="rule-toggle">▼</div>
+      </div>
+      <div class="rule-body">
+        <div class="code-block">
+          <div class="code-header">THREAT-Axios-npm-Supply-Chain-RAT.xql</div>
+          <div class="code-body"><span class="cmt">// Consolidated: postinstall spawn + suspicious file drop</span>
+dataset = xdr_data
+| filter (
+    event_type = ENUM.PROCESS
+    and actor_process_image_name in ("node", "node.exe", "npm")
+    and action_process_image_name in ("curl","wget","python3","bash","wscript.exe","powershell.exe")
+    and actor_process_command_args contains "postinstall"
+         or actor_process_command_args contains "setup.js"
+  ) or (
+    event_type = ENUM.FILE
+    and actor_process_image_name in ("node","node.exe","wscript.exe","powershell.exe")
+    and (action_file_path ~= "(?i)C:\\\\ProgramData\\\\.+\\.exe$"
+      or action_file_path ~= "^/tmp/[^/]+\\.py$")
+  )
+| fields _time, agent_hostname, actor_process_image_name,
+         action_process_image_name, action_file_path, actor_process_command_args</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Splunk -->
+    <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-header">
+        <div class="rule-title">
+          <span class="platform-badge">Splunk</span>
+          Sysmon EventCode 1/11 — npm Chain + File Drop
+        </div>
+        <div class="rule-toggle">▼</div>
+      </div>
+      <div class="rule-body">
+        <div class="code-block">
+          <div class="code-header">THREAT-Axios-npm-Supply-Chain-RAT.spl</div>
+          <div class="code-body"><span class="cmt">/* Process spawn + file creation unified rule */</span>
+(sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"
+  EventCode IN (1, 11))
+OR (sourcetype=sysmon_linux EventCode=1)
+| eval is_spawn=if(EventCode=1
+    AND match(ParentImage,"(?i)(node|npm)(\.exe)?$")
+    AND (match(CommandLine,"(?i)(postinstall|setup\.js|node_modules)"))
+    AND match(Image,"(?i)(curl|wget|python3|bash|wscript\.exe|powershell\.exe)$"), 1, 0)
+| eval is_drop=if(EventCode=11
+    AND match(Image,"(?i)(node|wscript|powershell)(\.exe)?$")
+    AND (match(TargetFilename,"(?i)C:\\ProgramData\\.+\.exe$")
+      OR match(TargetFilename,"^/tmp/.+\.(py|sh)$")), 1, 0)
+| where is_spawn=1 OR is_drop=1
+| table _time, ComputerName, User, ParentImage, Image, CommandLine, TargetFilename</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QRadar -->
+    <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-header">
+        <div class="rule-title">
+          <span class="platform-badge">IBM QRadar</span>
+          AQL — npm Spawn + Executable File Drop
+        </div>
+        <div class="rule-toggle">▼</div>
+      </div>
+      <div class="rule-body">
+        <div class="code-block">
+          <div class="code-header">THREAT-Axios-npm-Supply-Chain-RAT.aql</div>
+          <div class="code-body">SELECT sourceip, "username", parent_process_name, process_name, "command",
+       CATEGORYNAME(category),
+       DATEFORMAT(devicetime,'yyyy-MM-dd HH:mm:ss') AS event_time
+FROM events
+WHERE LOGSOURCETYPENAME(devicetype) ILIKE '%sysmon%'
+  AND CATEGORYNAME(category) ILIKE '%process%'
+  AND parent_process_name ILIKE '%node%'
+  AND (
+    ("command" ILIKE '%postinstall%' OR "command" ILIKE '%setup.js%')
+    AND process_name IN ('wscript.exe','powershell.exe','curl','wget','python3','bash','sh')
+  )
+UNION
+SELECT sourceip, "username", process_name, "filename", NULL,
+       CATEGORYNAME(category),
+       DATEFORMAT(devicetime,'yyyy-MM-dd HH:mm:ss')
+FROM events
+WHERE LOGSOURCETYPENAME(devicetype) ILIKE '%sysmon%'
+  AND CATEGORYNAME(category) ILIKE '%file%'
+  AND process_name ILIKE '%node%'
+  AND ("filename" ILIKE 'C:\\ProgramData\\%.exe'
+    OR "filename" ILIKE '/tmp/%.py')
+  AND devicetime > CURRENT_TIMESTAMP - 7 DAYS
+ORDER BY event_time DESC LIMIT 500</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Carbon Black -->
+    <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-header">
+        <div class="rule-title">
+          <span class="platform-badge">VMware Carbon Black</span>
+          Lucene — npm Child Spawn + ProgramData Execution
+        </div>
+        <div class="rule-toggle">▼</div>
+      </div>
+      <div class="rule-body">
+        <div class="code-block">
+          <div class="code-header">THREAT-Axios-npm-Supply-Chain-RAT.txt</div>
+          <div class="code-body"><span class="cmt">/* Rule 1: npm/node spawning network tool or scripting engine */</span>
+(parent_name:node OR parent_name:npm OR parent_name:node.exe)
+AND childproc_name:(curl OR wget OR python3 OR bash OR wscript.exe OR powershell.exe OR pwsh.exe)
+
+<span class="cmt">/* Rule 2: Suspicious process executing from ProgramData (not msiexec) */</span>
+process_path:c\:\\programdata\\* AND process_name:*.exe
+AND NOT parent_name:msiexec.exe
+
+<span class="cmt">/* Note: CBC does not provide general file creation events.
+   Executable drop detection requires Audit &amp; Remediation (LiveResponse). */</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SentinelOne -->
+    <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-header">
+        <div class="rule-title">
+          <span class="platform-badge">SentinelOne</span>
+          DVQL — npm Spawn + File Drops + Anti-Forensic Deletion
+        </div>
+        <div class="rule-toggle">▼</div>
+      </div>
+      <div class="rule-body">
+        <div class="code-block">
+          <div class="code-header">THREAT-Axios-npm-Supply-Chain-RAT.txt</div>
+          <div class="code-body"><span class="cmt">/* Unified: spawn OR drop OR anti-forensic cleanup */</span>
+(
+  EventType = "Process Creation"
+  AND SrcProcName In Contains ("node", "npm")
+  AND SrcProcCmdLine Contains "node_modules"
+  AND TgtProcName In Contains ("curl","wget","python3","bash","wscript.exe","powershell.exe")
+)
+OR (
+  EventType = "File Creation"
+  AND SrcProcName In Contains ("node.exe","wscript.exe","powershell.exe")
+  AND (TgtFile.Path Contains "\\ProgramData\\" AND TgtFile.Extension = "exe"
+    OR TgtFile.Path Contains "/tmp/" AND TgtFile.Extension = "py")
+)
+OR (
+  EventType In ("File Deletion", "File Modification")
+  AND SrcProcName Contains "node"
+  AND TgtFile.Path Contains "node_modules"
+  AND TgtFile.Name = "package.json"
+)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kaspersky -->
+    <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-header">
+        <div class="rule-title">
+          <span class="platform-badge">Kaspersky EDR</span>
+          KEDR — npm Spawn + File Events + Anti-Forensic
+        </div>
+        <div class="rule-toggle">▼</div>
+      </div>
+      <div class="rule-body">
+        <div class="code-block">
+          <div class="code-header">THREAT-Axios-npm-Supply-Chain-RAT.txt</div>
+          <div class="code-body"><span class="cmt">/* Spawn: npm/node parent → network/scripting child */</span>
+(Process.ParentName CONTAINS "node" OR Process.ParentName CONTAINS "npm")
+AND Process.ParentCommandLine CONTAINS "node_modules"
+AND (
+  Process.Name = "curl" OR Process.Name = "wget" OR Process.Name = "python3"
+  OR Process.Name = "wscript.exe" OR Process.Name = "powershell.exe"
+  OR Process.Name = "bash" OR Process.Name = "sh"
+)
+
+<span class="cmt">/* File drop: node/script engine writing exe to ProgramData */</span>
+(Process.Name CONTAINS "node.exe" OR Process.Name CONTAINS "powershell.exe")
+AND File.Path STARTS_WITH "C:\\ProgramData\\"
+AND File.Name ENDS_WITH ".exe"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CrowdStrike -->
+    <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-header">
+        <div class="rule-title">
+          <span class="platform-badge">CrowdStrike Falcon</span>
+          CQL + Custom IOA — npm Chain + File Drop
+        </div>
+        <div class="rule-toggle">▼</div>
+      </div>
+      <div class="rule-body">
+        <div class="code-block">
+          <div class="code-header">THREAT-Axios-npm-Supply-Chain-RAT.txt — Section A: CQL</div>
+          <div class="code-body"><span class="cmt">/* Section A: NG-SIEM hunting — spawn + file drop in one query */</span>
+#event_simpleName = /ProcessRollup2|FileCreatedEvent/
+| case {
+    #event_simpleName = "ProcessRollup2"
+      | ParentBaseFileName IN ("node", "npm", "npm-cli.js", "node.exe")
+      | CommandLine = /postinstall|setup\.js|node_modules/i
+      | ImageFileName IN ("curl","wget","python3","bash","wscript.exe","powershell.exe");
+    #event_simpleName = "FileCreatedEvent"
+      | join(ContextProcessId_decimal=TargetProcessId_decimal) [
+          #event_simpleName = "ProcessRollup2"
+          | ImageFileName = /node\.exe|wscript\.exe|powershell\.exe/i
+        ]
+      | TargetFileName = /C:\\ProgramData\\.+\.exe$|\/tmp\/.+\.py$/i;
+  }
+| table(_time, ComputerName, UserName, ImageFileName, CommandLine, TargetFileName)</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RECOMMENDATIONS -->
+  <div class="reveal" id="recommendations">
+    <div class="section-label">Response &amp; Hardening</div>
+    <h2>Detection &amp; Remediation Recommendations</h2>
+    <div class="rec-grid">
+      <div class="rec-card">
+        <div class="rec-icon">🔍</div>
+        <div class="rec-title">Audit Installed Packages</div>
+        <div class="rec-desc">
+          Run <code style="font-family:monospace">npm audit</code> and check for axios@1.14.1 or axios@0.30.4
+          in all CI/CD environments, developer workstations, and Docker base images.
+          Downgrade to 1.14.0 / 0.30.3 or upgrade past the fixed version.
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon">🚫</div>
+        <div class="rec-title">Block Postinstall Network Access</div>
+        <div class="rec-desc">
+          Apply network policies that prevent npm scripts from initiating outbound connections.
+          Consider <code style="font-family:monospace">--ignore-scripts</code> flag in CI/CD pipelines
+          or configure npm to disallow lifecycle scripts by default.
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon">📋</div>
+        <div class="rec-title">Lock Dependency Trees</div>
+        <div class="rec-desc">
+          Commit and pin <code style="font-family:monospace">package-lock.json</code>.
+          Use integrity hash verification. Consider private npm mirrors or
+          proxies (e.g. Verdaccio, JFrog Artifactory) to control which package
+          versions reach developers.
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon">🔎</div>
+        <div class="rec-title">Hunt for Active Compromise</div>
+        <div class="rec-desc">
+          Search for processes running from <code style="font-family:monospace">C:\ProgramData\</code>
+          with non-system parents, Python scripts in <code style="font-family:monospace">/tmp/</code>
+          with nohup parents, and unexpected binaries in
+          <code style="font-family:monospace">/Library/Caches/com.apple.*</code>.
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon">🛡️</div>
+        <div class="rec-title">Enable Supply Chain Monitoring</div>
+        <div class="rec-desc">
+          Adopt tools like Socket.dev, Snyk, or GitHub's dependency review action
+          to alert on new transitive dependencies added to popular packages
+          before they land in production.
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon">📡</div>
+        <div class="rec-title">Monitor for Fake User-Agents</div>
+        <div class="rec-desc">
+          Proxy/NGFW logs: alert on outbound HTTP with IE8 / MSIE 8.0 User-Agent strings
+          from developer or build machines — no legitimate modern application should
+          emit this UA string.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <strong>TI-DE Detection Engineering</strong> &nbsp;·&nbsp;
+  Report generated: 31 March 2026 &nbsp;·&nbsp;
+  Threat: Axios npm Supply Chain RAT &nbsp;·&nbsp;
+  Classification: TLP:WHITE
+</footer>
+
+<script>
+  // ── Navbar scroll effect ──
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // ── IntersectionObserver fade-in ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ── Chain steps animation (triggered once chain section visible) ──
+  const chainObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        document.querySelectorAll('.chain-step').forEach(step => {
+          step.classList.add('visible');
+        });
+        chainObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  const chainEl = document.getElementById('chainSteps');
+  if (chainEl) chainObs.observe(chainEl);
+
+  // ── Animated counters ──
+  function animateCounter(el) {
+    const target = parseInt(el.getAttribute('data-t'), 10);
+    let current = 0;
+    const step = Math.ceil(target / 40);
+    const timer = setInterval(() => {
+      current = Math.min(current + step, target);
+      el.textContent = current;
+      if (current >= target) clearInterval(timer);
+    }, 35);
+  }
+
+  const counterObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('[data-t]').forEach(animateCounter);
+        counterObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.stat-grid').forEach(g => counterObs.observe(g));
+
+  // ── Rule accordion ──
+  function toggleRule(card) {
+    card.classList.toggle('open');
+  }
+</script>
+</body>
+</html>

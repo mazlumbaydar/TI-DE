@@ -1,0 +1,49 @@
+# ============================================================
+# Threat  : Axios npm Supply Chain — Cross-Platform RAT Dropper
+# Platform: Kaspersky EDR Expert / KATA
+# TTPs    : T1195.001 / T1059.004 / T1059.001 / T1036.005 / T1070.004
+# Severity: Critical
+# Syntax  : ALL OPERATORS UPPERCASE. Dot notation for fields.
+#           CONTAINS = case-insensitive. MATCHES = PCRE, case-sensitive.
+#           Parentheses required for complex boolean expressions.
+# ============================================================
+
+# ── RULE 1: NPM/Node Spawning Network Tool During Postinstall (Linux) ──
+# Parent process = npm/node; child process = curl/wget/python3/shell.
+# BOTH conditions required with AND — prevents single-condition FPs.
+(Process.ParentName CONTAINS "node" OR Process.ParentName CONTAINS "npm")
+AND Process.ParentCommandLine CONTAINS "node_modules"
+AND (
+    Process.Name = "curl"
+    OR Process.Name = "wget"
+    OR Process.Name = "python3"
+    OR Process.Name = "python"
+    OR Process.Name = "bash"
+    OR Process.Name = "sh"
+    OR Process.Name = "nc"
+)
+
+# ── RULE 2: Node.exe Spawning Windows Scripting Engine ──
+# Windows vector: node.exe → wscript.exe or powershell.exe
+# during a postinstall execution.
+Process.ParentName CONTAINS "node.exe"
+AND (Process.ParentCommandLine CONTAINS "postinstall" OR Process.ParentCommandLine CONTAINS "setup.js")
+AND (
+    Process.Name = "wscript.exe"
+    OR Process.Name = "cscript.exe"
+    OR Process.Name = "powershell.exe"
+    OR Process.Name = "pwsh.exe"
+)
+
+# ── RULE 3: Node Process Creating Executable in ProgramData ──
+# Windows RAT masquerade: node/scripting engine writing .exe to ProgramData.
+# File.Path = full path of the created file.
+(Process.Name CONTAINS "node.exe" OR Process.Name CONTAINS "wscript.exe" OR Process.Name CONTAINS "powershell.exe")
+AND File.Path STARTS_WITH "C:\\ProgramData\\"
+AND File.Name ENDS_WITH ".exe"
+
+# ── RULE 4: Node Process Deleting Its package.json (Anti-Forensic) ──
+# Self-destruct behaviour: node deletes package.json inside node_modules.
+Process.Name CONTAINS "node"
+AND File.Path CONTAINS "node_modules"
+AND File.Name = "package.json"

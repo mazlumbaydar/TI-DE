@@ -1,0 +1,42 @@
+| ============================================================
+| Threat  : Axios npm Supply Chain — Cross-Platform RAT Dropper
+| Platform: Splunk SPL (Sysmon for Linux + Windows Sysmon)
+| TTPs    : T1195.001 / T1059.001 / T1059.004 / T1059.006 / T1036.005 / T1070.004
+| Severity: Critical
+| Sources : Sysmon EventCode 1 (process), EventCode 11 (file create)
+| ============================================================
+
+| ── RULE 1: NPM/Node Spawning Network Tool (Linux, Sysmon EventCode 1) ──
+| Parent = npm/node running postinstall; child = curl/wget/python3/shell.
+| Two conditions AND-ed: parent identity + child identity.
+
+index=* (sourcetype=sysmon_linux OR sourcetype="sysmon:linux") EventCode=1
+  ParentImage IN ("*/npm", "*/npm-cli.js", "*/node")
+  ParentCommandLine IN ("*postinstall*", "*setup.js*", "*node_modules*")
+  Image IN ("*/curl", "*/wget", "*/python3", "*/python", "*/bash", "*/sh", "*/nc", "*/ncat")
+| table _time, host, User, ParentImage, ParentCommandLine, Image, CommandLine
+
+| ── RULE 2: Node.exe Spawning Windows Scripting Engine (Windows Sysmon EventCode 1) ──
+| node.exe → wscript.exe or powershell.exe during npm install.
+
+index=* sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+  ParentImage="*\\node.exe"
+  (ParentCommandLine="*postinstall*" OR ParentCommandLine="*setup.js*")
+  Image IN ("*\\wscript.exe", "*\\cscript.exe", "*\\powershell.exe", "*\\pwsh.exe")
+| table _time, host, User, ParentCommandLine, Image, CommandLine
+
+| ── RULE 3: Node/Script Engine Writing .exe to ProgramData (Sysmon EventCode 11) ──
+| Detects wt.exe masquerade: executable dropped in C:\ProgramData\ by node/wscript.
+
+index=* sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=11
+  Image IN ("*\\node.exe", "*\\wscript.exe", "*\\powershell.exe", "*\\pwsh.exe")
+  TargetFilename="C:\\ProgramData\\*.exe"
+| table _time, host, User, Image, CommandLine, TargetFilename
+
+| ── RULE 4: Node Deleting package.json in node_modules (Sysmon EventCode 23 = FileDelete) ──
+| Anti-forensic self-destruct: node deletes setup.js and package.json (T1070.004).
+
+index=* sourcetype="sysmon:linux" EventCode=23
+  Image="*/node"
+  TargetFilename IN ("*/node_modules/*/package.json", "*/node_modules/*/setup.js")
+| table _time, host, User, Image, TargetFilename

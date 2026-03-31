@@ -1,0 +1,104 @@
+# ============================================================
+# Threat  : Axios npm Supply Chain — Cross-Platform RAT Dropper
+# Platform: CrowdStrike Falcon NG-SIEM / LogScale (CQL)
+# TTPs    : T1195.001 / T1059.001 / T1059.004 / T1059.006 / T1036.005
+# Severity: Critical
+# Section A: CQL hunting queries (NG-SIEM / LogScale)
+# Section B: Custom IOA JSON rules (sensor-level prevention)
+# ============================================================
+
+# ════════════════════════════════
+# SECTION A — CQL HUNTING QUERIES
+# ════════════════════════════════
+
+# ── CQL-1: NPM/Node Spawning Network Tool During Postinstall ──
+# ProcessRollup2: parent = npm/node, child = curl/wget/python3.
+# ParentBaseFileName = spawning process; ImageFileName = spawned.
+#event_simpleName=ProcessRollup2
+| ParentBaseFileName IN ("node", "npm", "npm-cli.js")
+| CommandLine = /postinstall|setup\.js|node_modules/i
+| ImageFileName IN ("curl", "wget", "python3", "python", "bash", "sh", "nc", "ncat")
+| table(_time, ComputerName, UserName, ParentBaseFileName, CommandLine, ImageFileName)
+| sort(_time, order=desc)
+
+# ── CQL-2: Node Spawning Windows Scripting Engine ──
+#event_simpleName=ProcessRollup2
+| ParentBaseFileName =~ "node.exe"
+| CommandLine = /postinstall|setup\.js/i
+| ImageFileName IN ("wscript.exe", "cscript.exe", "powershell.exe", "pwsh.exe")
+| table(_time, ComputerName, UserName, ParentBaseFileName, CommandLine, ImageFileName)
+| sort(_time, order=desc)
+
+# ── CQL-3: Executable File Written to ProgramData by Node/Script Engine ──
+# FileCreatedEvent: actor process writes .exe to C:\ProgramData\
+#event_simpleName=FileCreatedEvent
+| ContextProcessId_decimal = *
+| TargetFileName = /C:\\ProgramData\\.*\.exe$/i
+| join(ContextProcessId_decimal=TargetProcessId_decimal) [
+    #event_simpleName=ProcessRollup2
+    | ImageFileName = /node\.exe|wscript\.exe|powershell\.exe/i
+]
+| table(_time, ComputerName, TargetFileName, ImageFileName, CommandLine)
+
+# ── CQL-4: Python File Written to /tmp by Node (Linux) ──
+#event_simpleName=FileCreatedEvent
+| TargetFileName = /^\/tmp\/.*\.py$/i
+| join(ContextProcessId_decimal=TargetProcessId_decimal) [
+    #event_simpleName=ProcessRollup2
+    | ImageFileName = /\/node$/i
+]
+| table(_time, ComputerName, TargetFileName, ImageFileName, CommandLine)
+
+
+# ═══════════════════════════════════════════════
+# SECTION B — CUSTOM IOA RULES (SENSOR PREVENTION)
+# JSON format — load via Falcon UI or API
+# ═══════════════════════════════════════════════
+
+# IOA-1: NPM Postinstall Spawning Network/Shell Utility
+# Prevents the postinstall hook execution before OS sees it.
+# {
+#   "ruletype_id": 1,
+#   "name": "NPM Postinstall Hook Spawning Network Tool",
+#   "description": "Prevents npm/node spawning curl/wget/python3/bash during package install postinstall hook — supply chain attack vector (T1195.001)",
+#   "pattern_severity": "critical",
+#   "disposition_id": 30,
+#   "field_values": [
+#     {
+#       "name": "GrandparentImageFilename",
+#       "value": ".*[\\\\/](npm|node)$"
+#     },
+#     {
+#       "name": "ParentCommandLine",
+#       "value": ".*(postinstall|setup\\.js|node_modules).*"
+#     },
+#     {
+#       "name": "ImageFilename",
+#       "value": ".*(curl|wget|python3|python|bash|sh|nc|ncat)$"
+#     }
+#   ]
+# }
+
+# IOA-2: Node.exe Spawning Windows Scripting Engine
+# Prevents node.exe → wscript.exe/powershell.exe chain at sensor level.
+# {
+#   "ruletype_id": 1,
+#   "name": "Node.exe Spawning Windows Scripting Engine",
+#   "description": "Prevents node.exe spawning wscript.exe or powershell.exe — Windows vector of npm supply chain RAT dropper (T1059.001)",
+#   "pattern_severity": "critical",
+#   "disposition_id": 30,
+#   "field_values": [
+#     {
+#       "name": "ParentImageFilename",
+#       "value": ".*\\\\node\\.exe$"
+#     },
+#     {
+#       "name": "ParentCommandLine",
+#       "value": ".*(postinstall|setup\\.js).*"
+#     },
+#     {
+#       "name": "ImageFilename",
+#       "value": ".*(wscript|cscript|powershell|pwsh)\\.exe$"
+#     }
+#   ]
+# }

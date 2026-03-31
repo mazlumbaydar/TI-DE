@@ -1,0 +1,40 @@
+# ============================================================
+# Threat  : Axios npm Supply Chain — Cross-Platform RAT Dropper
+# Platform: SentinelOne Deep Visibility (v2 Enhanced)
+# TTPs    : T1195.001 / T1059.001 / T1059.004 / T1059.006
+#           T1036.005 / T1070.004
+# Severity: Critical
+# Syntax  : DVQL — dot notation, EventType string filters
+#           Contains = case-insensitive, StartsWith = case-sensitive
+# ============================================================
+
+# ── RULE 1: NPM/Node Spawning Network Tool During Postinstall (Linux/macOS) ──
+# SrcProc = parent (npm/node), TgtProc = spawned child (curl/wget/python3).
+# Requires BOTH parent identity AND child tool identity.
+EventType = "Process Creation"
+AND SrcProcName In Contains ("node", "npm", "npm-cli.js")
+AND SrcProcCmdLine Contains "node_modules"
+AND TgtProcName In Contains ("curl", "wget", "python3", "python", "bash", "sh", "nc", "ncat")
+
+# ── RULE 2: Node.exe Spawning Windows Scripting Engine ──
+# Windows vector: node.exe → wscript/powershell chain.
+# SrcProcName Contains "node" (case-insensitive) matches node.exe.
+EventType = "Process Creation"
+AND SrcProcName Contains "node"
+AND SrcProcCmdLine Contains "postinstall"
+AND TgtProcName In Contains ("wscript.exe", "cscript.exe", "powershell.exe", "pwsh.exe")
+
+# ── RULE 3: Non-System Process Creating Executable in ProgramData ──
+# node.exe or scripting engine writing .exe to C:\ProgramData\.
+# TgtFile.Path = file being created; SrcProcName = writing process.
+EventType = "File Creation"
+AND SrcProcName In Contains ("node.exe", "wscript.exe", "powershell.exe")
+AND TgtFile.Path Contains "\\ProgramData\\"
+AND TgtFile.Extension = "exe"
+
+# ── RULE 4: Node Process Deleting or Modifying package.json in node_modules ──
+# Anti-forensic self-destruct: node removes its own postinstall package.json.
+EventType In ("File Deletion", "File Modification")
+AND SrcProcName Contains "node"
+AND TgtFile.Path Contains "node_modules"
+AND TgtFile.Name = "package.json"

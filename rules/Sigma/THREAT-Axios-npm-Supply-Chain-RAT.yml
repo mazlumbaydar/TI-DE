@@ -1,0 +1,170 @@
+# ============================================================
+# Threat  : Axios npm Supply Chain — Cross-Platform RAT Dropper
+# Platform: Sigma (Generic SIEM)
+# TTPs    : T1195.001 / T1059.001 / T1059.004 / T1059.006
+#           T1036.005 / T1070.004 / T1140
+# Severity: Critical
+# Response: Isolate host, audit node_modules, revoke npm tokens
+# ============================================================
+
+---
+# ── RULE 1: Package Manager Spawning Network/Shell Tool ──
+# Detects npm/node executing a child process that performs
+# network activity or shell execution during package install.
+# Legitimate npm postinstall hooks do NOT spawn curl/wget/python.
+title: Package Manager Spawning Network Tool via Postinstall Hook
+id: a1b2c3d4-0001-4e5f-8901-axios001sigma
+status: experimental
+description: >
+  Detects npm or node spawning a network or shell utility as a child process,
+  characteristic of a malicious npm postinstall hook (T1195.001 supply chain).
+  Covers the Axios npm RAT dropper pattern and similar supply chain attacks.
+author: TI-DE Detection Engineering
+date: 2026-03-31
+references:
+  - https://www.stepsecurity.io/blog/axios-compromised-on-npm-malicious-versions-drop-remote-access-trojan
+tags:
+  - attack.t1195.001
+  - attack.t1059.004
+  - attack.t1059.006
+logsource:
+  category: process_creation
+  product: linux
+detection:
+  selection_parent:
+    ParentImage|endswith:
+      - '/npm'
+      - '/npm-cli.js'
+      - '/node'
+    ParentCommandLine|contains:
+      - 'postinstall'
+      - 'setup.js'
+      - 'node_modules'
+  selection_child:
+    Image|endswith:
+      - '/curl'
+      - '/wget'
+      - '/python3'
+      - '/python'
+      - '/bash'
+      - '/sh'
+      - '/nc'
+      - '/ncat'
+  condition: selection_parent and selection_child
+falsepositives:
+  - Legitimate packages with postinstall hooks that invoke system tools (rare but possible)
+  - Build scripts that call npm install and then shell tools in the same session
+level: high
+
+---
+# ── RULE 2: Package Manager Spawning VBScript/PowerShell (Windows) ──
+# Windows-specific: npm/node spawning wscript, cscript or powershell
+# is never expected behaviour from a legitimate package install.
+title: NPM Spawning Windows Scripting Engine During Install
+id: a1b2c3d4-0002-4e5f-8901-axios002sigma
+status: experimental
+description: >
+  Detects npm or node.exe spawning Windows scripting engines (wscript, cscript,
+  powershell) — the exact execution chain used by the Axios RAT dropper on Windows
+  (VBScript → PowerShell chain, T1059.001).
+author: TI-DE Detection Engineering
+date: 2026-03-31
+tags:
+  - attack.t1059.001
+  - attack.t1195.001
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_parent:
+    ParentImage|endswith:
+      - '\node.exe'
+      - '\npm.cmd'
+    ParentCommandLine|contains:
+      - 'postinstall'
+      - 'setup.js'
+  selection_child:
+    Image|endswith:
+      - '\wscript.exe'
+      - '\cscript.exe'
+      - '\powershell.exe'
+      - '\pwsh.exe'
+  condition: selection_parent and selection_child
+falsepositives:
+  - Highly unlikely — node.exe has no legitimate reason to spawn wscript
+level: critical
+
+---
+# ── RULE 3: Executable Dropped in Masquerade Path by Node Process ──
+# Detects node/npm writing an executable to a system-like path,
+# masquerading as a legitimate OS component (T1036.005).
+# macOS: /Library/Caches/com.apple.*  Windows: %PROGRAMDATA%\*.exe
+title: Node Process Creating Masquerade Executable in System-Like Path
+id: a1b2c3d4-0003-4e5f-8901-axios003sigma
+status: experimental
+description: >
+  Detects node or npm creating an executable file in a path that mimics
+  legitimate OS components. Covers the Windows vector (%PROGRAMDATA%\wt.exe)
+  and the macOS vector (/Library/Caches/com.apple.*).
+author: TI-DE Detection Engineering
+date: 2026-03-31
+tags:
+  - attack.t1036.005
+  - attack.t1195.001
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection_process:
+    Image|endswith:
+      - '\node.exe'
+      - '\wscript.exe'
+      - '\powershell.exe'
+  selection_file:
+    TargetFilename|startswith:
+      - 'C:\ProgramData\'
+    TargetFilename|endswith:
+      - '.exe'
+  filter_legit:
+    Image|startswith:
+      - 'C:\Windows\'
+      - 'C:\Program Files\'
+  condition: selection_process and selection_file and not filter_legit
+falsepositives:
+  - Legitimate software using node.js to install native modules to ProgramData
+level: high
+
+---
+# ── RULE 4: Node Process Deleting Its Own package.json (Evidence Destruction) ──
+# Detects the self-destruct anti-forensic behaviour: node process deletes
+# setup.js and replaces package.json with a clean stub (T1070.004).
+title: Node Process Deleting package.json in node_modules (Anti-Forensic)
+id: a1b2c3d4-0004-4e5f-8901-axios004sigma
+status: experimental
+description: >
+  Detects a node process deleting or overwriting package.json inside a
+  node_modules subdirectory — the exact evidence-destruction behaviour of the
+  Axios RAT dropper (T1070.004). Legitimate npm operations do not delete
+  package.json during install.
+author: TI-DE Detection Engineering
+date: 2026-03-31
+tags:
+  - attack.t1070.004
+  - attack.t1195.001
+logsource:
+  category: file_event
+  product: linux
+detection:
+  selection_process:
+    Image|endswith:
+      - '/node'
+  selection_file:
+    TargetFilename|contains:
+      - '/node_modules/'
+    TargetFilename|endswith:
+      - '/package.json'
+    FileOperation: 'delete'
+  condition: selection_process and selection_file
+falsepositives:
+  - npm pack/unpack operations (rare during install phase)
+level: medium
