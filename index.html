@@ -3,241 +3,496 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>TI-DE — Threat Intel & Detection Engineering</title>
+<title>TI-DE — Mazlum BAYDAR | Threat Intel & Detection Engineering</title>
 <style>
-  :root {
-    --bg: #0a0c10;
-    --surface: #111418;
-    --border: #232834;
-    --accent: #e85d04;
-    --accent2: #f48c06;
-    --text: #e2e8f0;
-    --muted: #8892a4;
-    --red: #ef233c;
-    --green: #06d6a0;
-    --blue: #4cc9f0;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
+:root {
+  --bg: #0a0c10;
+  --surface: #111418;
+  --surface2: #181c23;
+  --border: #232834;
+  --accent: #e85d04;
+  --accent2: #f48c06;
+  --accent3: #ffba08;
+  --red: #ef233c;
+  --green: #06d6a0;
+  --blue: #4cc9f0;
+  --purple: #a855f7;
+  --text: #e2e8f0;
+  --muted: #8892a4;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; overflow-x: hidden; }
 
-  /* NAVBAR */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    padding: 14px 40px;
-    display: flex; align-items: center; justify-content: space-between;
-    background: rgba(10,12,16,0.92);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
-  }
-  .nav-brand { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; }
-  .nav-sub { font-size: 0.78rem; color: var(--muted); }
+/* ── PROGRESS ── */
+#prog { position: fixed; top: 0; left: 0; height: 2px; width: 0%; background: linear-gradient(90deg,var(--accent),var(--accent2)); z-index: 9999; transition: width 0.08s; }
 
-  /* HERO */
-  .hero {
-    padding: 140px 24px 80px;
-    text-align: center;
-    background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(232,93,4,0.10) 0%, transparent 70%);
-    position: relative;
-  }
-  .hero::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.015) 40px),
-                repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.015) 40px);
-    pointer-events: none;
-  }
-  .hero h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 14px;
-    background: linear-gradient(135deg, #fff 40%, var(--accent2) 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-  .hero p { font-size: 1rem; color: var(--muted); max-width: 520px; margin: 0 auto 32px; line-height: 1.7; }
-  .stat-row { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; }
-  .stat-item { text-align: center; }
-  .stat-n { font-size: 1.8rem; font-weight: 800; color: var(--accent2); }
-  .stat-l { font-size: 0.72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+/* ── NAVBAR ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  padding: 0 40px; height: 58px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: transparent; backdrop-filter: blur(0);
+  border-bottom: 1px solid transparent;
+  transition: all 0.4s;
+}
+nav.scrolled { background: rgba(10,12,16,0.94); backdrop-filter: blur(16px); border-bottom-color: var(--border); }
+.nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand-logo {
+  width: 30px; height: 30px; border-radius: 7px;
+  background: linear-gradient(135deg,var(--accent),var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 900; color: #fff;
+}
+.brand-text { font-size: 0.88rem; font-weight: 800; letter-spacing: 0.08em; color: var(--text); text-transform: uppercase; }
+.nav-links { display: flex; gap: 4px; list-style: none; }
+.nav-links a {
+  font-size: 0.77rem; font-weight: 600; color: var(--muted);
+  text-decoration: none; padding: 5px 13px; border-radius: 6px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  transition: color 0.2s, background 0.2s;
+}
+.nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
 
-  /* MAIN */
-  main { max-width: 900px; margin: 0 auto; padding: 60px 24px 100px; }
+/* ── HERO / PROFILE ── */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 120px 24px 80px;
+  position: relative; overflow: hidden;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(232,93,4,0.15) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(124,45,190,0.08) 0%, transparent 60%);
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.012) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.012) 40px);
+  pointer-events: none;
+}
+.avatar {
+  width: 90px; height: 90px; border-radius: 50%;
+  background: linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.2rem; font-weight: 900; color: #fff;
+  margin: 0 auto 24px;
+  box-shadow: 0 0 0 4px rgba(232,93,4,0.2), 0 0 40px rgba(232,93,4,0.15);
+  animation: avatar-pulse 3s ease-in-out infinite;
+}
+@keyframes avatar-pulse { 0%,100%{box-shadow:0 0 0 4px rgba(232,93,4,0.2),0 0 40px rgba(232,93,4,0.15)} 50%{box-shadow:0 0 0 8px rgba(232,93,4,0.1),0 0 60px rgba(232,93,4,0.25)} }
+.hero-name {
+  font-size: clamp(2rem,5vw,3rem); font-weight: 800;
+  letter-spacing: -0.02em; margin-bottom: 6px;
+  background: linear-gradient(135deg,#fff 30%,var(--accent2) 70%,var(--accent) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.hero-role { font-size: 1rem; color: var(--accent2); font-weight: 600; letter-spacing: 0.03em; margin-bottom: 6px; }
+.hero-company { font-size: 0.88rem; color: var(--muted); margin-bottom: 20px; }
+.hero-bio { font-size: 0.97rem; color: var(--muted); max-width: 580px; margin: 0 auto 28px; line-height: 1.75; }
+.hero-bio strong { color: var(--text); }
+.hero-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 28px; }
+.hero-tag {
+  padding: 4px 13px; border-radius: 999px;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em;
+  background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+  transition: all 0.2s;
+}
+.hero-tag:hover { border-color: var(--accent); color: var(--accent); }
+.social-links { display: flex; gap: 12px; justify-content: center; }
+.social-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 7px 16px; border-radius: 8px;
+  font-size: 0.78rem; font-weight: 700; text-decoration: none;
+  border: 1px solid var(--border); color: var(--muted);
+  background: var(--surface);
+  transition: all 0.2s; letter-spacing: 0.03em;
+}
+.social-btn:hover { border-color: var(--accent2); color: var(--text); background: rgba(244,140,6,0.06); }
+.social-btn svg { width: 14px; height: 14px; }
+.scroll-hint {
+  position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  color: var(--muted); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+}
+.scroll-chevron { width: 16px; height: 16px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); animation: bounce 1.8s ease-in-out infinite; }
+@keyframes bounce { 0%,100%{transform:rotate(45deg) translate(0,0)} 50%{transform:rotate(45deg) translate(3px,3px)} }
 
-  .section-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
-  h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+/* ── SECTIONS ── */
+.section { max-width: 960px; margin: 0 auto; padding: 80px 24px; }
+.section-header { margin-bottom: 40px; }
+.section-eyebrow { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.section-title { font-size: clamp(1.5rem,3vw,2rem); font-weight: 700; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 14px; }
 
-  /* DATE GROUP */
-  .date-group { margin-bottom: 48px; }
-  .date-header {
-    display: flex; align-items: center; gap: 14px;
-    margin-bottom: 16px;
-  }
-  .date-pill {
-    padding: 4px 14px;
-    background: rgba(232,93,4,0.12);
-    border: 1px solid rgba(232,93,4,0.25);
-    border-radius: 999px;
-    font-size: 0.78rem; font-weight: 700; color: var(--accent2);
-    letter-spacing: 0.06em; white-space: nowrap;
-  }
-  .date-line { flex: 1; height: 1px; background: var(--border); }
+/* ── REVEAL ── */
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.6s, transform 0.6s; }
+.reveal.visible { opacity: 1; transform: none; }
 
-  /* REPORT CARD */
-  .report-card {
-    display: flex; align-items: center; gap: 20px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 24px;
-    margin-bottom: 10px;
-    text-decoration: none;
-    color: inherit;
-    transition: border-color 0.2s, transform 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-  .report-card::before {
-    content: '';
-    position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-    background: linear-gradient(to bottom, var(--accent), var(--accent2));
-    opacity: 0; transition: opacity 0.2s;
-  }
-  .report-card:hover { border-color: rgba(232,93,4,0.4); transform: translateX(4px); }
-  .report-card:hover::before { opacity: 1; }
+/* ── STATS BAR ── */
+.stats-bar { display: grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap: 12px; margin-bottom: 64px; }
+.stat-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 16px; text-align: center; position: relative; overflow: hidden; }
+.stat-item::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--accent),var(--accent2)); }
+.stat-val { font-size: 1.75rem; font-weight: 800; color: var(--accent2); line-height: 1; margin-bottom: 4px; }
+.stat-lbl { font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
 
-  .card-icon { font-size: 1.6rem; flex-shrink: 0; }
-  .card-body { flex: 1; min-width: 0; }
-  .card-title { font-size: 0.97rem; font-weight: 600; color: var(--text); margin-bottom: 4px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .card-meta { display: flex; flex-wrap: wrap; gap: 8px; }
-  .card-badge {
-    padding: 2px 9px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.05em;
-  }
-  .cb-crit { background: rgba(239,35,60,0.15); color: var(--red); }
-  .cb-high { background: rgba(232,93,4,0.15); color: var(--accent); }
-  .cb-supply { background: rgba(76,201,240,0.12); color: var(--blue); }
-  .cb-rce { background: rgba(6,214,160,0.12); color: var(--green); }
+/* ── REPORT CARDS ── */
+.reports-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(420px,1fr)); gap: 16px; }
+@media(max-width:520px){ .reports-grid { grid-template-columns: 1fr; } }
+.report-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 22px 24px; text-decoration: none; display: flex; flex-direction: column; gap: 10px;
+  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+  position: relative; overflow: hidden;
+}
+.report-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent2)); opacity:0; transition:opacity 0.25s; }
+.report-card:hover { border-color: rgba(232,93,4,0.4); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+.report-card:hover::before { opacity:1; }
+.card-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.card-date { font-size: 0.72rem; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; }
+.card-sev {
+  padding: 2px 9px; border-radius: 4px;
+  font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+}
+.sev-critical { background: rgba(239,35,60,0.15); color: var(--red); }
+.sev-high { background: rgba(232,93,4,0.15); color: var(--accent); }
+.card-title { font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1.3; }
+.card-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+.card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.card-tag {
+  padding: 2px 9px; border-radius: 4px;
+  font-size: 0.65rem; font-weight: 600; letter-spacing: 0.04em;
+  background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--border);
+}
+.card-arrow { align-self: flex-end; font-size: 0.8rem; color: var(--accent2); margin-top: 4px; font-weight: 700; }
 
-  .card-arrow { color: var(--muted); font-size: 1rem; flex-shrink: 0; transition: color 0.2s; }
-  .report-card:hover .card-arrow { color: var(--accent2); }
+/* ── ABOUT SECTION ── */
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media(max-width:640px){ .about-grid { grid-template-columns:1fr; } }
+.about-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+.about-card-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 14px; }
+.about-row { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.84rem; }
+.about-row:last-child { border-bottom: none; }
+.about-key { color: var(--muted); min-width: 80px; font-size: 0.73rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; margin-top: 1px; flex-shrink: 0; }
+.about-val { color: var(--text); }
+.tools-list { display: flex; flex-wrap: wrap; gap: 7px; }
+.tool-tag { padding: 4px 11px; border-radius: 6px; font-size: 0.73rem; font-weight: 600; background: var(--surface2); border: 1px solid var(--border); color: var(--muted); }
+.about-bio-text { font-size: 0.86rem; color: var(--muted); line-height: 1.75; }
+.about-bio-text strong { color: var(--text); }
 
-  /* FADE IN */
-  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s, transform 0.5s; }
-  .reveal.visible { opacity: 1; transform: none; }
+/* ── METHODOLOGY ── */
+.method-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 14px; }
+.method-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+.method-num { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.method-title { font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.method-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
 
-  /* FOOTER */
-  footer { text-align: center; padding: 32px; font-size: 0.78rem; color: var(--muted); border-top: 1px solid var(--border); }
-  footer a { color: var(--accent2); text-decoration: none; }
+/* ── FOOTER ── */
+footer { text-align: center; padding: 40px 24px; font-size: 0.76rem; color: var(--muted); border-top: 1px solid var(--border); }
+footer a { color: var(--accent2); text-decoration: none; }
+.footer-links { display: flex; gap: 20px; justify-content: center; margin-bottom: 12px; }
+.footer-links a { color: var(--muted); text-decoration: none; font-size: 0.77rem; transition: color 0.2s; }
+.footer-links a:hover { color: var(--text); }
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="nav-brand">TI-DE</div>
-  <div class="nav-sub">Threat Intelligence &amp; Detection Engineering</div>
+<div id="prog"></div>
+
+<nav id="nav">
+  <a class="nav-brand" href="#">
+    <div class="brand-logo">M</div>
+    <span class="brand-text">TI-DE</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#reports">Reports</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#methodology">Methodology</a></li>
+  </ul>
 </nav>
 
-<section class="hero">
-  <h1>Threat Intel &amp; Detection Engineering</h1>
-  <p>Daily critical threat research with TTP-based detection rules across 10 security platforms. No IOC-only rules — behavior-first detection.</p>
-  <div class="stat-row">
-    <div class="stat-item"><div class="stat-n">10</div><div class="stat-l">Platforms</div></div>
-    <div class="stat-item"><div class="stat-n">4</div><div class="stat-l">Reports</div></div>
-    <div class="stat-item"><div class="stat-n">100%</div><div class="stat-l">TTP-Based</div></div>
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="avatar">M</div>
+  <h1 class="hero-name">Mazlum BAYDAR</h1>
+  <div class="hero-role">Senior Security Engineer</div>
+  <div class="hero-company">ADEO Cyber Security Services &nbsp;·&nbsp; Ankara, Turkey</div>
+  <p class="hero-bio">
+    18+ years in cybersecurity. Focused on <strong>Managed Detection &amp; Response</strong>,
+    <strong>Threat Detection Engineering</strong>, and <strong>Threat Hunting</strong>.
+    This site publishes daily TTP-based detection rules for emerging threats —
+    no IOC-only rules, no hardcoded infrastructure.
+  </p>
+  <div class="hero-tags">
+    <span class="hero-tag">MDR</span>
+    <span class="hero-tag">Detection Engineering</span>
+    <span class="hero-tag">Threat Hunting</span>
+    <span class="hero-tag">Threat Intelligence</span>
+    <span class="hero-tag">Supply Chain Security</span>
+    <span class="hero-tag">MITRE ATT&amp;CK</span>
+  </div>
+  <div class="social-links">
+    <a class="social-btn" href="https://linkedin.com/in/mazlumbaydar/" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      LinkedIn
+    </a>
+    <a class="social-btn" href="https://github.com/mazlumbaydar" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      GitHub
+    </a>
+    <a class="social-btn" href="https://twitter.com/baydarmazlum" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      @baydarmazlum
+    </a>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-chevron"></div>
+    <span>Scroll</span>
   </div>
 </section>
 
-<main>
-  <div class="section-label">Daily Reports</div>
-  <h2>All Threat Reports</h2>
+<!-- STATS -->
+<div class="section reveal">
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-val" data-t="4">0</div><div class="stat-lbl">Reports Published</div></div>
+    <div class="stat-item"><div class="stat-val" data-t="10">0</div><div class="stat-lbl">Detection Platforms</div></div>
+    <div class="stat-item"><div class="stat-val" data-t="40">0</div><div class="stat-lbl">Detection Rules</div></div>
+    <div class="stat-item"><div class="stat-val" data-t="18">0</div><div class="stat-lbl">Years Experience</div></div>
+  </div>
+</div>
 
-  <!-- 31-03-2026 -->
-  <div class="date-group reveal">
-    <div class="date-header">
-      <div class="date-pill">31 March 2026</div>
-      <div class="date-line"></div>
-    </div>
-    <a class="report-card" href="daily-reports/31-03-2026/THREAT-Axios-npm-Supply-Chain-RAT/THREAT-Axios-npm-Supply-Chain-RAT.html">
-      <div class="card-icon">📦</div>
-      <div class="card-body">
-        <div class="card-title">Axios npm Supply Chain — Cross-Platform RAT Dropper</div>
-        <div class="card-meta">
-          <span class="card-badge cb-crit">Critical</span>
-          <span class="card-badge cb-supply">Supply Chain</span>
-          <span class="card-badge" style="background:rgba(124,45,190,0.15);color:#c9a0dc;">RAT</span>
-          <span class="card-badge" style="background:rgba(255,186,8,0.12);color:#ffba08;">T1195.001</span>
-        </div>
-      </div>
-      <div class="card-arrow">→</div>
-    </a>
+<!-- REPORTS -->
+<div class="section" id="reports">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">Latest Threat Intelligence</div>
+    <h2 class="section-title">Daily Detection Reports</h2>
   </div>
 
-  <!-- 27-03-2026 -->
-  <div class="date-group reveal">
-    <div class="date-header">
-      <div class="date-pill">27 March 2026</div>
-      <div class="date-line"></div>
-    </div>
-    <a class="report-card" href="daily-reports/27-03-2026/CVE-2026-20131_Cisco-FMC-Interlock-RCE/CVE-2026-20131_Cisco-FMC-Interlock-RCE.html">
-      <div class="card-icon">🔥</div>
-      <div class="card-body">
-        <div class="card-title">CVE-2026-20131 — Cisco FMC Interlock RCE</div>
-        <div class="card-meta">
-          <span class="card-badge cb-crit">Critical</span>
-          <span class="card-badge cb-rce">RCE</span>
-          <span class="card-badge" style="background:rgba(255,186,8,0.12);color:#ffba08;">T1190</span>
-        </div>
+  <div class="reports-grid">
+
+    <a class="report-card reveal" href="daily-reports/31-03-2026/THREAT-Axios-npm-Supply-Chain-RAT.html">
+      <div class="card-meta">
+        <span class="card-date">31 March 2026</span>
+        <span class="card-sev sev-critical">Critical</span>
+        <span class="card-sev" style="background:rgba(76,201,240,0.1);color:#4cc9f0">Supply Chain</span>
       </div>
-      <div class="card-arrow">→</div>
-    </a>
-    <a class="report-card" href="daily-reports/27-03-2026/CVE-2026-33017_Langflow-AI-RCE-TeamPCP/CVE-2026-33017_Langflow-AI-RCE.html">
-      <div class="card-icon">🤖</div>
-      <div class="card-body">
-        <div class="card-title">CVE-2026-33017 — Langflow AI RCE (TeamPCP)</div>
-        <div class="card-meta">
-          <span class="card-badge cb-crit">Critical</span>
-          <span class="card-badge cb-rce">RCE</span>
-          <span class="card-badge" style="background:rgba(255,186,8,0.12);color:#ffba08;">T1190</span>
-        </div>
+      <div class="card-title">Axios npm Supply Chain RAT</div>
+      <div class="card-desc">Malicious axios@1.14.1 and @0.30.4 deliver a cross-platform RAT via obfuscated postinstall hooks. XOR-decoded payload drops OS-specific binaries across Windows, Linux, and macOS. C2: sfrclak.com:8000.</div>
+      <div class="card-tags">
+        <span class="card-tag">T1195.001</span>
+        <span class="card-tag">T1140</span>
+        <span class="card-tag">npm</span>
+        <span class="card-tag">RAT</span>
+        <span class="card-tag">10 Platforms</span>
       </div>
-      <div class="card-arrow">→</div>
+      <div class="card-arrow">Read report →</div>
     </a>
+
+    <a class="report-card reveal" href="daily-reports/27-03-2026/CVE-2026-20131_Cisco-FMC-Interlock-RCE.html">
+      <div class="card-meta">
+        <span class="card-date">27 March 2026</span>
+        <span class="card-sev sev-critical">CVSS 10.0</span>
+        <span class="card-sev" style="background:rgba(239,35,60,0.1);color:var(--red)">CISA KEV</span>
+      </div>
+      <div class="card-title">CVE-2026-20131 — Cisco FMC Interlock Ransomware RCE</div>
+      <div class="card-desc">Java deserialization zero-day exploited by Interlock ransomware 36 days before disclosure. Unauthenticated RCE as root on Cisco Secure FMC — full firewall policy control enables unchallenged lateral movement.</div>
+      <div class="card-tags">
+        <span class="card-tag">T1190</span>
+        <span class="card-tag">T1486</span>
+        <span class="card-tag">Cisco FMC</span>
+        <span class="card-tag">Ransomware</span>
+        <span class="card-tag">Zero-Day</span>
+      </div>
+      <div class="card-arrow">Read report →</div>
+    </a>
+
+    <a class="report-card reveal" href="daily-reports/27-03-2026/CVE-2026-33017_Langflow-AI-RCE.html">
+      <div class="card-meta">
+        <span class="card-date">27 March 2026</span>
+        <span class="card-sev sev-critical">CVSS 9.8</span>
+        <span class="card-sev" style="background:rgba(239,35,60,0.1);color:var(--red)">CISA KEV</span>
+      </div>
+      <div class="card-title">CVE-2026-33017 — Langflow AI Pipeline Unauthenticated RCE</div>
+      <div class="card-desc">Python exec() code injection via unauthenticated build endpoint. Exploited within 20 hours of advisory publication. Attackers harvesting OpenAI, Anthropic &amp; AWS API keys at scale using Nuclei automation.</div>
+      <div class="card-tags">
+        <span class="card-tag">T1059.006</span>
+        <span class="card-tag">T1552.001</span>
+        <span class="card-tag">Langflow</span>
+        <span class="card-tag">AI Infrastructure</span>
+      </div>
+      <div class="card-arrow">Read report →</div>
+    </a>
+
+    <a class="report-card reveal" href="daily-reports/26-03-2026/CVE-2026-33634_LiteLLM-PyPI-Supply-Chain-TeamPCP.html">
+      <div class="card-meta">
+        <span class="card-date">26 March 2026</span>
+        <span class="card-sev sev-critical">CVSS 9.4</span>
+        <span class="card-sev" style="background:rgba(76,201,240,0.1);color:#4cc9f0">Supply Chain</span>
+      </div>
+      <div class="card-title">CVE-2026-33634 — LiteLLM PyPI Supply Chain (TeamPCP)</div>
+      <div class="card-desc">TeamPCP plants a persistent Python backdoor in LiteLLM 1.82.7/1.82.8 — 95M monthly downloads. .pth hook auto-executes on every Python start. Systemd masquerade persistence. Stage 3 of broader campaign.</div>
+      <div class="card-tags">
+        <span class="card-tag">T1195.001</span>
+        <span class="card-tag">T1546.018</span>
+        <span class="card-tag">PyPI</span>
+        <span class="card-tag">TeamPCP</span>
+        <span class="card-tag">AI Infra</span>
+      </div>
+      <div class="card-arrow">Read report →</div>
+    </a>
+
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="section" id="about">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">Author</div>
+    <h2 class="section-title">About Mazlum BAYDAR</h2>
   </div>
 
-  <!-- 26-03-2026 -->
-  <div class="date-group reveal">
-    <div class="date-header">
-      <div class="date-pill">26 March 2026</div>
-      <div class="date-line"></div>
+  <div class="about-grid reveal">
+    <div class="about-card">
+      <div class="about-card-title">Profile</div>
+      <div class="about-row"><div class="about-key">Name</div><div class="about-val">Mazlum BAYDAR</div></div>
+      <div class="about-row"><div class="about-key">Role</div><div class="about-val">Senior Security Engineer</div></div>
+      <div class="about-row"><div class="about-key">Company</div><div class="about-val">ADEO Cyber Security Services</div></div>
+      <div class="about-row"><div class="about-key">Location</div><div class="about-val">Ankara, Turkey</div></div>
+      <div class="about-row"><div class="about-key">Experience</div><div class="about-val">18+ years in cybersecurity</div></div>
+      <div class="about-row"><div class="about-key">Education</div><div class="about-val">Network Management, Fırat Üniversitesi</div></div>
+      <div class="about-row">
+        <div class="about-key">LinkedIn</div>
+        <div class="about-val"><a href="https://linkedin.com/in/mazlumbaydar/" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none">linkedin.com/in/mazlumbaydar</a></div>
+      </div>
+      <div class="about-row">
+        <div class="about-key">GitHub</div>
+        <div class="about-val"><a href="https://github.com/mazlumbaydar" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none">github.com/mazlumbaydar</a></div>
+      </div>
+      <div class="about-row">
+        <div class="about-key">Twitter/X</div>
+        <div class="about-val"><a href="https://twitter.com/baydarmazlum" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none">@baydarmazlum</a></div>
+      </div>
     </div>
-    <a class="report-card" href="daily-reports/26-03-2026/CVE-2026-33634_LiteLLM-PyPI-Supply-Chain-TeamPCP/CVE-2026-33634_LiteLLM-PyPI-Supply-Chain-TeamPCP.html">
-      <div class="card-icon">🐍</div>
-      <div class="card-body">
-        <div class="card-title">CVE-2026-33634 — LiteLLM PyPI Supply Chain (TeamPCP)</div>
-        <div class="card-meta">
-          <span class="card-badge cb-crit">Critical</span>
-          <span class="card-badge cb-supply">Supply Chain</span>
-          <span class="card-badge" style="background:rgba(255,186,8,0.12);color:#ffba08;">T1195.001</span>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="about-card">
+        <div class="about-card-title">Specialties</div>
+        <div class="about-bio-text">
+          <strong>MDR</strong> (Managed Detection &amp; Response), <strong>Threat Detection Engineering</strong>,
+          <strong>Threat Hunting</strong>, and <strong>Security Product Management</strong>.
+          Focused on building durable, TTP-based detection logic that survives attacker infrastructure rotation.
+          All rules published here require minimum 2 AND-conditions and contain no hardcoded IOCs.
         </div>
       </div>
-      <div class="card-arrow">→</div>
-    </a>
+      <div class="about-card">
+        <div class="about-card-title">Platforms &amp; Tools</div>
+        <div class="tools-list">
+          <span class="tool-tag">CrowdStrike Falcon</span>
+          <span class="tool-tag">Palo Alto Cortex XDR</span>
+          <span class="tool-tag">Microsoft Defender 365</span>
+          <span class="tool-tag">Carbon Black</span>
+          <span class="tool-tag">Kaspersky EDR</span>
+          <span class="tool-tag">SentinelOne</span>
+          <span class="tool-tag">Splunk</span>
+          <span class="tool-tag">Microsoft Sentinel</span>
+          <span class="tool-tag">IBM QRadar</span>
+          <span class="tool-tag">Sigma</span>
+          <span class="tool-tag">YARA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- METHODOLOGY -->
+<div class="section" id="methodology">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">Detection Philosophy</div>
+    <h2 class="section-title">Research &amp; Engineering Methodology</h2>
   </div>
 
-</main>
+  <div class="method-grid reveal">
+    <div class="method-card">
+      <div class="method-num">Step 01</div>
+      <div class="method-title">Threat Research</div>
+      <div class="method-desc">Monitor CISA KEV, threat intel feeds, vendor advisories, and OSINT. Prioritize actively exploited vulnerabilities and supply chain attacks.</div>
+    </div>
+    <div class="method-card">
+      <div class="method-num">Step 02</div>
+      <div class="method-title">TTP Mapping</div>
+      <div class="method-desc">Map adversary behavior to MITRE ATT&amp;CK. Identify what is behavioral (durable) vs what is infrastructure (transient, rotatable).</div>
+    </div>
+    <div class="method-card">
+      <div class="method-num">Step 03</div>
+      <div class="method-title">Rule Engineering</div>
+      <div class="method-desc">Write detection rules for 10 platforms. Minimum 2 AND-conditions per rule. No hardcoded IPs or domains. Platform field names verified against official documentation.</div>
+    </div>
+    <div class="method-card">
+      <div class="method-num">Step 04</div>
+      <div class="method-title">FP Review</div>
+      <div class="method-desc">Review each rule for false positive risk. Consolidate related detections — max 2 rules per threat per platform. Prefer parent-child process correlation over single-process signals.</div>
+    </div>
+    <div class="method-card">
+      <div class="method-num">Step 05</div>
+      <div class="method-title">Publish</div>
+      <div class="method-desc">Publish HTML report with attack chain visualization, MITRE mapping, IOC table with VirusTotal links, and platform-specific detection rules. Open source, TLP:WHITE.</div>
+    </div>
+  </div>
+</div>
 
 <footer>
-  <a href="https://github.com/mazlumbaydar/TI-DE" target="_blank">github.com/mazlumbaydar/TI-DE</a>
-  &nbsp;·&nbsp; TTP-based detection rules for 10 platforms &nbsp;·&nbsp; TLP:WHITE
+  <div class="footer-links">
+    <a href="#top">Home</a>
+    <a href="#reports">Reports</a>
+    <a href="#about">About</a>
+    <a href="https://github.com/mazlumbaydar/TI-DE" target="_blank" rel="noopener">GitHub Repo</a>
+    <a href="https://linkedin.com/in/mazlumbaydar/" target="_blank" rel="noopener">LinkedIn</a>
+  </div>
+  <div>
+    <strong style="color:var(--text)">TI-DE</strong> — Threat Intelligence &amp; Detection Engineering &nbsp;·&nbsp;
+    By <a href="https://linkedin.com/in/mazlumbaydar/">Mazlum BAYDAR</a> &nbsp;·&nbsp;
+    All rules TTP-based · TLP:WHITE · Open Source
+  </div>
 </footer>
 
 <script>
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+// Progress bar
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = h.scrollHeight - h.clientHeight;
+  document.getElementById('prog').style.width = (pct ? (h.scrollTop / pct * 100) : 0) + '%';
+});
+
+// Nav scroll
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// Reveal
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.06 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// Counters
+const countObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.querySelectorAll('[data-t]').forEach(el => {
+      const target = parseInt(el.dataset.t);
+      const dur = 1200, start = performance.now();
+      const tick = now => {
+        const p = Math.min((now - start) / dur, 1);
+        el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+    countObs.unobserve(e.target);
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.stats-bar').forEach(el => countObs.observe(el));
 </script>
 </body>
 </html>
