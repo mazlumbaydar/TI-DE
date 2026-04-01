@@ -436,7 +436,16 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
   <div class="reveal" id="detection">
     <div class="team-label team-blue">&#128309; Blue Team</div>
     <div class="section-label" id="detLabel">Detection Engineering</div>
-    <h2 id="detTitle">Detection Rules &mdash; 11 Platforms</h2>
+    <h2 id="detTitle">Detection Rules &amp; Threat Hunting</h2>
+
+    <!-- TAB SWITCHER -->
+    <div class="det-tabs">
+      <div class="det-tab active" onclick="switchDetTab(this,'det-rules')" data-en="&#128268; Detection Rules" data-tr="&#128268; Tespit Kuralları">&#128268; Detection Rules</div>
+      <div class="det-tab" onclick="switchDetTab(this,'det-hunt')" data-en="&#128270; Threat Hunting" data-tr="&#128270; Tehdit Avı">&#128270; Threat Hunting</div>
+    </div>
+
+    <!-- PANE 1: DETECTION RULES -->
+    <div class="det-pane active" id="det-rules">
     <p id="detDesc">All rules are <strong>TTP-based and behavioral</strong>. SIEM rules detect anomalous node.js network behavior and MSIE 8.0 UA. EDR/XDR rules catch runtime process-level indicators. The YARA rule covers both infrastructure-specific and behavioral patterns.</p>
 
     <!-- SIEM GROUP -->
@@ -793,6 +802,467 @@ tgt.file.type = <span class="str">"executable"</span></div>
         </div>
       </div>
     </div><!-- /Pattern group -->
+    </div><!-- /det-pane: det-rules -->
+
+    <!-- PANE 2: THREAT HUNTING -->
+    <div class="det-pane" id="det-hunt">
+
+      <div class="th-goal">
+        <strong>Hunting Goal:</strong> "Do I have <code>axios@1.14.1</code> or <code>axios@0.30.4</code> installed anywhere in my environment?" — These specific versions were never part of legitimate axios (real line is <strong>1.7.x</strong>). Any match = immediate compromise indicator.<br>
+        <strong>Scope:</strong> Developer workstations, CI/CD build agents, Docker build hosts, Node.js microservice hosts.
+      </div>
+
+      <!-- SIEM GROUP -->
+      <div class="rule-group">
+        <div class="rule-group-hd">
+          <span class="rgb-siem">SIEM</span>
+          <span class="rule-group-label">Hunt 1&ndash;3: Sentinel (KQL) / Splunk (SPL) / QRadar (AQL)</span>
+        </div>
+
+        <div class="th-note"><strong>&#9432; SIEM Prerequisite:</strong> These queries require process execution logs (npm, node) forwarded to your SIEM from endpoints. If you only have network/firewall logs in SIEM, use EDR/XDR queries below instead. Logs must include full command-line arguments.</div>
+
+        <!-- Hunt 1: Sentinel KQL -->
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">Microsoft Sentinel (KQL)</span>
+              npm install axios@1.14.1 or @0.30.4 — Process Log Hunt
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                sentinel-hunt-axios-install.kql &mdash; Hunt: Vulnerable Version Installed?
+              </div>
+              <div class="code-body"><span class="cmt">// Hunt: Was axios@1.14.1 or @0.30.4 ever installed on any host?
+// Source: Syslog (Linux auditd/execve) or SecurityEvent (Windows 4688)
+// Requires: process command-line logging enabled</span>
+
+<span class="cmt">// Linux (auditd via Syslog)</span>
+<span class="fn">Syslog</span>
+| <span class="kw">where</span> SyslogMessage <span class="kw">has_any</span> (<span class="str">"axios@1.14.1"</span>, <span class="str">"axios@0.30.4"</span>)
+| <span class="fn">project</span> TimeGenerated, HostName, SyslogMessage
+| <span class="fn">extend</span> Finding = <span class="str">"Malicious axios version installed"</span>
+
+<span class="fn">union</span> (
+  <span class="cmt">// Windows (Event ID 4688 — process creation with cmdline)</span>
+  <span class="fn">SecurityEvent</span>
+  | <span class="kw">where</span> EventID == <span class="num">4688</span>
+  | <span class="kw">where</span> CommandLine <span class="fn">has_any</span> (<span class="str">"axios@1.14.1"</span>, <span class="str">"axios@0.30.4"</span>)
+  | <span class="fn">project</span> TimeGenerated, Computer, Account, CommandLine
+  | <span class="fn">extend</span> Finding = <span class="str">"Malicious axios version installed"</span>
+)
+| <span class="fn">order by</span> TimeGenerated <span class="kw">desc</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hunt 2: Splunk SPL -->
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">Splunk (SPL)</span>
+              npm install axios Malicious Version — Endpoint Process Hunt
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                splunk-hunt-axios-version.spl &mdash; Hunt: Installed Version Check
+              </div>
+              <div class="code-body"><span class="cmt">| Hunt 1: Find npm install of malicious version in process logs</span>
+<span class="fn">index</span>=endpoint <span class="kw">sourcetype</span>=wineventlog EventCode=<span class="num">4688</span>
+  (CommandLine=<span class="str">"*axios@1.14.1*"</span> OR CommandLine=<span class="str">"*axios@0.30.4*"</span>)
+| <span class="fn">table</span> _time, host, user, CommandLine, ParentProcessName
+| <span class="fn">eval</span> finding=<span class="str">"Malicious axios version installed"</span>
+
+<span class="cmt">| Hunt 2: npm list output showing installed version (if npm list logged)</span>
+<span class="fn">index</span>=endpoint <span class="kw">sourcetype</span>=auditd
+  (msg=<span class="str">"*axios@1.14.1*"</span> OR msg=<span class="str">"*axios@0.30.4*"</span>)
+| <span class="fn">table</span> _time, host, user, msg
+
+<span class="cmt">| Hunt 3: Scheduled task "WindowsUpdate" created by npm/node (persistence)</span>
+<span class="fn">index</span>=endpoint <span class="kw">sourcetype</span>=wineventlog EventCode=<span class="num">4698</span>
+| <span class="kw">where</span> <span class="fn">like</span>(TaskName, <span class="str">"%WindowsUpdate%"</span>)
+  AND NOT <span class="fn">like</span>(TaskAuthor, <span class="str">"%Microsoft%"</span>)
+| <span class="fn">table</span> _time, host, TaskName, TaskAction, TaskAuthor</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hunt 3: QRadar AQL -->
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">QRadar (AQL)</span>
+              npm Malicious Version Install + C2 Domain Presence
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                qradar-hunt-axios.aql &mdash; Hunt: Version Install + C2 DNS
+              </div>
+              <div class="code-body"><span class="cmt">-- Hunt 1: Process logs showing malicious npm install</span>
+<span class="kw">SELECT</span> sourceip, username, <span class="str">"Process Name"</span>, <span class="str">"Command"</span>, starttime
+<span class="kw">FROM</span> events
+<span class="kw">WHERE</span> LOGSOURCETYPENAME(logsourceid) = <span class="str">'Microsoft Windows Security Event Log'</span>
+  <span class="kw">AND</span> <span class="str">"EventID"</span> = <span class="str">'4688'</span>
+  <span class="kw">AND</span> (<span class="str">"Command"</span> <span class="kw">ILIKE</span> <span class="str">'%axios@1.14.1%'</span>
+    <span class="kw">OR</span> <span class="str">"Command"</span> <span class="kw">ILIKE</span> <span class="str">'%axios@0.30.4%'</span>)
+<span class="kw">AND</span> starttime > <span class="fn">NOW</span>() - <span class="num">30</span> DAYS
+
+<span class="kw">UNION ALL</span>
+
+<span class="cmt">-- Hunt 2: DNS query for C2 (sfrclak.com) — if DNS logs in QRadar</span>
+<span class="kw">SELECT</span> sourceip, <span class="str">"DNS Name"</span>, starttime
+<span class="kw">FROM</span> events
+<span class="kw">WHERE</span> LOGSOURCETYPENAME(logsourceid) <span class="kw">ILIKE</span> <span class="str">'%DNS%'</span>
+  <span class="kw">AND</span> <span class="str">"DNS Name"</span> <span class="kw">ILIKE</span> <span class="str">'%sfrclak.com%'</span>
+<span class="kw">ORDER BY</span> starttime <span class="kw">DESC</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="th-guide">
+          <strong>&#128268; SIEM'de log yoksa ne yaparsın?</strong><br>
+          Eğer SIEM'de endpoint process log'u yoksa: <br>
+          &bull; <strong>DNS/Proxy logları</strong> varsa → <code>sfrclak.com</code> veya <code>142.11.206.73</code> sorgula (C2 iletişimi zaten gerçekleşmişse yakalanır).<br>
+          &bull; <strong>Firewall flow log'u</strong> varsa → kaynak IP'den <code>142.11.206.73:8000</code>'e giden trafiği sorgula.<br>
+          &bull; Log yoksa → Manuel: tüm developer makine ve CI/CD agent'larında <code>npm list axios --all</code> çalıştır.
+        </div>
+      </div><!-- /SIEM Hunt group -->
+
+      <!-- EDR/XDR GROUP -->
+      <div class="rule-group">
+        <div class="rule-group-hd">
+          <span class="rgb-edr">EDR / XDR</span>
+          <span class="rule-group-label">Hunt 4&ndash;9: Defender (KQL) / Cortex XDR (XQL) / CrowdStrike (SPL) / Carbon Black (CBQL) / SentinelOne (PowerQuery) / Kaspersky (SQL)</span>
+        </div>
+
+        <div class="th-note"><strong>&#9432; EDR/XDR Avantajı:</strong> EDR ajanları endpoint üzerinde dosya sistemi görünürlüğü sağlar — SIEM'e process log gelmese bile <code>package.json</code> dosyası veya <code>node_modules/axios/</code> klasörünü doğrudan sorgulayabilirsiniz.</div>
+
+        <!-- Hunt 4: MDE KQL -->
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">Defender for Endpoint (KQL)</span>
+              npm install Malicious axios — File + Process + Network Hunt
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                mde-hunt-axios.kql &mdash; Hunt: Version Presence + Artifacts
+              </div>
+              <div class="code-body"><span class="cmt">// Hunt 1: Was malicious axios ever installed? (process cmdline)</span>
+<span class="fn">DeviceProcessEvents</span>
+| <span class="kw">where</span> ProcessCommandLine <span class="fn">has_any</span> (<span class="str">"axios@1.14.1"</span>, <span class="str">"axios@0.30.4"</span>)
+| <span class="fn">project</span> Timestamp, DeviceName, AccountName, ProcessCommandLine
+| <span class="fn">extend</span> Finding = <span class="str">"Malicious axios version installed"</span>
+
+<span class="fn">union</span> (
+  <span class="cmt">// Hunt 2: Scheduled task "WindowsUpdate" created by node.exe (persistence)</span>
+  <span class="fn">DeviceProcessEvents</span>
+  | <span class="kw">where</span> FileName == <span class="str">"schtasks.exe"</span>
+  | <span class="kw">where</span> InitiatingProcessFileName <span class="fn">in~</span> (<span class="str">"node.exe"</span>, <span class="str">"npm.cmd"</span>)
+  | <span class="kw">where</span> ProcessCommandLine <span class="fn">contains</span> <span class="str">"WindowsUpdate"</span>
+  | <span class="fn">project</span> Timestamp, DeviceName, AccountName, ProcessCommandLine
+  | <span class="fn">extend</span> Finding = <span class="str">"RAT persistence: WindowsUpdate schtask from node"</span>
+)
+
+<span class="fn">union</span> (
+  <span class="cmt">// Hunt 3: Outbound connection to C2 (sfrclak.com / 142.11.206.73)</span>
+  <span class="fn">DeviceNetworkEvents</span>
+  | <span class="kw">where</span> RemoteUrl <span class="fn">contains</span> <span class="str">"sfrclak.com"</span>
+     <span class="kw">or</span> RemoteIP == <span class="str">"142.11.206.73"</span>
+  | <span class="fn">project</span> Timestamp, DeviceName, InitiatingProcessFileName,
+            RemoteUrl, RemoteIP, RemotePort
+  | <span class="fn">extend</span> Finding = <span class="str">"C2 beacon — host likely compromised"</span>
+)
+| <span class="fn">order by</span> Timestamp <span class="kw">desc</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hunt 5: Cortex XQL -->
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">Cortex XDR (XQL)</span>
+              npm Malicious Axios — Install + Persistence + C2 Hunt
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                cortex-hunt-axios.xql &mdash; Hunt: Version + C2 + Cron
+              </div>
+              <div class="code-body"><span class="cmt">// Hunt 1: npm install of malicious version</span>
+<span class="kw">dataset</span> = xdr_data
+| <span class="kw">filter</span> event_type = ENUM.EVENT_TYPE_PROCESS
+| <span class="kw">filter</span> actor_process_image_name <span class="kw">in</span> (<span class="str">"npm"</span>, <span class="str">"npm.cmd"</span>, <span class="str">"node"</span>)
+| <span class="kw">filter</span> actor_process_command_line <span class="kw">contains</span> <span class="str">"axios@1.14.1"</span>
+   <span class="kw">or</span> actor_process_command_line <span class="kw">contains</span> <span class="str">"axios@0.30.4"</span>
+| <span class="fn">fields</span> _time, agent_hostname, actor_process_command_line,
+         actor_process_os_pid, actor_effective_username
+
+<span class="cmt">// Hunt 2: Network connection to C2</span>
+<span class="kw">dataset</span> = xdr_data
+| <span class="kw">filter</span> event_type = ENUM.EVENT_TYPE_NETWORK
+| <span class="kw">filter</span> action_remote_ip = <span class="str">"142.11.206.73"</span>
+   <span class="kw">or</span> action_remote_hostname <span class="kw">contains</span> <span class="str">"sfrclak.com"</span>
+| <span class="fn">fields</span> _time, agent_hostname, actor_process_image_name,
+         action_remote_ip, action_remote_port, action_local_ip
+
+<span class="cmt">// Hunt 3: Cron entry written (Linux persistence)</span>
+<span class="kw">dataset</span> = xdr_data
+| <span class="kw">filter</span> event_type = ENUM.EVENT_TYPE_FILE
+| <span class="kw">filter</span> action_file_path <span class="kw">contains</span> <span class="str">"/var/spool/cron"</span>
+   <span class="kw">or</span> action_file_path <span class="kw">contains</span> <span class="str">".local/bin"</span>
+| <span class="kw">filter</span> actor_process_image_name <span class="kw">in</span> (<span class="str">"node"</span>, <span class="str">"bash"</span>)
+| <span class="fn">fields</span> _time, agent_hostname, action_file_path, action_file_name</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hunt 6: CrowdStrike SPL -->
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">CrowdStrike (SPL)</span>
+              Axios RAT — Install + Scheduled Task + C2 Hunt
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                crowdstrike-hunt-axios.spl &mdash; Hunt: All Three Signals
+              </div>
+              <div class="code-body"><span class="cmt">| Hunt 1: npm install with malicious version in cmdline</span>
+<span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=ProcessRollup2
+| <span class="kw">where</span> (FileName="npm.cmd" OR FileName="npm" OR FileName="node.exe")
+  AND (CommandLine LIKE <span class="str">"%axios@1.14.1%"</span>
+       OR CommandLine LIKE <span class="str">"%axios@0.30.4%"</span>)
+| <span class="fn">table</span> _time, ComputerName, UserName, FileName, CommandLine
+
+<span class="cmt">| Hunt 2: WindowsUpdate scheduled task created by node (persistence artifact)</span>
+<span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=ProcessRollup2
+| <span class="kw">where</span> FileName="schtasks.exe"
+  AND ParentBaseFileName IN (<span class="str">"node.exe"</span>, <span class="str">"npm.cmd"</span>)
+  AND CommandLine LIKE <span class="str">"%WindowsUpdate%"</span>
+  AND NOT CommandLine LIKE <span class="str">"%Microsoft%"</span>
+| <span class="fn">table</span> _time, ComputerName, CommandLine, ParentBaseFileName
+
+<span class="cmt">| Hunt 3: C2 connection to sfrclak.com or 142.11.206.73</span>
+<span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=NetworkConnect
+| <span class="kw">where</span> RemoteIP="142.11.206.73"
+   OR RemoteDomainName LIKE <span class="str">"%sfrclak.com%"</span>
+| <span class="fn">table</span> _time, ComputerName, UserName, FileName, RemoteIP, RemotePort</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hunt 7: Carbon Black -->
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">Carbon Black (CBQL)</span>
+              Axios Malicious Version — Install + Network + Cron
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                cb-hunt-axios.cbql &mdash; Hunt: Version + Artifacts
+              </div>
+              <div class="code-body"><span class="cmt">-- Hunt 1: npm install of malicious axios version</span>
+process_cmdline:*axios@1.14.1* OR process_cmdline:*axios@0.30.4*
+| fields device_name, username, process_name,
+          process_cmdline, process_start_time
+
+<span class="cmt">-- Hunt 2: C2 network connection</span>
+netconn_domain:sfrclak.com OR netconn_ipv4:142.11.206.73
+| fields device_name, username, process_name, netconn_domain,
+          netconn_ipv4, netconn_port
+
+<span class="cmt">-- Hunt 3: File written to %TEMP% by node.exe (Windows payload drop)</span>
+process_name:node.exe AND
+filemod_type:CREATE AND filemod_name:*.exe
+AND filemod_name:*Temp*
+| fields device_name, username, filemod_name, process_cmdline</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hunt 8: SentinelOne -->
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">SentinelOne (PowerQuery)</span>
+              Axios Supply Chain — Version Install + Persistence Hunt
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                s1-hunt-axios.pq &mdash; Hunt: Install + C2 + Scheduled Task
+              </div>
+              <div class="code-body"><span class="cmt">-- Hunt 1: npm install of malicious version</span>
+EventType = "ProcessCreation" AND
+SrcProcName In ("npm", "npm.cmd", "node", "node.exe") AND
+(SrcProcCmdLine Contains "axios@1.14.1"
+ OR SrcProcCmdLine Contains "axios@0.30.4")
+| columns EndpointName, SrcUserName, SrcProcCmdLine, EventTime
+
+<span class="cmt">-- Hunt 2: C2 network beaconing</span>
+EventType = "IP Connect" AND
+(DstIP = "142.11.206.73" OR DstDNS Contains "sfrclak.com")
+| columns EndpointName, SrcUserName, SrcProcName,
+           DstIP, DstPort, DstDNS, EventTime
+
+<span class="cmt">-- Hunt 3: schtasks.exe spawned by node (Windows persistence)</span>
+EventType = "ProcessCreation" AND
+TgtProcName = "schtasks.exe" AND
+SrcProcName In ("node.exe", "npm.cmd") AND
+TgtProcCmdLine Contains "WindowsUpdate"
+| columns EndpointName, SrcUserName, SrcProcName,
+           TgtProcCmdLine, EventTime</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hunt 9: Kaspersky -->
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">Kaspersky (SQL)</span>
+              Axios RAT Dropper — Version Install + Network Hunt
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                kaspersky-hunt-axios.sql &mdash; Hunt: KSC Database Query
+              </div>
+              <div class="code-body"><span class="cmt">-- Kaspersky Security Center DB (MS SQL / PostgreSQL)
+-- Hunt 1: Process execution with malicious axios version</span>
+<span class="kw">SELECT</span> h.wstrNetName, e.tmOccur, e.wstrEventDescr,
+       e.wstrParam1 <span class="kw">AS</span> ProcessName, e.wstrParam2 <span class="kw">AS</span> CommandLine
+<span class="kw">FROM</span> v_events e
+<span class="kw">JOIN</span> v_hosts h <span class="kw">ON</span> e.nHostId = h.nId
+<span class="kw">WHERE</span> (e.wstrParam2 <span class="kw">LIKE</span> <span class="str">'%axios@1.14.1%'</span>
+    <span class="kw">OR</span>  e.wstrParam2 <span class="kw">LIKE</span> <span class="str">'%axios@0.30.4%'</span>)
+  <span class="kw">AND</span> e.tmOccur > <span class="fn">DATEADD</span>(day, -<span class="num">30</span>, <span class="fn">GETDATE</span>())
+<span class="kw">ORDER BY</span> e.tmOccur <span class="kw">DESC</span>
+
+<span class="cmt">-- Hunt 2: Network events to C2 IP (Kaspersky network control events)</span>
+<span class="kw">SELECT</span> h.wstrNetName, e.tmOccur, e.wstrParam1 <span class="kw">AS</span> Process,
+       e.wstrParam3 <span class="kw">AS</span> RemoteIP, e.wstrParam4 <span class="kw">AS</span> RemotePort
+<span class="kw">FROM</span> v_events e
+<span class="kw">JOIN</span> v_hosts h <span class="kw">ON</span> e.nHostId = h.nId
+<span class="kw">WHERE</span> e.wstrParam3 = <span class="str">'142.11.206.73'</span>
+<span class="kw">ORDER BY</span> e.tmOccur <span class="kw">DESC</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="th-guide">
+          <strong>&#128268; EDR/XDR'ınız yoksa ne yaparsın?</strong><br>
+          &bull; <strong>Firewall / Proxy logu</strong> varsa → <code>sfrclak.com</code> veya <code>142.11.206.73:8000</code>'e giden HTTP/HTTPS trafiğini sorgula. C2 bağlantısı zaten gerçekleşmişse buradan yakalanır.<br>
+          &bull; <strong>Hiçbir log yoksa</strong> → Tüm developer makinelerde ve CI/CD agent'larında manuel çalıştır:<br>
+          &nbsp;&nbsp;<code>npm list axios --all 2&gt;/dev/null | grep axios</code><br>
+          &nbsp;&nbsp;Sonuç <code>1.14.1</code> veya <code>0.30.4</code> içeriyorsa → Makineyi izole et, tam IR başlat.
+        </div>
+      </div><!-- /EDR Hunt group -->
+
+      <!-- FIREWALL / NETWORK GROUP -->
+      <div class="rule-group">
+        <div class="rule-group-hd">
+          <span class="rgb-pattern" style="background:rgba(232,93,4,0.15);border-color:rgba(232,93,4,0.4);color:var(--accent2)">Network</span>
+          <span class="rule-group-label">Hunt 10: Firewall / Proxy / DNS — C2 Presence Hunt</span>
+        </div>
+
+        <div class="th-note"><strong>&#9432; Bu bölüm şunlar için:</strong> EDR/SIEM'de endpoint process log'u olmayan ama ağ cihazı logları (Cisco ASA/FTD, Palo Alto, Fortinet, Proxy, DNS sunucusu) olan ekipler. Bu sorgular vendor-agnostic arama mantığıdır — kendi platformunuzun query syntax'ına uyarlayın.</div>
+
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">Firewall / Proxy / DNS</span>
+              C2 Communication — sfrclak.com + MSIE 8.0 UA Hunt
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                firewall-dns-hunt-axios.txt &mdash; Platform-Agnostic Hunt Criteria
+              </div>
+              <div class="code-body"><span class="cmt">## Firewall / Proxy Hunt — What to look for:</span>
+
+<span class="cmt"># 1. DNS queries to C2 domain</span>
+Destination domain: sfrclak.com
+&rarr; Any internal host querying this = potential compromise
+&rarr; Check: DNS server logs / Proxy DNS resolution logs
+
+<span class="cmt"># 2. IP-based C2 connections</span>
+Destination IP:   142.11.206.73
+Destination port: 8000 (primary C2 port)
+Protocol:         TCP/HTTPS
+&rarr; Cisco ASA: show conn | include 142.11.206.73
+&rarr; Palo Alto: Traffic logs → Destination = 142.11.206.73
+&rarr; Fortinet: Forward traffic log → dstip=142.11.206.73
+&rarr; Generic Syslog/CEF: grep "142.11.206.73" /var/log/firewall.log
+
+<span class="cmt"># 3. HTTP User-Agent in proxy logs (zero false-positive signal)</span>
+User-Agent contains: "MSIE 8.0" or "Trident/4.0"
+Source: any internal IP
+&rarr; This string is impossible on any modern system (IE8 = 2009)
+&rarr; Any match = active RAT beacon from that source IP
+
+<span class="cmt"># 4. npm registry bypass (package download from non-registry host)</span>
+Request URL contains: sfrclak.com/d/
+&rarr; Binary download path for Windows/Linux/macOS RAT payload
+&rarr; If seen in proxy logs → payload was downloaded (host likely infected)
+
+<span class="cmt">## Priority order if you have limited visibility:</span>
+<span class="cmt"># HIGH: MSIE 8.0 UA → source host is actively beaconing</span>
+<span class="cmt"># HIGH: DNS to sfrclak.com → C2 lookup happened</span>
+<span class="cmt"># MED:  IP 142.11.206.73:8000 → C2 communication ongoing</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="th-guide">
+          <strong>&#128268; Hangi log'u almalıyım? (Henüz log almıyorsan)</strong><br>
+          &bull; <strong>DNS logları</strong> en değerlisi — tüm C2 domain sorguları burada görünür.<br>
+          &bull; <strong>Proxy User-Agent logları</strong> — MSIE 8.0 UA sıfır false positive sinyali, günlük birkaç MB log.<br>
+          &bull; <strong>Firewall flow logları</strong> (NetFlow/IPFIX) — IP + port bazlı C2 tespiti.<br>
+          Öneri sırası: DNS &gt; Proxy &gt; Firewall flow &gt; Endpoint process log.
+        </div>
+      </div><!-- /Network Hunt group -->
+
+    </div><!-- /det-pane: det-hunt -->
+
   </div>
 
   <!-- ══ RESPONSE / RECOMMENDATIONS ══ -->
@@ -1084,6 +1554,15 @@ if (chainEl) chainObs.observe(chainEl);
    RULE CARD TOGGLES
 ═══════════════════════════════════════════════════════════════ */
 function toggleRule(card) { card.classList.toggle('open'); }
+
+/* ─── DETECTION / THREAT HUNTING TAB SWITCHER ─── */
+function switchDetTab(tab, paneId) {
+  document.querySelectorAll('.det-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.det-pane').forEach(p => p.classList.remove('active'));
+  tab.classList.add('active');
+  const pane = document.getElementById(paneId);
+  if (pane) pane.classList.add('active');
+}
 
 /* ═══════════════════════════════════════════════════════════════
    ATTACK SIMULATION

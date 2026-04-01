@@ -382,6 +382,74 @@ code { font-family: 'Cascadia Code','Fira Code',monospace; font-size: 0.83em; co
 .team-red { background: rgba(239,35,60,0.08); border: 1px solid rgba(239,35,60,0.2); color: var(--red); }
 .team-blue { background: rgba(76,201,240,0.08); border: 1px solid rgba(76,201,240,0.2); color: var(--blue); }
 
+/* ── DETECTION / THREAT HUNTING TABS ── */
+.det-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+  margin-top: 8px;
+}
+.det-tab {
+  padding: 9px 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  transition: color 0.15s, border-color 0.15s;
+  user-select: none;
+  white-space: nowrap;
+}
+.det-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.det-tab:hover:not(.active) { color: var(--text); }
+.det-pane { display: none; }
+.det-pane.active { display: block; }
+
+/* Threat Hunting pane specific */
+.th-goal {
+  background: rgba(168,85,247,0.07);
+  border: 1px solid rgba(168,85,247,0.2);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  font-size: 0.82rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+.th-goal strong { color: var(--purple); }
+.th-goal code { color: var(--accent2); font-size: 0.78rem; }
+
+.th-guide {
+  background: rgba(6,214,160,0.06);
+  border-left: 3px solid var(--green);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0 6px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.th-guide strong { color: var(--green); }
+.th-guide code { color: var(--accent2); }
+
+.th-note {
+  background: rgba(255,186,8,0.07);
+  border-left: 3px solid var(--accent3);
+  border-radius: 0 6px 6px 0;
+  padding: 8px 12px;
+  margin: 8px 0;
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+.th-note strong { color: var(--accent3); }
+
+[data-theme="light"] .th-goal { background: rgba(168,85,247,0.04); }
+[data-theme="light"] .th-guide { background: rgba(6,214,160,0.04); }
+[data-theme="light"] .th-note { background: rgba(255,186,8,0.04); }
+
 /* ── FOOTER ── */
 footer { text-align: center; padding: 36px 24px; font-size: 0.76rem; color: var(--muted); border-top: 1px solid var(--border); }
 footer a { color: var(--accent2); text-decoration: none; }
