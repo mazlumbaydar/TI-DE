@@ -240,6 +240,61 @@ code { font-family: 'Cascadia Code','Fira Code',monospace; font-size: 0.83em; co
 .ref-list a { color: var(--blue); text-decoration: none; transition: color 0.2s; }
 .ref-list a:hover { color: var(--text); }
 
+/* ── ATTACK VISUALIZATION ── */
+.atk-viz { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 40px; }
+.atk-viz-top { padding: 20px 24px 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.atk-play { background: var(--accent); color: #fff; border: none; padding: 9px 20px; border-radius: 6px; font-size: 0.76rem; font-weight: 700; cursor: pointer; letter-spacing: 0.08em; white-space: nowrap; transition: opacity 0.2s, transform 0.15s; flex-shrink: 0; margin-top: 4px; }
+.atk-play:hover { opacity: 0.85; transform: translateY(-1px); }
+.atk-play:disabled { opacity: 0.4; cursor: default; transform: none; }
+.atk-pipeline { padding: 28px 20px 20px; display: flex; align-items: center; overflow-x: auto; gap: 0; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+.atk-node { display: flex; flex-direction: column; align-items: center; gap: 7px; flex-shrink: 0; width: 82px; cursor: default; }
+.atk-node-box { width: 68px; height: 58px; border: 1.5px solid var(--border); border-radius: 8px; background: var(--surface2); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 1.3rem; transition: all 0.4s ease; }
+.atk-node.active .atk-node-box { border-color: var(--accent); background: rgba(232,93,4,0.1); box-shadow: 0 0 18px rgba(232,93,4,0.3), 0 0 36px rgba(232,93,4,0.1); }
+.atk-node.pwned .atk-node-box { border-color: var(--red); background: rgba(239,35,60,0.1); box-shadow: 0 0 18px rgba(239,35,60,0.3), 0 0 36px rgba(239,35,60,0.1); }
+.atk-node.safe .atk-node-box { border-color: var(--green); background: rgba(6,214,160,0.08); }
+.atk-node-label { font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); text-align: center; line-height: 1.3; transition: color 0.3s; }
+.atk-node.active .atk-node-label { color: var(--accent); }
+.atk-node.pwned .atk-node-label { color: var(--red); }
+.atk-connector { flex: 1 1 32px; min-width: 32px; display: flex; align-items: center; justify-content: center; position: relative; height: 24px; }
+.atk-connector svg { width: 100%; height: 24px; overflow: visible; }
+.atk-connector .conn-line { stroke: var(--border); stroke-width: 1.5; fill: none; stroke-dasharray: 5 3; transition: stroke 0.3s; }
+.atk-connector .conn-arrow { fill: var(--border); transition: fill 0.3s; }
+.atk-connector.active .conn-line { stroke: var(--accent); animation: dashFlow 1s linear infinite; }
+.atk-connector.active .conn-arrow { fill: var(--accent); }
+.atk-connector.danger .conn-line { stroke: var(--red); animation: dashFlow 0.6s linear infinite; }
+.atk-connector.danger .conn-arrow { fill: var(--red); }
+.atk-pkt { position: absolute; width: 8px; height: 8px; border-radius: 50%; top: 50%; transform: translateY(-50%); left: 0; opacity: 0; }
+.atk-pkt.orange { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.atk-pkt.red { background: var(--red); box-shadow: 0 0 8px var(--red); }
+.atk-pkt.run { animation: pktSlide 0.5s ease-in-out forwards; }
+@keyframes pktSlide { 0% { left: 4px; opacity: 1; } 100% { left: calc(100% - 12px); opacity: 0; } }
+@keyframes dashFlow { to { stroke-dashoffset: -16; } }
+.atk-detail { padding: 14px 24px 20px; background: rgba(0,0,0,0.2); border-top: 1px solid var(--border); min-height: 80px; }
+.atk-detail-step { font-size: 0.63rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 5px; font-family: monospace; }
+.atk-detail-text { font-size: 0.84rem; color: var(--text); margin-bottom: 8px; line-height: 1.5; }
+.atk-detail-cmd { display: inline-block; font-family: 'Cascadia Code','Fira Code',monospace; font-size: 0.72rem; color: var(--accent3); background: rgba(0,0,0,0.35); padding: 5px 12px; border-radius: 4px; border-left: 2px solid var(--accent3); max-width: 100%; word-break: break-all; }
+.atk-progress { padding: 10px 24px 16px; display: flex; align-items: center; gap: 10px; border-top: 1px solid var(--border); }
+.atk-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); transition: all 0.3s; cursor: pointer; }
+.atk-dot.done { background: var(--green); }
+.atk-dot.current { background: var(--accent); transform: scale(1.5); box-shadow: 0 0 6px rgba(232,93,4,0.5); }
+.atk-prog-label { margin-left: auto; font-size: 0.68rem; color: var(--muted); font-family: monospace; }
+
+/* ── POC / WRITE-UPS SECTION ── */
+.poc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; margin-bottom: 40px; }
+.poc-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 9px; transition: border-color 0.2s, transform 0.2s; }
+.poc-card:hover { border-color: rgba(232,93,4,0.35); transform: translateY(-2px); }
+.poc-tag { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 2px 8px; border-radius: 4px; align-self: flex-start; }
+.poc-tag.poc { background: rgba(239,35,60,0.1); color: var(--red); border: 1px solid rgba(239,35,60,0.25); }
+.poc-tag.analysis { background: rgba(76,201,240,0.1); color: var(--blue); border: 1px solid rgba(76,201,240,0.25); }
+.poc-tag.advisory { background: rgba(232,93,4,0.1); color: var(--accent); border: 1px solid rgba(232,93,4,0.25); }
+.poc-tag.writeup { background: rgba(6,214,160,0.1); color: var(--green); border: 1px solid rgba(6,214,160,0.25); }
+.poc-card-title { font-size: 0.86rem; font-weight: 600; color: var(--text); line-height: 1.4; }
+.poc-card-src { font-size: 0.72rem; color: var(--muted); }
+.poc-card-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.55; flex: 1; }
+.poc-card-link { display: inline-flex; align-items: center; gap: 5px; font-size: 0.74rem; font-weight: 600; color: var(--accent); text-decoration: none; transition: gap 0.15s; margin-top: auto; }
+.poc-card-link::after { content: '→'; }
+.poc-card-link:hover { gap: 9px; }
+
 /* ── FOOTER ── */
 footer { text-align: center; padding: 36px 24px; font-size: 0.76rem; color: var(--muted); border-top: 1px solid var(--border); }
 footer a { color: var(--accent2); text-decoration: none; }
