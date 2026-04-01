@@ -198,6 +198,13 @@ nav.scrolled{
 .hero-p{font-size:1.05rem;color:var(--muted);max-width:580px;margin:0 auto 36px;line-height:1.75}
 .hero-p strong{color:var(--text2)}
 
+/* MASCOT */
+.mascot-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;margin:0 auto 32px}
+.mascot-svg{width:96px;height:96px;filter:drop-shadow(0 0 18px rgba(232,93,4,0.25));animation:mascotFloat 4s ease-in-out infinite}
+@keyframes mascotFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.mascot-label{font-size:.6rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);opacity:.7}
+[data-theme="light"] .mascot-svg{filter:drop-shadow(0 0 14px rgba(232,93,4,0.2))}
+
 /* CTA buttons */
 .ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:52px}
 .cta-primary{
@@ -446,7 +453,6 @@ nav.scrolled{
   <div style="display:flex;align-items:center">
     <div class="nav-links">
       <a class="nav-lnk" href="#reports" data-en="Reports" data-tr="Raporlar">Reports</a>
-      <a class="nav-lnk" href="https://github.com/mazlumbaydar/TI-DE" target="_blank" rel="noopener">GitHub</a>
     </div>
     <div class="nav-controls">
       <button class="ctrl" id="langBtn" onclick="toggleLang()">
@@ -474,16 +480,57 @@ nav.scrolled{
       Where Intelligence<br><em>Becomes Detection</em>
     </h1>
 
-    <p class="hero-p">
-      <span data-en="TTP-based detection rules for emerging threats — published daily across <strong>10 security platforms</strong>. No hardcoded IPs or domains. Rules built to survive infrastructure rotation."
-            data-tr="Ortaya çıkan tehditler için günlük yayınlanan TTP tabanlı tespit kuralları — <strong>10 güvenlik platformunda</strong> kapsamı var. Hardcoded IP veya domain yok. Altyapı rotasyonuna dayanıklı kurallar.">
-        TTP-based detection rules for emerging threats — published daily across <strong>10 security platforms</strong>. No hardcoded IPs or domains. Rules built to survive infrastructure rotation.
-      </span>
-    </p>
+    <!-- MASCOT -->
+    <div class="mascot-wrap" aria-hidden="true">
+      <svg class="mascot-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <!-- Body / shield base -->
+        <path d="M60 8 L16 24 v28 c0 26 18 49 44 56 26-7 44-30 44-56 V24 Z"
+              fill="url(#shieldGrad)" opacity=".18"/>
+        <path d="M60 8 L16 24 v28 c0 26 18 49 44 56 26-7 44-30 44-56 V24 Z"
+              fill="none" stroke="url(#shieldGrad)" stroke-width="2" opacity=".5">
+          <animate attributeName="stroke-opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+        </path>
+        <!-- Face -->
+        <circle cx="60" cy="52" r="22" fill="url(#faceGrad)"/>
+        <!-- Eyes -->
+        <circle cx="52" cy="48" r="4" fill="#0a0c10"/>
+        <circle cx="68" cy="48" r="4" fill="#0a0c10"/>
+        <!-- Eye shine -->
+        <circle cx="53.5" cy="46.5" r="1.5" fill="#fff" opacity=".8"/>
+        <circle cx="69.5" cy="46.5" r="1.5" fill="#fff" opacity=".8"/>
+        <!-- Smile -->
+        <path d="M50 57 Q60 65 70 57" fill="none" stroke="#0a0c10" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Antenna -->
+        <line x1="60" y1="30" x2="60" y2="20" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="60" cy="18" r="4" fill="var(--accent)">
+          <animate attributeName="r" values="4;5.5;4" dur="1.8s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="1;0.5;1" dur="1.8s" repeatCount="indefinite"/>
+        </circle>
+        <!-- Ears -->
+        <rect x="36" y="44" width="8" height="14" rx="4" fill="url(#faceGrad)"/>
+        <rect x="76" y="44" width="8" height="14" rx="4" fill="url(#faceGrad)"/>
+        <!-- Tiny scan line across eyes -->
+        <rect x="40" y="51" width="40" height="2" rx="1" fill="var(--accent)" opacity="0">
+          <animate attributeName="opacity" values="0;0.7;0" dur="2.5s" begin="1s" repeatCount="indefinite"/>
+          <animate attributeName="y" values="45;59;45" dur="2.5s" begin="1s" repeatCount="indefinite"/>
+        </rect>
+        <!-- Defs -->
+        <defs>
+          <linearGradient id="shieldGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#e85d04"/>
+            <stop offset="100%" stop-color="#f48c06"/>
+          </linearGradient>
+          <linearGradient id="faceGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1e2532"/>
+            <stop offset="100%" stop-color="#141820"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="mascot-label" data-en="ARIA &bull; TI-DE Analyst" data-tr="ARIA &bull; TI-DE Analisti">ARIA &bull; TI-DE Analyst</div>
+    </div>
 
     <div class="ctas">
       <a class="cta-primary" href="#reports" data-en="Browse Reports" data-tr="Raporları İncele">Browse Reports</a>
-      <a class="cta-ghost" href="https://github.com/mazlumbaydar/TI-DE" target="_blank" rel="noopener" data-en="GitHub Repository" data-tr="GitHub Deposu">GitHub Repository</a>
     </div>
 
     <div class="stats-row">
@@ -685,7 +732,7 @@ nav.scrolled{
     <div class="pillar">
       <div class="p-ico">🌍</div>
       <div class="p-title" data-en="Open Source · TLP:WHITE" data-tr="Açık Kaynak · TLP:WHITE">Open Source · TLP:WHITE</div>
-      <div class="p-desc" data-en="All detection rules freely available on GitHub. No paywalls, no registration. The security community grows stronger when detection logic is shared openly." data-tr="Tüm tespit kuralları GitHub'da özgürce erişilebilir. Ücret yok, kayıt yok. Tespit mantığı açıkça paylaşıldığında güvenlik topluluğu güçlenir.">All detection rules freely available on GitHub. No paywalls, no registration. The security community grows stronger when detection logic is shared openly.</div>
+      <div class="p-desc" data-en="All detection rules are freely available. TLP:WHITE — no paywalls, no registration. The security community grows stronger when detection logic is shared openly." data-tr="Tüm tespit kuralları özgürce erişilebilir. TLP:WHITE — ücret yok, kayıt yok. Tespit mantığı açıkça paylaşıldığında güvenlik topluluğu güçlenir.">All detection rules are freely available. TLP:WHITE — no paywalls, no registration. The security community grows stronger when detection logic is shared openly.</div>
     </div>
     <div class="pillar">
       <div class="p-ico">📖</div>
@@ -712,8 +759,6 @@ nav.scrolled{
       </div>
     </div>
     <div class="f-links">
-      <a href="https://github.com/mazlumbaydar/TI-DE" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://linkedin.com/in/mazlumbaydar/" target="_blank" rel="noopener">LinkedIn</a>
       <a href="#reports" data-en="Reports" data-tr="Raporlar">Reports</a>
       <a href="#about" data-en="About" data-tr="Hakkında">About</a>
     </div>

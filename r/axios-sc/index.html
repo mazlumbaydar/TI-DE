@@ -459,7 +459,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
-            <span class="platform-badge">Sigma</span>
+            <span class="platform-badge">Sigma (YAML)</span>
             Axios npm Malicious Postinstall &mdash; Shell from Node
           </div>
           <div class="rule-toggle">&#9660;</div>
@@ -506,7 +506,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
-            <span class="platform-badge">Microsoft Sentinel KQL</span>
+            <span class="platform-badge">Sentinel (KQL)</span>
             MSIE 8.0 User-Agent from Internal Host
           </div>
           <div class="rule-toggle">&#9660;</div>
@@ -532,7 +532,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
-            <span class="platform-badge">Splunk SPL</span>
+            <span class="platform-badge">Splunk (SPL)</span>
             Windows Scheduled Task Created by Node Process
           </div>
           <div class="rule-toggle">&#9660;</div>
@@ -556,7 +556,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
-            <span class="platform-badge">QRadar AQL</span>
+            <span class="platform-badge">QRadar (AQL)</span>
             C2 Communication to Axios RAT Infrastructure
           </div>
           <div class="rule-toggle">&#9660;</div>
@@ -591,7 +591,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
-            <span class="platform-badge">Defender for Endpoint KQL</span>
+            <span class="platform-badge">Defender for Endpoint (KQL)</span>
             Node.js Downloading Executable to Temp
           </div>
           <div class="rule-toggle">&#9660;</div>
@@ -618,7 +618,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
-            <span class="platform-badge">Cortex XDR BIOC XQL</span>
+            <span class="platform-badge">Cortex XDR (XQL)</span>
             npm postinstall Outbound Connection
           </div>
           <div class="rule-toggle">&#9660;</div>
@@ -644,7 +644,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
-            <span class="platform-badge">CrowdStrike Hunting SPL</span>
+            <span class="platform-badge">CrowdStrike (SPL)</span>
             MSIE 8.0 UA Network Beacon
           </div>
           <div class="rule-toggle">&#9660;</div>
@@ -668,7 +668,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
-            <span class="platform-badge">CrowdStrike Custom IOA</span>
+            <span class="platform-badge">CrowdStrike (IOA)</span>
             Axios RAT &mdash; Scheduled Task from Node
           </div>
           <div class="rule-toggle">&#9660;</div>
@@ -712,7 +712,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
-            <span class="platform-badge">SentinelOne PowerQuery</span>
+            <span class="platform-badge">SentinelOne (PowerQuery)</span>
             Node Spawning schtasks / ELF Drop in /tmp
           </div>
           <div class="rule-toggle">&#9660;</div>
@@ -740,7 +740,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
-            <span class="platform-badge">Carbon Black CBQL</span>
+            <span class="platform-badge">Carbon Black (CBQL)</span>
             npm RAT Full TTP Correlation
           </div>
           <div class="rule-toggle">&#9660;</div>
@@ -770,7 +770,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
-            <span class="platform-badge">YARA</span>
+            <span class="platform-badge">YARA (Pattern)</span>
             Axios npm RAT Dropper &mdash; Behavioral + Infrastructure
           </div>
           <div class="rule-toggle">&#9660;</div>
@@ -1357,7 +1357,7 @@ Request URL contains: sfrclak.com/d/
 
 <footer>
   <div>TI-DE Detection Engineering &bull; Axios npm Supply Chain RAT &bull; 2026-03-31</div>
-  <div>Author: Mazlum BAYDAR &bull; <a href="https://mazlumbaydar.github.io/TI-DE/">mazlumbaydar.github.io/TI-DE</a></div>
+  <div>TLP:WHITE &mdash; Free to share</div>
 </footer>
 
 <script>
@@ -1429,19 +1429,20 @@ function applyLang(lang) {
   localStorage.setItem(LANG_KEY, lang);
   const btn = document.getElementById('langBtn');
   if (lang === 'tr') {
-    btn.textContent = '&#127988; TR';
+    btn.innerHTML = '&#127988; TR';
     Object.keys(TR).forEach(id => {
       const el = document.getElementById(id);
       if (el) el.innerHTML = TR[id];
     });
   } else {
-    btn.textContent = '&#127760; EN';
-    // Reload page content from DOM originals stored at init
+    btn.innerHTML = '&#127760; EN';
     Object.keys(_enCache).forEach(id => {
       const el = document.getElementById(id);
       if (el) el.innerHTML = _enCache[id];
     });
   }
+  // Re-render current simulation step in new language
+  if (_atvIdx >= 0) atvRender(_atvIdx);
 }
 
 // Cache EN values at startup
@@ -1459,6 +1460,7 @@ function updateLangBtn() {
   const btn = document.getElementById('langBtn');
   if (btn) btn.innerHTML = _lang === 'tr' ? '&#127988; TR' : '&#127760; EN';
 }
+
 
 function toggleLang() {
   applyLang(_lang === 'en' ? 'tr' : 'en');
