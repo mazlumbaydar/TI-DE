@@ -422,6 +422,16 @@ Contents: "Your network is encrypted. Contact us at..."
     <h2 data-en="Detection Rules — 11 Platforms" data-tr="Tespit Kuralları — 11 Platform">Detection Rules &mdash; 11 Platforms</h2>
     <p data-en="All rules are TTP-based and behavioral. SIEM rules detect anomalous HTTP POST patterns and reverse shell activity. EDR/XDR rules catch JVM spawning shells. The YARA rule covers the serialized gadget chain byte pattern." data-tr="Tüm kurallar TTP tabanlı ve davranışsaldır. SIEM kuralları anormal HTTP POST modellerini ve ters shell aktivitesini tespit eder. EDR/XDR kuralları JVM'nin shell başlatmasını yakalar. YARA kuralı serileştirilmiş gadget zinciri byte modelini kapsar.">All rules are <strong>TTP-based and behavioral</strong>. SIEM rules detect anomalous HTTP POST patterns and reverse shell activity. EDR/XDR rules catch JVM spawning shells. The YARA rule covers the serialized gadget chain byte pattern.</p>
 
+
+    <!-- TAB SWITCHER -->
+    <div class="det-tabs">
+      <div class="det-tab active" onclick="switchDetTab(this,'det-rules')" data-en="&#128268; Detection Rules" data-tr="&#128268; Tespit Kuralları">&#128268; Detection Rules</div>
+      <div class="det-tab" onclick="switchDetTab(this,'det-hunt')" data-en="&#128270; Threat Hunting" data-tr="&#128270; Tehdit Avı">&#128270; Threat Hunting</div>
+    </div>
+
+    <!-- PANE 1: DETECTION RULES -->
+    <div class="det-pane active" id="det-rules">
+
     <!-- SIEM GROUP -->
     <div class="rule-group">
       <div class="rule-group-hd">
@@ -443,6 +453,7 @@ Contents: "Your network is encrypted. Contact us at..."
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               sigma-fmc-java-deser.yml &mdash; T1190 / CWE-502
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">title</span>: Cisco FMC &mdash; Java Deserialization Exploit Attempt
 <span class="kw">id</span>: 7f2a9b1c-4e5d-8f0a-2b3c-6d7e8f9a0b1c
@@ -475,7 +486,7 @@ Contents: "Your network is encrypted. Contact us at..."
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
-            <span class="platform-badge">Microsoft Sentinel (KQL)</span>
+            <span class="platform-badge">Sentinel (KQL)</span>
             Reverse Shell from FMC Process
           </div>
           <div class="rule-toggle">&#9660;</div>
@@ -485,6 +496,7 @@ Contents: "Your network is encrypted. Contact us at..."
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               sentinel-fmc-reverse-shell.kql &mdash; T1059.004
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="cmt">// Syslog from FMC auditd — bash spawned by Java parent</span>
 <span class="fn">Syslog</span>
@@ -513,6 +525,7 @@ Contents: "Your network is encrypted. Contact us at..."
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               splunk-fmc-ips-disabled.spl &mdash; T1562.001
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="fn">index</span>=cisco_fmc <span class="kw">sourcetype</span>=fmc_audit
 | <span class="kw">where</span> <span class="fn">like</span>(Description, <span class="str">"%intrusion_policy%enabled%0%"</span>)
@@ -539,6 +552,7 @@ Contents: "Your network is encrypted. Contact us at..."
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               qradar-fmc-java-post.aql &mdash; T1190
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">SELECT</span> sourceip, destinationip, <span class="str">"HTTP Method"</span>,
        <span class="str">"HTTP URI"</span>, <span class="str">"Content Type"</span>, eventcount
@@ -565,7 +579,7 @@ Contents: "Your network is encrypted. Contact us at..."
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
-            <span class="platform-badge">Defender for Endpoint (KQL)</span>
+            <span class="platform-badge">Defender (KQL)</span>
             Java Process Spawning Bash Shell
           </div>
           <div class="rule-toggle">&#9660;</div>
@@ -575,6 +589,7 @@ Contents: "Your network is encrypted. Contact us at..."
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               mde-java-spawn-bash.kql &mdash; T1059.004 / T1203
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="fn">DeviceProcessEvents</span>
 | <span class="kw">where</span> InitiatingProcessFileName <span class="fn">in~</span> (<span class="str">"java"</span>, <span class="str">"java8"</span>, <span class="str">"java11"</span>)
@@ -601,6 +616,7 @@ Contents: "Your network is encrypted. Contact us at..."
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               cortex-java-shell.xql &mdash; T1059.004
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">dataset</span> = xdr_data
 | <span class="kw">filter</span> event_type = ENUM.EVENT_TYPE_PROCESS
@@ -618,7 +634,7 @@ Contents: "Your network is encrypted. Contact us at..."
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
-            <span class="platform-badge">CrowdStrike Hunting (SPL)</span>
+            <span class="platform-badge">CrowdStrike (SPL)</span>
             Java Process Reverse Shell — FMC Context
           </div>
           <div class="rule-toggle">&#9660;</div>
@@ -628,6 +644,7 @@ Contents: "Your network is encrypted. Contact us at..."
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               crowdstrike-java-revshell.spl &mdash; T1059.004
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=ProcessRollup2
 | <span class="kw">where</span> ParentBaseFileName LIKE <span class="str">"%java%"</span>
@@ -641,11 +658,11 @@ Contents: "Your network is encrypted. Contact us at..."
         </div>
       </div>
 
-      <!-- Rule 8: CrowdStrike Custom IOA -->
+      <!-- Rule 8: CrowdStrike (IOA) -->
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
-            <span class="platform-badge">CrowdStrike Custom IOA</span>
+            <span class="platform-badge">CrowdStrike (IOA)</span>
             FMC RCE &mdash; Java Spawning Network Shell
           </div>
           <div class="rule-toggle">&#9660;</div>
@@ -655,6 +672,7 @@ Contents: "Your network is encrypted. Contact us at..."
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               crowdstrike-ioa-fmc-java-shell.json &mdash; T1059.004 / T1190
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body">{
   <span class="str">"name"</span>: <span class="str">"CVE-2026-20131 FMC RCE &mdash; Java Spawning Shell"</span>,
@@ -699,6 +717,7 @@ Contents: "Your network is encrypted. Contact us at..."
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               cb-java-netshell.cbql &mdash; T1059.004
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body">process_name:bash AND
 parent_name:java AND
@@ -723,6 +742,7 @@ process_cmdline:*"/dev/tcp"* OR process_cmdline:*"bash -i"*
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               s1-java-shell.pq &mdash; T1059.004 / T1203
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body">EventType = "ProcessCreation" AND
 SrcProcName ContainsCIS "java" AND
@@ -756,6 +776,7 @@ TgtProcCmdLine Contains "/dev/tcp"
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               yara-fmc-java-deser.yar &mdash; T1190 / CWE-502
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">rule</span> FMC_Java_Deserialization_Exploit {
   <span class="kw">meta</span>:
@@ -781,7 +802,260 @@ TgtProcCmdLine Contains "/dev/tcp"
         </div>
       </div>
     </div><!-- /Pattern group -->
+    </div><!-- /det-pane det-rules -->
 
+    <!-- PANE 2: THREAT HUNTING -->
+    <div class="det-pane" id="det-hunt">
+
+      <div class="th-goal">
+        <strong>Hunting Goal:</strong> "Do I have Cisco Firepower Management Center (FMC) in my environment? Has it received HTTP POST requests with Java serialization headers? Has the JVM spawned shell processes?" — FMC is a critical network management platform. Unauthorized Java deserialization requests indicate active exploitation attempts.<br>
+        <strong>Scope:</strong> Network perimeter, management networks, Cisco security appliance hosts, firewall management consoles.
+      </div>
+
+      <!-- SIEM GROUP -->
+      <div class="rule-group">
+        <div class="rule-group-hd">
+          <span class="rgb-siem">SIEM</span>
+          <span class="rule-group-label">Hunt 1&ndash;3: Sentinel (KQL) / Splunk (SPL) / QRadar (AQL)</span>
+        </div>
+
+        <div class="th-note"><strong>&#9432; SIEM Prerequisite:</strong> Requires FMC audit logs or network appliance logs forwarded to SIEM. Cisco FMC can forward syslog to SIEM via RFC 5424. If unavailable, network-layer detection (firewall/IDS) below provides coverage.</div>
+
+        <!-- Hunt 1: Sentinel -->
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">Sentinel (KQL)</span>
+              Java Serialization Content-Type to FMC — HTTP Log Hunt
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                sentinel-hunt-fmc-java-deser.kql &mdash; Hunt: Serialized Object POST to FMC?
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <div class="code-body"><span class="cmt">// Hunt: Has FMC received POST requests with Java serialization Content-Type?
+// Source: FMC audit syslog, network proxy logs, or WAF logs
+// Requires: Cisco FMC syslog to Sentinel workspace</span>
+
+<span class="fn">CommonSecurityLog</span>
+| <span class="kw">where</span> RequestMethod == <span class="str">"POST"</span>
+| <span class="kw">where</span> RequestClientApplication <span class="fn">has</span> <span class="str">"java-serialized-object"</span>
+    <span class="kw">or</span> AdditionalExtensions <span class="fn">has</span> <span class="str">"application/x-java-serialized-object"</span>
+| <span class="fn">project</span> TimeGenerated, SourceIP, DestinationIP, DestinationPort,
+    RequestURL, RequestMethod, RequestClientApplication
+| <span class="fn">extend</span> Finding = <span class="str">"Java serialization POST — CVE-2026-20131 exploitation attempt"</span>
+| <span class="fn">order by</span> TimeGenerated <span class="kw">desc</span>
+
+<span class="cmt">// FMC audit log search (if FMC syslog forwarded)</span>
+<span class="fn">union</span> (<span class="fn">Syslog</span>
+| <span class="kw">where</span> ProcessName <span class="fn">has_any</span>(<span class="str">"FMC"</span>, <span class="str">"cisco"</span>, <span class="str">"firepower"</span>)
+| <span class="kw">where</span> SyslogMessage <span class="fn">has_any</span>(<span class="str">"CommonsCollections"</span>, <span class="str">"InvokerTransformer"</span>, <span class="str">"serialized-object"</span>)
+| <span class="fn">project</span> TimeGenerated, HostName, SyslogMessage)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hunt 2: Splunk -->
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">Splunk (SPL)</span>
+              FMC Audit Log — Java Process Spawning Shell Commands
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                splunk-hunt-fmc-jvm-shell.spl &mdash; Hunt: JVM Spawning Shell on FMC Host?
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <div class="code-body"><span class="cmt">| Hunt 1: FMC auditd — Java spawning bash</span>
+<span class="fn">index</span>=cisco_fmc <span class="kw">sourcetype</span>=fmc_audit
+  (parent_process=<span class="str">"*java*"</span> OR parent_process=<span class="str">"*jvm*"</span>)
+  (process=<span class="str">"*bash*"</span> OR process=<span class="str">"*sh*"</span> OR process=<span class="str">"*curl*"</span> OR process=<span class="str">"*wget*"</span>)
+| <span class="fn">table</span> _time, host, parent_process, process, cmdline, user
+| <span class="fn">eval</span> finding=<span class="str">"JVM spawning shell — Java deserialization RCE"</span>
+
+<span class="cmt">| Hunt 2: Syslog — Java serialization in FMC HTTP access log</span>
+<span class="fn">index</span>=network <span class="kw">sourcetype</span>=cisco:fmc:syslog
+  (<span class="str">"x-java-serialized-object"</span> OR <span class="str">"CommonsCollections"</span> OR <span class="str">"InvokerTransformer"</span>)
+| <span class="fn">table</span> _time, host, src_ip, dest_ip, message
+| <span class="fn">eval</span> finding=<span class="str">"Java deserialization indicator in FMC logs"</span>
+
+<span class="cmt">| Hunt 3: Network connections FROM FMC host (post-exploitation C2)</span>
+<span class="fn">index</span>=network <span class="kw">sourcetype</span>=cisco:asa:syslog
+  src=<span class="str">"[FMC_IP]"</span>
+  NOT dest_port IN (<span class="num">443</span>, <span class="num">80</span>, <span class="num">53</span>, <span class="num">123</span>, <span class="num">514</span>)
+| <span class="fn">table</span> _time, src, dest, dest_port, bytes_out
+| <span class="fn">eval</span> finding=<span class="str">"FMC making unexpected outbound connection"</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hunt 3: QRadar -->
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">QRadar (AQL)</span>
+              FMC Java Serialization Request — AQL Network Log Hunt
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                qradar-hunt-fmc-deser.aql &mdash; Hunt: Java Serialization to FMC?
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <div class="code-body"><span class="kw">SELECT</span> sourceip, destinationip, destinationport,
+       <span class="str">"HTTP Content Type"</span>, <span class="str">"HTTP Method"</span>, <span class="str">"URL"</span>,
+       LOGSOURCENAME(logsourceid), starttime
+<span class="kw">FROM</span> events
+<span class="kw">WHERE</span> (<span class="str">"HTTP Content Type"</span> ILIKE <span class="str">'%java-serialized%'</span>
+   <span class="kw">OR</span> <span class="str">"HTTP Content Type"</span> ILIKE <span class="str">'%serialized-object%'</span>)
+  <span class="kw">AND</span> <span class="str">"HTTP Method"</span> = <span class="str">'POST'</span>
+  <span class="kw">AND</span> starttime > <span class="fn">CURRENT_TIMESTAMP</span> - <span class="num">30</span> DAYS
+<span class="kw">ORDER BY</span> starttime <span class="kw">DESC</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="th-guide"><strong>&#10140; FMC logs not in SIEM?</strong> Configure Cisco FMC to forward audit logs via syslog (System &rarr; Configuration &rarr; SMTP, Syslog). Alternatively, use your network firewall/proxy logs which should capture HTTP headers including Content-Type for flows to the FMC management IP.</div>
+      </div><!-- /SIEM group -->
+
+      <!-- EDR/XDR GROUP -->
+      <div class="rule-group">
+        <div class="rule-group-hd">
+          <span class="rgb-edr">EDR / XDR</span>
+          <span class="rule-group-label">Hunt 4&ndash;6: Defender (KQL) / Cortex XDR (XQL) / CrowdStrike (SPL)</span>
+        </div>
+
+        <div class="th-note"><strong>&#9432; EDR Prerequisite:</strong> Requires EDR agent installed on the FMC appliance (Linux-based). Cisco FMC runs on a hardened Linux OS — if EDR is not deployed there, consider network-based detection as the primary hunt method.</div>
+
+        <!-- Hunt 4: Defender -->
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">Defender (KQL)</span>
+              Java Process Spawning Shell on Management Appliance
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                mde-hunt-fmc-jvm-shell.kql &mdash; Hunt: JVM Spawning Shell?
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <div class="code-body"><span class="cmt">// Hunt: Java process spawning shell on Cisco FMC host (Linux)</span>
+<span class="fn">DeviceProcessEvents</span>
+| <span class="kw">where</span> InitiatingProcessFileName <span class="fn">in~</span> (<span class="str">"java"</span>, <span class="str">"javaw"</span>)
+    <span class="kw">or</span> InitiatingProcessCommandLine <span class="fn">has_any</span>(<span class="str">"CommonsCollections"</span>, <span class="str">"InvokerTransformer"</span>)
+| <span class="kw">where</span> FileName <span class="fn">in~</span> (<span class="str">"bash"</span>, <span class="str">"sh"</span>, <span class="str">"dash"</span>, <span class="str">"curl"</span>, <span class="str">"wget"</span>, <span class="str">"nc"</span>)
+| <span class="fn">project</span> Timestamp, DeviceName, InitiatingProcessCommandLine,
+    FileName, ProcessCommandLine, AccountName
+| <span class="fn">extend</span> Finding = <span class="str">"JVM spawning shell — Java deserialization RCE indicator"</span>
+| <span class="fn">order by</span> Timestamp <span class="kw">desc</span>
+
+<span class="cmt">// Also: check for credential harvest files created by Java</span>
+<span class="fn">DeviceFileEvents</span>
+| <span class="kw">where</span> InitiatingProcessFileName <span class="fn">in~</span> (<span class="str">"java"</span>)
+| <span class="kw">where</span> FileName <span class="fn">has_any</span>(<span class="str">".key"</span>, <span class="str">"id_rsa"</span>, <span class="str">"shadow"</span>, <span class="str">"passwd"</span>, <span class="str">"README_INTERLOCK"</span>)
+| <span class="fn">project</span> Timestamp, DeviceName, FolderPath, FileName, InitiatingProcessCommandLine</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hunt 5: Cortex XDR -->
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">Cortex XDR (XQL)</span>
+              JVM Outbound Network Connection After Deserialization
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                cortex-hunt-fmc-jvm.xql &mdash; Hunt: Java Process Network Activity
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <div class="code-body"><span class="kw">dataset</span> = xdr_data
+| <span class="fn">filter</span> actor_process_image_name <span class="fn">contains</span> <span class="str">"java"</span>
+| <span class="fn">filter</span> action_remote_port <span class="fn">not in</span> (<span class="num">443</span>, <span class="num">80</span>, <span class="num">8080</span>, <span class="num">8443</span>, <span class="num">4848</span>)
+    <span class="kw">or</span> causality_actor_process_image_name <span class="fn">in</span> (<span class="str">"bash"</span>, <span class="str">"sh"</span>, <span class="str">"curl"</span>, <span class="str">"wget"</span>)
+| <span class="fn">fields</span> _time, agent_hostname, actor_process_image_name,
+    actor_process_cmd_line, action_remote_ip, action_remote_port,
+    causality_actor_process_image_name</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="th-guide"><strong>&#10140; EDR not on Cisco appliances?</strong> Cisco FMC is a managed appliance — deploy EDR carefully per Cisco TAC guidance. Primary coverage should come from network IDS/IPS (Snort rules for Java deserialization magic bytes <code>AC ED 00 05</code>) and firewall logs showing inbound POST traffic to FMC ports.</div>
+      </div><!-- /EDR group -->
+
+      <!-- NETWORK GROUP -->
+      <div class="rule-group">
+        <div class="rule-group-hd">
+          <span class="rgb-pattern">Network</span>
+          <span class="rule-group-label">Hunt 7&ndash;8: Firewall / IDS / Proxy</span>
+        </div>
+
+        <div class="th-note"><strong>&#9432; Network Prerequisite:</strong> Requires firewall logs showing traffic to/from FMC management IP (port 443/8443). IDS/IPS with Java deserialization signatures provides best coverage. These queries identify Interlock C2 IP 185.220.101.47.</div>
+
+        <!-- Hunt 7: Firewall/IDS -->
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">Firewall / IDS</span>
+              Java Deserialization Magic Bytes + Interlock C2 — Network Hunt
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                network-hunt-fmc-interlock.txt &mdash; Hunt: C2 Traffic + Deserialization Payload
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <div class="code-body"><span class="cmt">// Hunt 1: Connections TO FMC management IP from external (in Sentinel)</span>
+<span class="fn">CommonSecurityLog</span>
+| <span class="kw">where</span> DestinationIP == <span class="str">"[FMC_MGMT_IP]"</span>  <span class="cmt">// Replace with your FMC IP</span>
+| <span class="kw">where</span> DestinationPort <span class="fn">in</span> (<span class="num">443</span>, <span class="num">8443</span>, <span class="num">8080</span>)
+| <span class="kw">where</span> SourceIP <span class="fn">!startswith</span> <span class="str">"10."</span> <span class="kw">and</span> SourceIP <span class="fn">!startswith</span> <span class="str">"192.168."</span>
+| <span class="fn">summarize</span> count(), make_set(DestinationPort) by SourceIP, bin(TimeGenerated, <span class="num">1</span>h)
+
+<span class="cmt">// Hunt 2: Connections FROM FMC to known Interlock C2 IP</span>
+<span class="fn">CommonSecurityLog</span>
+| <span class="kw">where</span> SourceIP == <span class="str">"[FMC_MGMT_IP]"</span>
+| <span class="kw">where</span> DestinationIP == <span class="str">"185.220.101.47"</span>  <span class="cmt">// Known Interlock ransomware C2</span>
+| <span class="fn">project</span> TimeGenerated, SourceIP, DestinationIP, DestinationPort, RequestURL
+| <span class="fn">extend</span> Finding = <span class="str">"FMC communicating with Interlock ransomware C2"</span>
+
+<span class="cmt">// Hunt 3: Any outbound from FMC to Tor exit node ranges</span>
+<span class="fn">CommonSecurityLog</span>
+| <span class="kw">where</span> SourceIP == <span class="str">"[FMC_MGMT_IP]"</span>
+| <span class="kw">where</span> DestinationPort <span class="fn">not in</span> (<span class="num">443</span>, <span class="num">80</span>, <span class="num">53</span>, <span class="num">123</span>, <span class="num">514</span>)
+| <span class="fn">summarize</span> count() by DestinationIP, DestinationPort</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="th-guide"><strong>&#10140; No firewall log visibility into FMC traffic?</strong> FMC management should be isolated to a dedicated management network segment with strict ACLs — no internet access in/out. If FMC is internet-accessible, this is itself a critical finding independent of CVE-2026-20131. Remediate network segmentation immediately.</div>
+      </div><!-- /Network group -->
+
+    </div><!-- /det-pane det-hunt -->
   </div>
 
   <!-- ══ RECOMMENDATIONS ══ -->
@@ -1127,6 +1401,22 @@ applyLang(_lang);
     btn.classList.toggle('visible', window.scrollY > 400);
   }, {passive: true});
 })();
+function copyCode(btn) {
+  var body = btn.closest(".code-block").querySelector(".code-body");
+  var text = body.innerText;
+  var orig = btn.innerHTML;
+  navigator.clipboard.writeText(text).then(function() {
+    btn.textContent = "Copied!"; btn.classList.add("copied");
+    setTimeout(function() { btn.innerHTML = orig; btn.classList.remove("copied"); }, 2000);
+  }).catch(function() {
+    var ta = document.createElement("textarea");
+    ta.value = text; ta.style.cssText = "position:fixed;opacity:0";
+    document.body.appendChild(ta); ta.select(); document.execCommand("copy");
+    document.body.removeChild(ta);
+    btn.textContent = "Copied!"; btn.classList.add("copied");
+    setTimeout(function() { btn.innerHTML = orig; btn.classList.remove("copied"); }, 2000);
+  });
+}
 </script>
 </body>
 </html>

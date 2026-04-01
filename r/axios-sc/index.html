@@ -276,34 +276,34 @@
     <div class="mtt">
 
       <div class="mtt-item">
-        <div class="mtt-tactic">Initial Access</div>
-        <div class="mtt-technique-title">Supply Chain Compromise via Malicious npm Package</div>
+        <div class="mtt-tactic" data-en="Initial Access" data-tr="İlk Erişim">Initial Access</div>
+        <div class="mtt-technique-title" data-en="Supply Chain Compromise via Malicious npm Package" data-tr="Kötü Niyetli npm Paketi ile Tedarik Zinciri Ele Geçirme">Supply Chain Compromise via Malicious npm Package</div>
         <div class="mtt-tids">
           <span class="mtt-tid">T1195.001</span>
         </div>
-        <div class="mtt-desc"><strong>Technique:</strong> Compromise Software Dependencies and Development Tools. Threat actor publishes axios@1.14.1 and @0.30.4 &mdash; version numbers that never existed in legitimate axios (real: 1.7.x). Any <code>npm install axios</code> without pinned integrity check pulls the malicious build.</div>
+        <div class="mtt-desc" data-en="&lt;strong&gt;Technique:&lt;/strong&gt; Compromise Software Dependencies and Development Tools. Threat actor publishes axios@1.14.1 and @0.30.4 &mdash; version numbers that never existed in legitimate axios (real: 1.7.x). Any &lt;code&gt;npm install axios&lt;/code&gt; without pinned integrity check pulls the malicious build." data-tr="&lt;strong&gt;Teknik:&lt;/strong&gt; Yazılım Bağımlılıklarını ve Geliştirme Araçlarını Ele Geçirme. Tehdit aktörü meşru axios'ta hiç var olmayan versiyon numaralarıyla (gerçek: 1.7.x) axios@1.14.1 ve @0.30.4'ü yayınlar. Sabitlenmiş bütünlük denetimi olmadan yapılan her &lt;code&gt;npm install axios&lt;/code&gt; kötü niyetli paketi çeker."><strong>Technique:</strong> Compromise Software Dependencies and Development Tools. Threat actor publishes axios@1.14.1 and @0.30.4 &mdash; version numbers that never existed in legitimate axios (real: 1.7.x). Any <code>npm install axios</code> without pinned integrity check pulls the malicious build.</div>
         <div class="mtt-evidence">
           <div class="mtt-evidence-hd">
-            <span class="mtt-evidence-title">Evidence Artifacts</span>
+            <span class="mtt-evidence-title" data-en="Evidence Artifacts" data-tr="Adli Kanıt Eserleri">Evidence Artifacts</span>
             <span class="mtt-evidence-src">npm / package-lock.json</span>
           </div>
           <div class="mtt-evidence-body">npm audit output showing axios@1.14.1
 package-lock.json — "resolved": "...axios/-/axios-1.14.1.tgz"
 timestamp of npm install execution in CI logs</div>
         </div>
-        <div class="mtt-annotation"><strong>Detection Note:</strong> "npm version 1.14.1 doesn't exist in legitimate axios &mdash; version check catches this." Run <code>npm view axios versions</code> to verify any suspicious version number.</div>
+        <div class="mtt-annotation" data-en="&lt;strong&gt;Detection Note:&lt;/strong&gt; &#34;npm version 1.14.1 doesn't exist in legitimate axios &mdash; version check catches this.&#34; Run &lt;code&gt;npm view axios versions&lt;/code&gt; to verify any suspicious version number." data-tr="&lt;strong&gt;Tespit Notu:&lt;/strong&gt; &#34;npm 1.14.1 versiyonu meşru axios'ta mevcut değildir — versiyon kontrolü bunu yakalar.&#34; Şüpheli versiyon numarasını doğrulamak için &lt;code&gt;npm view axios versions&lt;/code&gt; çalıştırın."><strong>Detection Note:</strong> "npm version 1.14.1 doesn't exist in legitimate axios &mdash; version check catches this." Run <code>npm view axios versions</code> to verify any suspicious version number.</div>
       </div>
 
       <div class="mtt-item">
-        <div class="mtt-tactic">Execution</div>
-        <div class="mtt-technique-title">JavaScript Postinstall Hook &mdash; Automatic Execution on npm install</div>
+        <div class="mtt-tactic" data-en="Execution" data-tr="Yürütme">Execution</div>
+        <div class="mtt-technique-title" data-en="JavaScript Postinstall Hook &mdash; Automatic Execution on npm install" data-tr="JavaScript Postinstall Hook &mdash; npm install Sırasında Otomatik Yürütme">JavaScript Postinstall Hook &mdash; Automatic Execution on npm install</div>
         <div class="mtt-tids">
           <span class="mtt-tid">T1059.007</span>
         </div>
-        <div class="mtt-desc"><strong>Technique:</strong> Command and Scripting Interpreter: JavaScript. The <code>postinstall</code> hook in <code>package.json</code> runs <code>node ./scripts/install.js</code> automatically when npm resolves the dependency. No user interaction beyond <code>npm install</code> is required &mdash; the hook fires silently.</div>
+        <div class="mtt-desc" data-en="&lt;strong&gt;Technique:&lt;/strong&gt; Command and Scripting Interpreter: JavaScript. The &lt;code&gt;postinstall&lt;/code&gt; hook in &lt;code&gt;package.json&lt;/code&gt; runs &lt;code&gt;node ./scripts/install.js&lt;/code&gt; automatically when npm resolves the dependency. No user interaction beyond &lt;code&gt;npm install&lt;/code&gt; is required &mdash; the hook fires silently." data-tr="&lt;strong&gt;Teknik:&lt;/strong&gt; Komut ve Betik Yorumlayıcısı: JavaScript. &lt;code&gt;package.json&lt;/code&gt;'daki &lt;code&gt;postinstall&lt;/code&gt; hook'u npm bağımlılığı çözdüğünde otomatik olarak &lt;code&gt;node ./scripts/install.js&lt;/code&gt;'yi çalıştırır. &lt;code&gt;npm install&lt;/code&gt;'ın ötesinde kullanıcı etkileşimi gerekmez &mdash; hook sessizce tetiklenir."><strong>Technique:</strong> Command and Scripting Interpreter: JavaScript. The <code>postinstall</code> hook in <code>package.json</code> runs <code>node ./scripts/install.js</code> automatically when npm resolves the dependency. No user interaction beyond <code>npm install</code> is required &mdash; the hook fires silently.</div>
         <div class="mtt-evidence">
           <div class="mtt-evidence-hd">
-            <span class="mtt-evidence-title">Evidence Artifacts</span>
+            <span class="mtt-evidence-title" data-en="Evidence Artifacts" data-tr="Adli Kanıt Eserleri">Evidence Artifacts</span>
             <span class="mtt-evidence-src">npm verbose log / process tree</span>
           </div>
           <div class="mtt-evidence-body">npm verbose log showing: "> axios@1.14.1 postinstall"
@@ -311,21 +311,21 @@ timestamp of npm install execution in CI logs</div>
 node.exe spawned by npm.cmd — parent-child process tree
 network connection from node.exe to sfrclak.com within 3s of install</div>
         </div>
-        <div class="mtt-annotation"><strong>Detection Note:</strong> "postinstall script runs immediately on npm install &mdash; no additional user action needed." Flag any <code>node.exe</code> making outbound connections during <code>npm install</code> to non-registry hosts.</div>
+        <div class="mtt-annotation" data-en="&lt;strong&gt;Detection Note:&lt;/strong&gt; &#34;postinstall script runs immediately on npm install &mdash; no additional user action needed.&#34; Flag any &lt;code&gt;node.exe&lt;/code&gt; making outbound connections during &lt;code&gt;npm install&lt;/code&gt; to non-registry hosts." data-tr="&lt;strong&gt;Tespit Notu:&lt;/strong&gt; &#34;postinstall script npm install anında çalışır — ek kullanıcı etkileşimi gerekmez.&#34; npm install sırasında kayıt dışı host'lara giden bağlantı yapan &lt;code&gt;node.exe&lt;/code&gt;'yi işaretleyin."><strong>Detection Note:</strong> "postinstall script runs immediately on npm install &mdash; no additional user action needed." Flag any <code>node.exe</code> making outbound connections during <code>npm install</code> to non-registry hosts.</div>
       </div>
 
       <div class="mtt-item">
-        <div class="mtt-tactic">Defense Evasion</div>
-        <div class="mtt-technique-title">Triple Evasion: XOR Obfuscation + Process Masquerade + Antique UA</div>
+        <div class="mtt-tactic" data-en="Defense Evasion" data-tr="Savunmadan Kaçınma">Defense Evasion</div>
+        <div class="mtt-technique-title" data-en="Triple Evasion: XOR Obfuscation + Process Masquerade + Antique UA" data-tr="Üçlü Kaçınma: XOR Gizleme + Süreç Taklit Etme + Eski UA">Triple Evasion: XOR Obfuscation + Process Masquerade + Antique UA</div>
         <div class="mtt-tids">
           <span class="mtt-tid">T1140</span>
           <span class="mtt-tid">T1036</span>
           <span class="mtt-tid">T1001</span>
         </div>
-        <div class="mtt-desc"><strong>T1140:</strong> XOR decoding of payload URLs and binary content on-disk defeats simple string-based YARA/AV signatures. <strong>T1036:</strong> RAT binary renamed to mimic system utilities (<em>svchost_update.exe</em> on Windows, <em>update</em> on Linux). <strong>T1001:</strong> MSIE 8.0 User-Agent in C2 traffic disguises beacon as legacy browser activity.</div>
+        <div class="mtt-desc" data-en="&lt;strong&gt;T1140:&lt;/strong&gt; XOR decoding of payload URLs and binary content on-disk defeats simple string-based YARA/AV signatures. &lt;strong&gt;T1036:&lt;/strong&gt; RAT binary renamed to mimic system utilities (&lt;em&gt;svchost_update.exe&lt;/em&gt; on Windows, &lt;em&gt;update&lt;/em&gt; on Linux). &lt;strong&gt;T1001:&lt;/strong&gt; MSIE 8.0 User-Agent in C2 traffic disguises beacon as legacy browser activity." data-tr="&lt;strong&gt;T1140:&lt;/strong&gt; Payload URL'lerinin ve disk üzerindeki binary içeriğinin XOR ile çözümlenmesi basit string tabanlı YARA/AV imzalarını geçersiz kılar. &lt;strong&gt;T1036:&lt;/strong&gt; RAT binary'si sistem yardımcı programlarını taklit edecek şekilde yeniden adlandırılır (Windows'ta &lt;em&gt;svchost_update.exe&lt;/em&gt;, Linux'ta &lt;em&gt;update&lt;/em&gt;). &lt;strong&gt;T1001:&lt;/strong&gt; C2 trafiğindeki MSIE 8.0 User-Agent, beacon'ı eski tarayıcı aktivitesi gibi gösterir."><strong>T1140:</strong> XOR decoding of payload URLs and binary content on-disk defeats simple string-based YARA/AV signatures. <strong>T1036:</strong> RAT binary renamed to mimic system utilities (<em>svchost_update.exe</em> on Windows, <em>update</em> on Linux). <strong>T1001:</strong> MSIE 8.0 User-Agent in C2 traffic disguises beacon as legacy browser activity.</div>
         <div class="mtt-evidence">
           <div class="mtt-evidence-hd">
-            <span class="mtt-evidence-title">Evidence Artifacts</span>
+            <span class="mtt-evidence-title" data-en="Evidence Artifacts" data-tr="Adli Kanıt Eserleri">Evidence Artifacts</span>
             <span class="mtt-evidence-src">Proxy logs / filesystem / memory</span>
           </div>
           <div class="mtt-evidence-body">XOR-decoded binary written to %TEMP%\svchost_update.exe
@@ -333,20 +333,20 @@ process renamed to system utility name in tasklist/ps output
 MSIE 8.0 UA string in proxy/firewall logs:
   "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)"</div>
         </div>
-        <div class="mtt-annotation"><strong>Detection Note:</strong> "Triple evasion: XOR on download, system name masquerade, antique UA string for C2 traffic." The MSIE 8.0 UA is a <strong>zero-false-positive</strong> signal &mdash; no modern application legitimately sends this string.</div>
+        <div class="mtt-annotation" data-en="&lt;strong&gt;Detection Note:&lt;/strong&gt; &#34;Triple evasion: XOR on download, system name masquerade, antique UA string for C2 traffic.&#34; The MSIE 8.0 UA is a &lt;strong&gt;zero-false-positive&lt;/strong&gt; signal &mdash; no modern application legitimately sends this string." data-tr="&lt;strong&gt;Tespit Notu:&lt;/strong&gt; &#34;Üçlü kaçınma: indirmede XOR, sistem adı taklidi, C2 trafiği için eski UA string.&#34; MSIE 8.0 UA &lt;strong&gt;sıfır yanlış pozitifli&lt;/strong&gt; bir sinyaldir &mdash; hiçbir modern uygulama bu string'i meşru olarak göndermez."><strong>Detection Note:</strong> "Triple evasion: XOR on download, system name masquerade, antique UA string for C2 traffic." The MSIE 8.0 UA is a <strong>zero-false-positive</strong> signal &mdash; no modern application legitimately sends this string.</div>
       </div>
 
       <div class="mtt-item">
-        <div class="mtt-tactic">Persistence</div>
-        <div class="mtt-technique-title">Scheduled Task (Windows) + Cron Job (Linux/macOS)</div>
+        <div class="mtt-tactic" data-en="Persistence" data-tr="Kalıcılık">Persistence</div>
+        <div class="mtt-technique-title" data-en="Scheduled Task (Windows) + Cron Job (Linux/macOS)" data-tr="Zamanlanmış Görev (Windows) + Cron Job (Linux/macOS)">Scheduled Task (Windows) + Cron Job (Linux/macOS)</div>
         <div class="mtt-tids">
           <span class="mtt-tid">T1053.005</span>
           <span class="mtt-tid">T1053.003</span>
         </div>
-        <div class="mtt-desc"><strong>T1053.005:</strong> Scheduled task named <em>"WindowsUpdate"</em> created via <code>schtasks /create</code> running every 5 minutes, deliberately chosen to blend with Microsoft's legitimate Windows Update task. <strong>T1053.003:</strong> <code>crontab</code> entry added for the current user on Linux/macOS with <code>*/5 * * * *</code> frequency. Both mechanisms survive reboots and are installed without admin/root privileges.</div>
+        <div class="mtt-desc" data-en="&lt;strong&gt;T1053.005:&lt;/strong&gt; Scheduled task named &lt;em&gt;&#34;WindowsUpdate&#34;&lt;/em&gt; created via &lt;code&gt;schtasks /create&lt;/code&gt; running every 5 minutes, deliberately chosen to blend with Microsoft's legitimate Windows Update task. &lt;strong&gt;T1053.003:&lt;/strong&gt; &lt;code&gt;crontab&lt;/code&gt; entry added for the current user on Linux/macOS with &lt;code&gt;*/5 * * * *&lt;/code&gt; frequency. Both mechanisms survive reboots and are installed without admin/root privileges." data-tr="&lt;strong&gt;T1053.005:&lt;/strong&gt; &lt;code&gt;schtasks /create&lt;/code&gt; aracılığıyla her 5 dakikada bir çalışan &lt;em&gt;&#34;WindowsUpdate&#34;&lt;/em&gt; adlı zamanlanmış görev oluşturulur; bu isim Microsoft'un meşru Windows Update göreviyle karışması için kasıtlı seçilmiştir. &lt;strong&gt;T1053.003:&lt;/strong&gt; Linux/macOS'ta mevcut kullanıcı için &lt;code&gt;*/5 * * * *&lt;/code&gt; sıklığında &lt;code&gt;crontab&lt;/code&gt; girişi eklenir. Her iki mekanizma da yeniden başlatmadan sağ çıkar ve admin/root yetkisi gerektirmez."><strong>T1053.005:</strong> Scheduled task named <em>"WindowsUpdate"</em> created via <code>schtasks /create</code> running every 5 minutes, deliberately chosen to blend with Microsoft's legitimate Windows Update task. <strong>T1053.003:</strong> <code>crontab</code> entry added for the current user on Linux/macOS with <code>*/5 * * * *</code> frequency. Both mechanisms survive reboots and are installed without admin/root privileges.</div>
         <div class="mtt-evidence">
           <div class="mtt-evidence-hd">
-            <span class="mtt-evidence-title">Evidence Artifacts</span>
+            <span class="mtt-evidence-title" data-en="Evidence Artifacts" data-tr="Adli Kanıt Eserleri">Evidence Artifacts</span>
             <span class="mtt-evidence-src">schtasks / crontab / Windows Event Log 4698</span>
           </div>
           <div class="mtt-evidence-body">Windows:
@@ -357,22 +357,22 @@ Linux/macOS:
   crontab -l → "*/5 * * * * ~/.local/bin/update"
   process restart observed after manual kill</div>
         </div>
-        <div class="mtt-annotation"><strong>Detection Note:</strong> "Task named WindowsUpdate: deliberate confusion with Microsoft's legitimate task name." Alert on <strong>WindowsUpdate</strong> scheduled task where the author is NOT <code>NT AUTHORITY\SYSTEM</code> or a Microsoft process.</div>
+        <div class="mtt-annotation" data-en="&lt;strong&gt;Detection Note:&lt;/strong&gt; &#34;Task named WindowsUpdate: deliberate confusion with Microsoft's legitimate task name.&#34; Alert on &lt;strong&gt;WindowsUpdate&lt;/strong&gt; scheduled task where the author is NOT &lt;code&gt;NT AUTHORITY\SYSTEM&lt;/code&gt; or a Microsoft process." data-tr="&lt;strong&gt;Tespit Notu:&lt;/strong&gt; &#34;WindowsUpdate adlı görev: Microsoft'un meşru görev adıyla kasıtlı karıştırma.&#34; Yazarı &lt;code&gt;NT AUTHORITY\SYSTEM&lt;/code&gt; veya Microsoft süreci olmayan &lt;strong&gt;WindowsUpdate&lt;/strong&gt; zamanlanmış görevi için uyarı oluşturun."><strong>Detection Note:</strong> "Task named WindowsUpdate: deliberate confusion with Microsoft's legitimate task name." Alert on <strong>WindowsUpdate</strong> scheduled task where the author is NOT <code>NT AUTHORITY\SYSTEM</code> or a Microsoft process.</div>
       </div>
 
       <div class="mtt-item">
-        <div class="mtt-tactic">Collection + Exfiltration</div>
-        <div class="mtt-technique-title">Credential Harvest + C2 Exfiltration over HTTP</div>
+        <div class="mtt-tactic" data-en="Collection + Exfiltration" data-tr="Toplama + Dışarıya Sızdırma">Collection + Exfiltration</div>
+        <div class="mtt-technique-title" data-en="Credential Harvest + C2 Exfiltration over HTTP" data-tr="Kimlik Bilgisi Toplama + HTTP Üzerinden C2 Sızdırma">Credential Harvest + C2 Exfiltration over HTTP</div>
         <div class="mtt-tids">
           <span class="mtt-tid">T1552.001</span>
           <span class="mtt-tid">T1005</span>
           <span class="mtt-tid">T1041</span>
           <span class="mtt-tid">T1071.001</span>
         </div>
-        <div class="mtt-desc"><strong>T1552.001:</strong> SSH private keys (<code>~/.ssh/id_rsa</code>), npm auth tokens (<code>~/.npmrc</code>), git credentials (<code>~/.gitconfig</code>), and environment variables containing <code>TOKEN</code>, <code>KEY</code>, <code>SECRET</code>, or <code>PASS</code> are harvested. <strong>T1041:</strong> All data exfiltrated to <code>sfrclak.com:8000</code> via HTTP POST, with beacon traffic disguised using MSIE 8.0 UA (<strong>T1071.001</strong>).</div>
+        <div class="mtt-desc" data-en="&lt;strong&gt;T1552.001:&lt;/strong&gt; SSH private keys (&lt;code&gt;~/.ssh/id_rsa&lt;/code&gt;), npm auth tokens (&lt;code&gt;~/.npmrc&lt;/code&gt;), git credentials (&lt;code&gt;~/.gitconfig&lt;/code&gt;), and environment variables containing &lt;code&gt;TOKEN&lt;/code&gt;, &lt;code&gt;KEY&lt;/code&gt;, &lt;code&gt;SECRET&lt;/code&gt;, or &lt;code&gt;PASS&lt;/code&gt; are harvested. &lt;strong&gt;T1041:&lt;/strong&gt; All data exfiltrated to &lt;code&gt;sfrclak.com:8000&lt;/code&gt; via HTTP POST, with beacon traffic disguised using MSIE 8.0 UA (&lt;strong&gt;T1071.001&lt;/strong&gt;)." data-tr="&lt;strong&gt;T1552.001:&lt;/strong&gt; SSH özel anahtarları (&lt;code&gt;~/.ssh/id_rsa&lt;/code&gt;), npm auth token'ları (&lt;code&gt;~/.npmrc&lt;/code&gt;), git kimlik bilgileri (&lt;code&gt;~/.gitconfig&lt;/code&gt;) ve &lt;code&gt;TOKEN&lt;/code&gt;, &lt;code&gt;KEY&lt;/code&gt;, &lt;code&gt;SECRET&lt;/code&gt; veya &lt;code&gt;PASS&lt;/code&gt; içeren ortam değişkenleri toplanır. &lt;strong&gt;T1041:&lt;/strong&gt; Tüm veriler MSIE 8.0 UA ile gizlenen beacon trafiğiyle (&lt;strong&gt;T1071.001&lt;/strong&gt;) HTTP POST aracılığıyla &lt;code&gt;sfrclak.com:8000&lt;/code&gt;'e sızdırılır."><strong>T1552.001:</strong> SSH private keys (<code>~/.ssh/id_rsa</code>), npm auth tokens (<code>~/.npmrc</code>), git credentials (<code>~/.gitconfig</code>), and environment variables containing <code>TOKEN</code>, <code>KEY</code>, <code>SECRET</code>, or <code>PASS</code> are harvested. <strong>T1041:</strong> All data exfiltrated to <code>sfrclak.com:8000</code> via HTTP POST, with beacon traffic disguised using MSIE 8.0 UA (<strong>T1071.001</strong>).</div>
         <div class="mtt-evidence">
           <div class="mtt-evidence-hd">
-            <span class="mtt-evidence-title">Evidence Artifacts</span>
+            <span class="mtt-evidence-title" data-en="Evidence Artifacts" data-tr="Adli Kanıt Eserleri">Evidence Artifacts</span>
             <span class="mtt-evidence-src">File access audit / proxy logs / SIEM</span>
           </div>
           <div class="mtt-evidence-body">~/.ssh/id_rsa read by non-ssh process (high-priority alert)
@@ -381,7 +381,7 @@ HTTP GET sfrclak.com:8000/api/status — MSIE 8.0 UA
 HTTP POST sfrclak.com:8000/api/data — large body (credentials)
 DNS query: sfrclak.com resolved to 142.11.206.73</div>
         </div>
-        <div class="mtt-annotation"><strong>Detection Note:</strong> "SSH key access by non-ssh process is zero-FP on developer machines &mdash; highest priority alert." Create an alert for any process reading <code>~/.ssh/id_rsa</code> where <code>process.name != ssh</code> and <code>process.name != gpg-agent</code>.</div>
+        <div class="mtt-annotation" data-en="&lt;strong&gt;Detection Note:&lt;/strong&gt; &#34;SSH key access by non-ssh process is zero-FP on developer machines &mdash; highest priority alert.&#34; Create an alert for any process reading &lt;code&gt;~/.ssh/id_rsa&lt;/code&gt; where &lt;code&gt;process.name != ssh&lt;/code&gt; and &lt;code&gt;process.name != gpg-agent&lt;/code&gt;." data-tr="&lt;strong&gt;Tespit Notu:&lt;/strong&gt; &#34;SSH olmayan sürecin SSH key erişimi, geliştirici makinelerinde sıfır yanlış pozitiflidir — en yüksek öncelikli uyarı.&#34; &lt;code&gt;process.name != ssh&lt;/code&gt; ve &lt;code&gt;process.name != gpg-agent&lt;/code&gt; koşullarında &lt;code&gt;~/.ssh/id_rsa&lt;/code&gt;'yı okuyan her süreç için uyarı oluşturun."><strong>Detection Note:</strong> "SSH key access by non-ssh process is zero-FP on developer machines &mdash; highest priority alert." Create an alert for any process reading <code>~/.ssh/id_rsa</code> where <code>process.name != ssh</code> and <code>process.name != gpg-agent</code>.</div>
       </div>
 
     </div>
@@ -405,13 +405,25 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
         <tbody>
           <tr>
             <td><code class="ioc-val">sfrclak.com</code></td>
-            <td><span class="ioc-type">Domain</span></td>
+            <td><span class="ioc-type">Domain / C2</span></td>
             <td><span class="ioc-conf high">HIGH</span></td>
             <td><a class="vt-btn" href="https://www.virustotal.com/gui/domain/sfrclak.com" target="_blank" rel="noopener">VT &nearr;</a></td>
           </tr>
           <tr>
+            <td><code class="ioc-val">calltan.com</code></td>
+            <td><span class="ioc-type">Domain / C2</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td><a class="vt-btn" href="https://www.virustotal.com/gui/domain/calltan.com" target="_blank" rel="noopener">VT &nearr;</a></td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">callnrwise.com</code></td>
+            <td><span class="ioc-type">Domain / C2</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td><a class="vt-btn" href="https://www.virustotal.com/gui/domain/callnrwise.com" target="_blank" rel="noopener">VT &nearr;</a></td>
+          </tr>
+          <tr>
             <td><code class="ioc-val">142.11.206.73</code></td>
-            <td><span class="ioc-type">IP</span></td>
+            <td><span class="ioc-type">IP / C2</span></td>
             <td><span class="ioc-conf high">HIGH</span></td>
             <td><a class="vt-btn" href="https://www.virustotal.com/gui/ip-address/142.11.206.73" target="_blank" rel="noopener">VT &nearr;</a></td>
           </tr>
@@ -424,6 +436,36 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
           <tr>
             <td><code class="ioc-val">axios@0.30.4</code></td>
             <td><span class="ioc-type">npm Package</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">plain-crypto-js@4.2.1</code></td>
+            <td><span class="ioc-type">npm Package</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">2553649f232204966871cea80a5d0d6adc700ca</code></td>
+            <td><span class="ioc-type">SHA1 — axios@1.14.1</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">6483c004e207137385f480909d6edecf1b699087378aa91745ecba7c3394f9d7</code></td>
+            <td><span class="ioc-type">SHA256 — /tmp/ld.py (Linux RAT)</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td><a class="vt-btn" href="https://www.virustotal.com/gui/file/6483c004e207137385f480909d6edecf1b699087378aa91745ecba7c3394f9d7" target="_blank" rel="noopener">VT &nearr;</a></td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">92ff08773995ebc8d55ec4b8e1a225d0d1e51efa4ef88b8849d0071230c9645a</code></td>
+            <td><span class="ioc-type">SHA256 — com.apple.act.mond (macOS)</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td><a class="vt-btn" href="https://www.virustotal.com/gui/file/92ff08773995ebc8d55ec4b8e1a225d0d1e51efa4ef88b8849d0071230c9645a" target="_blank" rel="noopener">VT &nearr;</a></td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">HKCU\...\Run\MicrosoftUpdate</code></td>
+            <td><span class="ioc-type">Registry Key</span></td>
             <td><span class="ioc-conf high">HIGH</span></td>
             <td>&mdash;</td>
           </tr>
@@ -455,49 +497,101 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
         <span class="rule-group-label">Rules 1&ndash;4: Sigma / Sentinel KQL / Splunk SPL / QRadar AQL</span>
       </div>
 
-      <!-- Rule 1: Sigma -->
+      <!-- Rule 1: Sigma — community ref + TI-DE tuned -->
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Sigma (YAML)</span>
-            Axios npm Malicious Postinstall &mdash; Shell from Node
+            Node.exe Arbitrary Code Execution + Persistence Run Key — Community Rules
           </div>
           <div class="rule-toggle">&#9660;</div>
         </div>
         <div class="rule-body">
+          <div class="th-note" style="margin:12px 0 4px"><strong>&#128279; Community Rules (SigmaHQ GitHub):</strong> The following are <strong>existing SigmaHQ rules</strong> that directly cover the axios supply chain TTPs. Referenced from the official repository — not written from scratch.
+            <br>&bull; <a href="https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_node_abuse.yml" target="_blank" rel="noopener" style="color:var(--accent2)">proc_creation_win_node_abuse.yml</a> — Node.exe code execution (T1127) — <strong>id: 6640f31c</strong>
+            <br>&bull; <a href="https://github.com/SigmaHQ/sigma/blob/master/rules/windows/registry/registry_set/registry_set_susp_run_key_img_folder.yml" target="_blank" rel="noopener" style="color:var(--accent2)">registry_set_susp_run_key_img_folder.yml</a> — Run key → suspicious folder (T1547.001) — <strong>id: 02ee49e2</strong>
+            <br>&bull; <a href="https://github.com/SigmaHQ/sigma/blob/master/rules/windows/registry/registry_set/registry_set_powershell_in_run_keys.yml" target="_blank" rel="noopener" style="color:var(--accent2)">registry_set_powershell_in_run_keys.yml</a> — PowerShell in Run keys — <strong>id: 8d85cf08</strong>
+            <br>&bull; <a href="https://github.com/SigmaHQ/sigma/blob/master/rules/windows/network_connection/net_connection_win_susp_initiated_uncommon_or_suspicious_locations.yml" target="_blank" rel="noopener" style="color:var(--accent2)">net_connection_win_susp_initiated_uncommon_or_suspicious_locations.yml</a> — Net connection from unusual process location — <strong>id: 7b434893</strong>
+          </div>
           <div class="code-block">
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
-              sigma-axios-npm-postinstall.yml &mdash; T1195.001 / T1059.007
+              proc_creation_win_node_abuse.yml &mdash; SigmaHQ id:6640f31c &mdash; T1127
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
-            <div class="code-body"><span class="kw">title</span>: Malicious npm Postinstall &mdash; Unauthorized Network Connection from Node.js
-<span class="kw">id</span>: 4d6e8f0a-3b5c-7d9e-1f3a-5b7c9d1e3f5a
-<span class="kw">status</span>: experimental
-<span class="kw">description</span>: Detects node.js making outbound connections to non-registry hosts
-           during npm install &mdash; supply chain RAT indicator
-<span class="kw">author</span>: TI-DE
-<span class="kw">date</span>: <span class="num">2026/03/31</span>
+            <div class="code-body"><span class="cmt"># Source: SigmaHQ/sigma — github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_node_abuse.yml
+# status: test | level: high | author: Nasreddine Bencherchali (Nextron Systems)</span>
+<span class="kw">title</span>: Potential Arbitrary Code Execution Via Node.EXE
+<span class="kw">id</span>: <span class="num">6640f31c-01ad-49b5-beb5-83498a5cd8bd</span>
+<span class="kw">status</span>: test
+<span class="kw">description</span>: Detects the execution node.exe which is shipped with multiple software
+           in order to execute arbitrary code. As seen in Log4j and supply chain attacks.
+<span class="kw">references</span>:
+  - <span class="str">http://blog.talosintelligence.com/2022/09/lazarus-three-rats.html</span>
+  - <span class="str">https://www.rapid7.com/blog/post/2022/01/18/active-exploitation-of-vmware-horizon-servers/</span>
+<span class="kw">author</span>: Nasreddine Bencherchali (Nextron Systems)
+<span class="kw">date</span>: <span class="num">2022/09/09</span>
 <span class="kw">tags</span>:
-  - attack.initial_access
-  - attack.t1195.001
-  - attack.execution
-  - attack.t1059.007
+  - attack.defense-evasion
+  - attack.t1127
 <span class="kw">logsource</span>:
-  category: network_connection
-  product: linux
+  category: process_creation
+  product: windows
 <span class="kw">detection</span>:
-  selection:
-    Image|endswith: <span class="str">'/node'</span>
-    ParentImage|contains: <span class="str">'npm'</span>
-    Initiated: <span class="str">'true'</span>
-  filter_legitimate:
-    DestinationHostname|endswith:
-      - <span class="str">'registry.npmjs.org'</span>
-      - <span class="str">'registry.yarnpkg.com'</span>
-  condition: selection and not filter_legitimate
+  selection_main:
+    Image|endswith: <span class="str">'\node.exe'</span>
+    CommandLine|contains:
+      - <span class="str">' -e '</span>
+      - <span class="str">' --eval '</span>
+  selection_action_reverse_shell:
+    CommandLine|contains|all:
+      - <span class="str">'.exec('</span>
+      - <span class="str">'net.socket'</span>
+      - <span class="str">'.connect'</span>
+      - <span class="str">'child_process'</span>
+  condition: selection_main and 1 of selection_action_*
 <span class="kw">falsepositives</span>:
-  - Postinstall scripts that legitimately call external APIs
-<span class="kw">level</span>: medium</div>
+  - Unlikely
+<span class="kw">level</span>: high</div>
+          </div>
+          <div class="code-block" style="margin-top:10px">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              registry_set_susp_run_key_img_folder.yml &mdash; SigmaHQ id:02ee49e2 &mdash; T1547.001
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt"># Source: SigmaHQ/sigma — github.com/SigmaHQ/sigma/blob/master/rules/windows/registry/registry_set/registry_set_susp_run_key_img_folder.yml
+# status: experimental | level: high | Covers: WindowsUpdate Run key → %PROGRAMDATA%\wt.exe</span>
+<span class="kw">title</span>: New RUN Key Pointing to Suspicious Folder
+<span class="kw">id</span>: <span class="num">02ee49e2-e294-4d0f-9278-f5b3212fc588</span>
+<span class="kw">status</span>: experimental
+<span class="kw">description</span>: Detects suspicious new RUN key element pointing to an executable
+           in a suspicious folder — catches axios RAT MicrosoftUpdate persistence
+<span class="kw">author</span>: Florian Roth (Nextron Systems), Markus Neis
+<span class="kw">date</span>: <span class="num">2018/08/25</span>
+<span class="kw">tags</span>:
+  - attack.persistence
+  - attack.t1547.001
+<span class="kw">logsource</span>:
+  category: registry_set
+  product: windows
+<span class="kw">detection</span>:
+  selection_target:
+    TargetObject|contains:
+      - <span class="str">'\Software\Microsoft\Windows\CurrentVersion\Run'</span>
+  selection_suspicious_paths:
+    Details|contains:
+      - <span class="str">':\ProgramData'</span>     <span class="cmt"># %PROGRAMDATA%\wt.exe ← axios Windows RAT</span>
+      - <span class="str">':\Windows\Temp'</span>
+      - <span class="str">':\Temp'</span>
+      - <span class="str">'\AppData\Local\Temp'</span>
+      - <span class="str">'\AppData\Roaming'</span>
+      - <span class="str">'%temp%'</span>
+      - <span class="str">'%AppData%'</span>
+  condition: selection_target and selection_suspicious_paths
+<span class="kw">falsepositives</span>:
+  - Software using unusual folders for updates
+<span class="kw">level</span>: high</div>
           </div>
         </div>
       </div>
@@ -516,6 +610,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               sentinel-msie8-ua.kql &mdash; T1001 / T1071.001
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="cmt">// Proxy/firewall logs &mdash; MSIE 8.0 UA is impossible on modern systems</span>
 <span class="fn">W3CIISLog</span>
@@ -542,6 +637,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               splunk-schtask-from-node.spl &mdash; T1053.005
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="fn">index</span>=endpoint <span class="kw">sourcetype</span>=wineventlog EventCode=<span class="num">4698</span>
 | <span class="kw">where</span> <span class="fn">like</span>(TaskContent, <span class="str">"%schtasks%"</span>) OR <span class="fn">like</span>(TaskAction, <span class="str">"%TEMP%"</span>)
@@ -566,6 +662,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               qradar-axios-c2.aql &mdash; T1071.001 / T1041
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">SELECT</span> sourceip, destinationip, <span class="str">"Destination Hostname"</span>,
        <span class="str">"User Agent"</span>, <span class="str">"Bytes Sent"</span>, starttime
@@ -601,6 +698,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               mde-node-drop-exe.kql &mdash; T1059.007 / T1195.001
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="fn">DeviceFileEvents</span>
 | <span class="kw">where</span> InitiatingProcessFileName =~ <span class="str">"node.exe"</span>
@@ -628,6 +726,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               cortex-npm-postinstall-outbound.xql &mdash; T1059.007
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">dataset</span> = xdr_data
 | <span class="kw">filter</span> event_type = ENUM.EVENT_TYPE_NETWORK
@@ -654,6 +753,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               crowdstrike-msie8-beacon.spl &mdash; T1001 / T1071.001
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=NetworkConnect
 | <span class="kw">where</span> UserAgent LIKE <span class="str">"%MSIE 8.0%"</span>
@@ -678,6 +778,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               crowdstrike-ioa-schtask-from-node.json &mdash; T1053.005
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body">{
   <span class="str">"name"</span>: <span class="str">"Axios npm RAT &mdash; Scheduled Task Created by Node.js"</span>,
@@ -722,6 +823,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               sentinelone-node-rat.pq &mdash; T1053.005 / T1059.007
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="cmt">-- Windows: node.exe spawning schtasks</span>
 src.process.name = <span class="str">"node.exe"</span> AND
@@ -750,6 +852,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               carbon-black-axios-rat.cbql &mdash; T1195.001 / T1053.005 / T1041
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body">(process_name:node.exe parent_name:npm netconn_domain:sfrclak.com) OR
 (process_name:schtasks.exe parent_name:node.exe cmdline:<span class="str">"/create"</span>) OR
@@ -780,6 +883,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               axios_npm_rat_dropper.yar &mdash; Behavioral + IOC
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">rule</span> <span class="fn">Axios_npm_RAT_Dropper</span> {
     <span class="kw">meta</span>:
@@ -835,6 +939,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 sentinel-hunt-axios-install.kql &mdash; Hunt: Vulnerable Version Installed?
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">// Hunt: Was axios@1.14.1 or @0.30.4 ever installed on any host?
 // Source: Syslog (Linux auditd/execve) or SecurityEvent (Windows 4688)
@@ -873,6 +978,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 splunk-hunt-axios-version.spl &mdash; Hunt: Installed Version Check
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">| Hunt 1: Find npm install of malicious version in process logs</span>
 <span class="fn">index</span>=endpoint <span class="kw">sourcetype</span>=wineventlog EventCode=<span class="num">4688</span>
@@ -908,6 +1014,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 qradar-hunt-axios.aql &mdash; Hunt: Version Install + C2 DNS
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">-- Hunt 1: Process logs showing malicious npm install</span>
 <span class="kw">SELECT</span> sourceip, username, <span class="str">"Process Name"</span>, <span class="str">"Command"</span>, starttime
@@ -962,6 +1069,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 mde-hunt-axios.kql &mdash; Hunt: Version Presence + Artifacts
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">// Hunt 1: Was malicious axios ever installed? (process cmdline)</span>
 <span class="fn">DeviceProcessEvents</span>
@@ -1007,6 +1115,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 cortex-hunt-axios.xql &mdash; Hunt: Version + C2 + Cron
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">// Hunt 1: npm install of malicious version</span>
 <span class="kw">dataset</span> = xdr_data
@@ -1050,6 +1159,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 crowdstrike-hunt-axios.spl &mdash; Hunt: All Three Signals
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">| Hunt 1: npm install with malicious version in cmdline</span>
 <span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=ProcessRollup2
@@ -1089,6 +1199,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 cb-hunt-axios.cbql &mdash; Hunt: Version + Artifacts
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">-- Hunt 1: npm install of malicious axios version</span>
 process_cmdline:*axios@1.14.1* OR process_cmdline:*axios@0.30.4*
@@ -1123,6 +1234,7 @@ AND filemod_name:*Temp*
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 s1-hunt-axios.pq &mdash; Hunt: Install + C2 + Scheduled Task
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">-- Hunt 1: npm install of malicious version</span>
 EventType = "ProcessCreation" AND
@@ -1162,6 +1274,7 @@ TgtProcCmdLine Contains "WindowsUpdate"
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 kaspersky-hunt-axios.sql &mdash; Hunt: KSC Database Query
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">-- Kaspersky Security Center DB (MS SQL / PostgreSQL)
 -- Hunt 1: Process execution with malicious axios version</span>
@@ -1216,6 +1329,7 @@ TgtProcCmdLine Contains "WindowsUpdate"
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 firewall-dns-hunt-axios.txt &mdash; Platform-Agnostic Hunt Criteria
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">## Firewall / Proxy Hunt — What to look for:</span>
 
@@ -1430,15 +1544,24 @@ function applyLang(lang) {
   const btn = document.getElementById('langBtn');
   if (lang === 'tr') {
     btn.innerHTML = '&#127988; TR';
+    // ID-based translations
     Object.keys(TR).forEach(id => {
       const el = document.getElementById(id);
       if (el) el.innerHTML = TR[id];
+    });
+    // data-en / data-tr attribute translations (MITRE timeline etc.)
+    document.querySelectorAll('[data-tr]').forEach(el => {
+      if (el.dataset.tr) el.innerHTML = el.dataset.tr;
     });
   } else {
     btn.innerHTML = '&#127760; EN';
     Object.keys(_enCache).forEach(id => {
       const el = document.getElementById(id);
       if (el) el.innerHTML = _enCache[id];
+    });
+    // Restore data-en values
+    document.querySelectorAll('[data-en]').forEach(el => {
+      if (!el.id || !_enCache[el.id]) el.innerHTML = el.dataset.en;
     });
   }
   // Re-render current simulation step in new language
@@ -1769,6 +1892,22 @@ function atvRun() {
     btn.classList.toggle('visible', window.scrollY > 400);
   }, {passive: true});
 })();
+function copyCode(btn) {
+  var body = btn.closest(".code-block").querySelector(".code-body");
+  var text = body.innerText;
+  var orig = btn.innerHTML;
+  navigator.clipboard.writeText(text).then(function() {
+    btn.textContent = "Copied!"; btn.classList.add("copied");
+    setTimeout(function() { btn.innerHTML = orig; btn.classList.remove("copied"); }, 2000);
+  }).catch(function() {
+    var ta = document.createElement("textarea");
+    ta.value = text; ta.style.cssText = "position:fixed;opacity:0";
+    document.body.appendChild(ta); ta.select(); document.execCommand("copy");
+    document.body.removeChild(ta);
+    btn.textContent = "Copied!"; btn.classList.add("copied");
+    setTimeout(function() { btn.innerHTML = orig; btn.classList.remove("copied"); }, 2000);
+  });
+}
 </script>
 
 </body>

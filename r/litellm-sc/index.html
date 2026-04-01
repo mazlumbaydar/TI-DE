@@ -411,6 +411,15 @@ POST https://models.litellm.cloud/v1/telemetry
     <h2 data-en="Detection Rules — 11 Platforms" data-tr="Tespit Kuralları — 11 Platform">Detection Rules &mdash; 11 Platforms</h2>
     <p data-en="All rules are TTP-based and behavioral. Key detection signals: Python reading .env files at startup (not import time), outbound HTTPS to models.litellm.cloud, new .pth files written to site-packages by pip." data-tr="Tüm kurallar TTP tabanlı ve davranışsaldır. Temel tespit sinyalleri: Python'ın başlangıçta (import zamanı değil) .env dosyalarını okuması, models.litellm.cloud'a giden HTTPS trafiği, pip tarafından site-packages'e yazılan yeni .pth dosyaları.">All rules are <strong>TTP-based and behavioral</strong>. Key detection signals: Python reading .env files at startup (not import time), outbound HTTPS to models.litellm.cloud, new .pth files written to site-packages by pip.</p>
 
+    <!-- TAB SWITCHER -->
+    <div class="det-tabs">
+      <div class="det-tab active" onclick="switchDetTab(this,'det-rules')" data-en="&#128268; Detection Rules" data-tr="&#128268; Tespit Kuralları">&#128268; Detection Rules</div>
+      <div class="det-tab" onclick="switchDetTab(this,'det-hunt')" data-en="&#128270; Threat Hunting" data-tr="&#128270; Tehdit Avı">&#128270; Threat Hunting</div>
+    </div>
+
+    <!-- PANE 1: DETECTION RULES -->
+    <div class="det-pane active" id="det-rules">
+
     <!-- SIEM GROUP -->
     <div class="rule-group">
       <div class="rule-group-hd">
@@ -432,6 +441,7 @@ POST https://models.litellm.cloud/v1/telemetry
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               sigma-pip-pth-write.yml &mdash; T1546 / T1195.001
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">title</span>: Malicious pip Package &mdash; .pth File Written to site-packages
 <span class="kw">id</span>: 9a3b5c7d-1e2f-4a6b-8c9d-0e1f2a3b4c5d
@@ -471,7 +481,7 @@ POST https://models.litellm.cloud/v1/telemetry
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
-            <span class="platform-badge">Microsoft Sentinel (KQL)</span>
+            <span class="platform-badge">Sentinel (KQL)</span>
             Outbound HTTPS to models.litellm.cloud or checkmarx.zone
           </div>
           <div class="rule-toggle">&#9660;</div>
@@ -481,6 +491,7 @@ POST https://models.litellm.cloud/v1/telemetry
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               sentinel-litellm-c2.kql &mdash; T1041 / T1071.001
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="cmt">// DNS and proxy logs — C2 domain detection</span>
 <span class="fn">DnsEvents</span>
@@ -510,6 +521,7 @@ POST https://models.litellm.cloud/v1/telemetry
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               splunk-python-env-read.spl &mdash; T1552.001
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="fn">index</span>=endpoint <span class="kw">sourcetype</span>=auditd <span class="kw">type</span>=SYSCALL
 | <span class="kw">where</span> <span class="fn">like</span>(exe, <span class="str">"%python%"</span>)
@@ -536,6 +548,7 @@ POST https://models.litellm.cloud/v1/telemetry
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               qradar-litellm-c2.aql &mdash; T1041 / T1071.001
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">SELECT</span> sourceip, destinationip, <span class="str">"Destination Hostname"</span>,
        <span class="str">"URL"</span>, <span class="str">"Bytes Sent"</span>, starttime
@@ -561,7 +574,7 @@ POST https://models.litellm.cloud/v1/telemetry
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
-            <span class="platform-badge">Defender for Endpoint (KQL)</span>
+            <span class="platform-badge">Defender (KQL)</span>
             Python Process Making Outbound Connection to C2
           </div>
           <div class="rule-toggle">&#9660;</div>
@@ -571,6 +584,7 @@ POST https://models.litellm.cloud/v1/telemetry
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               mde-python-litellm-c2.kql &mdash; T1041 / T1059.006
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="fn">DeviceNetworkEvents</span>
 | <span class="kw">where</span> InitiatingProcessFileName <span class="fn">in~</span> (<span class="str">"python.exe"</span>, <span class="str">"python3.exe"</span>, <span class="str">"python3"</span>)
@@ -597,6 +611,7 @@ POST https://models.litellm.cloud/v1/telemetry
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               cortex-pth-write.xql &mdash; T1546
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">dataset</span> = xdr_data
 | <span class="kw">filter</span> event_type = ENUM.EVENT_TYPE_FILE
@@ -613,7 +628,7 @@ POST https://models.litellm.cloud/v1/telemetry
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
-            <span class="platform-badge">CrowdStrike Hunting (SPL)</span>
+            <span class="platform-badge">CrowdStrike (SPL)</span>
             Python Connecting to LiteLLM Typosquat Domain
           </div>
           <div class="rule-toggle">&#9660;</div>
@@ -623,6 +638,7 @@ POST https://models.litellm.cloud/v1/telemetry
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               crowdstrike-python-litellm-c2.spl &mdash; T1041
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=NetworkConnect
 | <span class="kw">where</span> ImageFileName LIKE <span class="str">"%python%"</span>
@@ -636,11 +652,11 @@ POST https://models.litellm.cloud/v1/telemetry
         </div>
       </div>
 
-      <!-- Rule 8: CrowdStrike Custom IOA -->
+      <!-- Rule 8: CrowdStrike (IOA) -->
       <div class="rule-card" onclick="toggleRule(this)">
         <div class="rule-header">
           <div class="rule-title">
-            <span class="platform-badge">CrowdStrike Custom IOA</span>
+            <span class="platform-badge">CrowdStrike (IOA)</span>
             pip Writing .pth to site-packages
           </div>
           <div class="rule-toggle">&#9660;</div>
@@ -650,6 +666,7 @@ POST https://models.litellm.cloud/v1/telemetry
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               crowdstrike-ioa-pth-write.json &mdash; T1546
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body">{
   <span class="str">"name"</span>: <span class="str">"CVE-2026-33634 LiteLLM &mdash; .pth Persistence Write"</span>,
@@ -689,6 +706,7 @@ POST https://models.litellm.cloud/v1/telemetry
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               cb-pip-pth.cbql &mdash; T1546
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body">process_name:pip OR process_name:pip3 OR process_name:python3
 AND filemod_name:*.pth
@@ -714,6 +732,7 @@ AND filemod_type:CREATE
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               s1-pth-persistence.pq &mdash; T1546 / T1195.001
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body">EventType = "FileCreation" AND
 SrcProcName In ("pip", "pip3", "python3") AND
@@ -747,6 +766,7 @@ TgtFileExtension = ".pth"
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               yara-litellm-pth.yar &mdash; T1546 / CVE-2026-33634
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">rule</span> LiteLLM_Supply_Chain_PTH_Persistence {
   <span class="kw">meta</span>:
@@ -772,7 +792,286 @@ TgtFileExtension = ".pth"
         </div>
       </div>
     </div><!-- /Pattern group -->
+    </div><!-- /det-pane det-rules -->
 
+    <!-- PANE 2: THREAT HUNTING -->
+    <div class="det-pane" id="det-hunt">
+
+      <div class="th-goal">
+        <strong data-en="Hunting Goal:" data-tr="Avcılık Hedefi:">Hunting Goal:</strong> <span data-en="&quot;Is the malicious &lt;code&gt;litellm&lt;/code&gt; package installed anywhere? Is there a &lt;code&gt;sitecustomize.pth&lt;/code&gt; in Python site-packages? Is Python beaconing to &lt;code&gt;models.litellm.cloud&lt;/code&gt;, &lt;code&gt;checkmarx.zone&lt;/code&gt;, &lt;code&gt;45.148.10.212&lt;/code&gt;, or &lt;code&gt;83.142.209.11&lt;/code&gt;?&quot; — Any &lt;code&gt;.pth&lt;/code&gt; file in site-packages executes at every Python startup. This is a persistence and credential theft mechanism.&lt;br&gt;&lt;strong&gt;Scope:&lt;/strong&gt; All systems where pip/Python is used — developer workstations, CI/CD agents, AI/ML servers, production Python services." data-tr="&quot;Ortamımda kötü niyetli &lt;code&gt;litellm&lt;/code&gt; paketi kurulu mu? Python site-packages'de &lt;code&gt;sitecustomize.pth&lt;/code&gt; var mı? Python, &lt;code&gt;models.litellm.cloud&lt;/code&gt;, &lt;code&gt;checkmarx.zone&lt;/code&gt;, &lt;code&gt;45.148.10.212&lt;/code&gt; veya &lt;code&gt;83.142.209.11&lt;/code&gt;'e beacon gönderiyor mu?&quot; — site-packages'deki herhangi bir &lt;code&gt;.pth&lt;/code&gt; dosyası her Python başlangıcında çalışır. Bu bir kalıcılık ve kimlik bilgisi hırsızlığı mekanizmasıdır.&lt;br&gt;&lt;strong&gt;Kapsam:&lt;/strong&gt; pip/Python kullanılan tüm sistemler — geliştirici iş istasyonları, CI/CD ajanları, AI/ML sunucuları, üretim Python servisleri.">"Is the malicious <code>litellm</code> package installed anywhere? Is there a <code>sitecustomize.pth</code> in Python site-packages? Is Python beaconing to <code>models.litellm.cloud</code>, <code>checkmarx.zone</code>, <code>45.148.10.212</code>, or <code>83.142.209.11</code>?" — Any <code>.pth</code> file in site-packages executes at every Python startup. This is a persistence and credential theft mechanism.<br><strong>Scope:</strong> All systems where pip/Python is used — developer workstations, CI/CD agents, AI/ML servers, production Python services.</span>
+      </div>
+
+      <!-- SIEM GROUP -->
+      <div class="rule-group">
+        <div class="rule-group-hd">
+          <span class="rgb-siem">SIEM</span>
+          <span class="rule-group-label" data-en="Hunt 1–3: Sentinel (KQL) / Splunk (SPL) / QRadar (AQL)" data-tr="Avcılık 1–3: Sentinel (KQL) / Splunk (SPL) / QRadar (AQL)">Hunt 1&ndash;3: Sentinel (KQL) / Splunk (SPL) / QRadar (AQL)</span>
+        </div>
+        <div class="th-note"><strong>&#9432; </strong><span data-en="SIEM Prerequisite: Requires process execution logs (pip/python cmdline) and file write events forwarded from endpoints. If unavailable, use EDR/XDR queries below." data-tr="SIEM Önkoşulu: Endpoint'lerden iletilen süreç yürütme logları (pip/python cmdline) ve dosya yazma olayları gerektirir. Mevcut değilse aşağıdaki EDR/XDR sorgularını kullanın.">SIEM Prerequisite: Requires process execution logs (pip/python cmdline) and file write events forwarded from endpoints. If unavailable, use EDR/XDR queries below.</span></div>
+
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">Sentinel (KQL)</span>
+              <span data-en="pip install litellm + .pth File Written to site-packages" data-tr="pip install litellm + site-packages'e .pth Dosyası Yazılması">pip install litellm + .pth File Written to site-packages</span>
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                sentinel-hunt-litellm-pth.kql
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <div class="code-body"><span class="cmt">// Hunt 1: pip install litellm in process logs</span>
+<span class="fn">SecurityEvent</span>
+| <span class="kw">where</span> EventID == <span class="num">4688</span>
+| <span class="kw">where</span> NewProcessName <span class="fn">has_any</span>(<span class="str">"pip"</span>, <span class="str">"pip3"</span>) <span class="kw">and</span> CommandLine <span class="fn">has</span> <span class="str">"litellm"</span>
+| <span class="fn">project</span> TimeGenerated, Computer, Account, CommandLine
+| <span class="fn">extend</span> Finding = <span class="str">"pip install litellm — verify build integrity"</span>
+
+<span class="cmt">// Hunt 2: .pth file written to site-packages</span>
+<span class="fn">union</span> (<span class="fn">SecurityEvent</span>
+| <span class="kw">where</span> EventID == <span class="num">4663</span>
+| <span class="kw">where</span> ObjectName <span class="fn">has</span> <span class="str">"site-packages"</span> <span class="kw">and</span> ObjectName <span class="fn">endswith</span> <span class="str">".pth"</span>
+| <span class="fn">project</span> TimeGenerated, Computer, Account, ObjectName, ProcessName
+| <span class="fn">extend</span> Finding = <span class="str">".pth file in site-packages — persistence mechanism"</span>)
+
+<span class="cmt">// Hunt 3: Python connecting to LiteLLM C2</span>
+<span class="fn">union</span> (<span class="fn">DeviceNetworkEvents</span>
+| <span class="kw">where</span> InitiatingProcessFileName <span class="fn">in~</span>(<span class="str">"python"</span>, <span class="str">"python3"</span>)
+| <span class="kw">where</span> RemoteIP <span class="fn">in</span>(<span class="str">"45.148.10.212"</span>, <span class="str">"83.142.209.11"</span>)
+    <span class="kw">or</span> RemoteUrl <span class="fn">has_any</span>(<span class="str">"models.litellm.cloud"</span>, <span class="str">"checkmarx.zone"</span>)
+| <span class="fn">project</span> Timestamp, DeviceName, RemoteIP, RemoteUrl
+| <span class="fn">extend</span> Finding = <span class="str">"Python C2 beacon — LiteLLM supply chain"</span>)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">Splunk (SPL)</span>
+              <span data-en="sitecustomize.pth Presence + Python C2 Beacon" data-tr="sitecustomize.pth Varlığı + Python C2 Beacon">sitecustomize.pth Presence + Python C2 Beacon</span>
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                splunk-hunt-litellm.spl
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <div class="code-body"><span class="cmt">| Hunt 1: pip install litellm (Linux auditd)</span>
+<span class="fn">index</span>=endpoint <span class="kw">sourcetype</span>=auditd syscall=execve
+  (a0=<span class="str">"pip"</span> OR a0=<span class="str">"pip3"</span>) a2=<span class="str">"litellm"</span>
+| <span class="fn">table</span> _time, host, user, a0, a2
+| <span class="fn">eval</span> finding=<span class="str">"litellm installed — check version"</span>
+
+<span class="cmt">| Hunt 2: .pth file created in site-packages</span>
+<span class="fn">index</span>=endpoint <span class="kw">sourcetype</span>=auditd syscall=open
+  name=<span class="str">"*/site-packages/*.pth"</span>
+| <span class="fn">table</span> _time, host, user, pid, name, comm
+| <span class="fn">eval</span> finding=<span class="str">".pth persistence file written"</span>
+
+<span class="cmt">| Hunt 3: Python outbound to C2 IPs (Zeek)</span>
+<span class="fn">index</span>=network <span class="kw">sourcetype</span>=zeek:conn
+  id.resp_h IN (<span class="str">"45.148.10.212"</span>, <span class="str">"83.142.209.11"</span>)
+| <span class="fn">table</span> _time, id.orig_h, id.resp_h, id.resp_p
+| <span class="fn">eval</span> finding=<span class="str">"LiteLLM supply chain C2 connection"</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">QRadar (AQL)</span>
+              <span data-en="LiteLLM C2 IP Hunt + .pth File Write" data-tr="LiteLLM C2 IP Avı + .pth Dosya Yazması">LiteLLM C2 IP Hunt + .pth File Write</span>
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                qradar-hunt-litellm.aql
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <div class="code-body"><span class="kw">SELECT</span> sourceip, destinationip, destinationport,
+       LOGSOURCENAME(logsourceid), starttime, username
+<span class="kw">FROM</span> events
+<span class="kw">WHERE</span> destinationip IN (<span class="str">'45.148.10.212'</span>, <span class="str">'83.142.209.11'</span>)
+  <span class="kw">AND</span> starttime > <span class="fn">CURRENT_TIMESTAMP</span> - <span class="num">30</span> DAYS
+<span class="kw">ORDER BY</span> starttime <span class="kw">DESC</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="th-guide"><strong>&#10140; </strong><span data-en="No process logs? Enable Windows Audit Process Creation (Event 4688) or Linux auditd execve rules, then forward to SIEM. Alternatively run live queries via EDR below." data-tr="Süreç logu yok mu? Windows Denetim Süreç Oluşturma (Olay 4688) veya Linux auditd execve kurallarını etkinleştirip SIEM'e iletin. Alternatif olarak aşağıdaki EDR ile canlı sorgu çalıştırın.">No process logs? Enable Windows Audit Process Creation (Event 4688) or Linux auditd execve rules, then forward to SIEM. Alternatively run live queries via EDR below.</span></div>
+      </div>
+
+      <!-- EDR GROUP -->
+      <div class="rule-group">
+        <div class="rule-group-hd">
+          <span class="rgb-edr">EDR / XDR</span>
+          <span class="rule-group-label" data-en="Hunt 4–6: Defender (KQL) / Cortex XDR (XQL) / CrowdStrike (SPL)" data-tr="Avcılık 4–6: Defender (KQL) / Cortex XDR (XQL) / CrowdStrike (SPL)">Hunt 4&ndash;6: Defender (KQL) / Cortex XDR (XQL) / CrowdStrike (SPL)</span>
+        </div>
+        <div class="th-note"><strong>&#9432; </strong><span data-en="EDR provides the most reliable coverage for this threat — file writes to site-packages, Python network C2, and systemd persistence are all high-confidence signals." data-tr="EDR bu tehdit için en güvenilir kapsamı sağlar — site-packages'e dosya yazma, Python ağ C2 ve systemd kalıcılığı yüksek güvenilirlikte sinyallerdir.">EDR provides the most reliable coverage for this threat — file writes to site-packages, Python network C2, and systemd persistence are all high-confidence signals.</span></div>
+
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">Defender (KQL)</span>
+              <span data-en=".pth File + Python C2 + systemd Persistence — MDE Hunt" data-tr=".pth Dosyası + Python C2 + systemd Kalıcılığı — MDE Avı">.pth File + Python C2 + systemd Persistence — MDE Hunt</span>
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                mde-hunt-litellm-pth-c2.kql
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <div class="code-body"><span class="cmt">// Hunt 1: .pth file written to site-packages</span>
+<span class="fn">DeviceFileEvents</span>
+| <span class="kw">where</span> FolderPath <span class="fn">has</span> <span class="str">"site-packages"</span> <span class="kw">and</span> FileName <span class="fn">endswith</span> <span class="str">".pth"</span>
+| <span class="fn">project</span> Timestamp, DeviceName, FolderPath, FileName,
+    InitiatingProcessFileName, InitiatingProcessCommandLine
+| <span class="fn">extend</span> Finding = <span class="str">".pth in site-packages — backdoor persistence possible"</span>
+
+<span class="cmt">// Hunt 2: Python connecting to LiteLLM C2</span>
+<span class="fn">union</span> (<span class="fn">DeviceNetworkEvents</span>
+| <span class="kw">where</span> InitiatingProcessFileName <span class="fn">in~</span>(<span class="str">"python"</span>, <span class="str">"python3"</span>)
+| <span class="kw">where</span> RemoteIP <span class="fn">in</span>(<span class="str">"45.148.10.212"</span>, <span class="str">"83.142.209.11"</span>)
+    <span class="kw">or</span> RemoteUrl <span class="fn">has_any</span>(<span class="str">"models.litellm.cloud"</span>, <span class="str">"checkmarx.zone"</span>)
+| <span class="fn">project</span> Timestamp, DeviceName, RemoteIP, RemoteUrl, RemotePort
+| <span class="fn">extend</span> Finding = <span class="str">"Python C2 beacon — LiteLLM supply chain"</span>)
+
+<span class="cmt">// Hunt 3: systemd user service created by Python</span>
+<span class="fn">union</span> (<span class="fn">DeviceFileEvents</span>
+| <span class="kw">where</span> FolderPath <span class="fn">has</span> <span class="str">".config/systemd/user"</span>
+    <span class="kw">and</span> InitiatingProcessFileName <span class="fn">in~</span>(<span class="str">"python"</span>, <span class="str">"python3"</span>)
+| <span class="fn">project</span> Timestamp, DeviceName, FolderPath, FileName
+| <span class="fn">extend</span> Finding = <span class="str">"systemd user persistence by Python — TeamPCP indicator"</span>)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">Cortex XDR (XQL)</span>
+              <span data-en="Python Reading .env + Outbound to C2" data-tr="Python .env Okuyor + C2'ye Giden Trafik">Python Reading .env + Outbound to C2</span>
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                cortex-hunt-litellm-c2.xql
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <div class="code-body"><span class="kw">dataset</span> = xdr_data
+| <span class="fn">filter</span> actor_process_image_name <span class="fn">in</span> (<span class="str">"python3"</span>, <span class="str">"python"</span>)
+| <span class="fn">filter</span> action_remote_ip <span class="fn">in</span> (<span class="str">"45.148.10.212"</span>, <span class="str">"83.142.209.11"</span>)
+    <span class="kw">or</span> dns_query_name <span class="fn">contains</span> <span class="str">"litellm.cloud"</span>
+    <span class="kw">or</span> dns_query_name <span class="fn">contains</span> <span class="str">"checkmarx.zone"</span>
+| <span class="fn">fields</span> _time, agent_hostname, actor_process_cmd_line,
+    action_remote_ip, dns_query_name, action_remote_port
+| <span class="fn">sort</span> desc _time</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">CrowdStrike (SPL)</span>
+              <span data-en=".pth Write + Python C2 Beacon" data-tr=".pth Yazma + Python C2 Beacon">.pth Write + Python C2 Beacon</span>
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                crowdstrike-hunt-litellm.spl
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <div class="code-body"><span class="cmt">| Hunt 1: Python beaconing to C2 IPs</span>
+<span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=NetworkConnect
+  ImageFileName IN (<span class="str">"*/python3"</span>, <span class="str">"*/python"</span>)
+  RemoteAddressIP4 IN (<span class="str">"45.148.10.212"</span>, <span class="str">"83.142.209.11"</span>)
+| <span class="fn">table</span> _time, ComputerName, UserName, ImageFileName,
+    RemoteAddressIP4, RemotePort
+| <span class="fn">eval</span> finding=<span class="str">"Python C2 beacon to LiteLLM IOC"</span>
+
+<span class="cmt">| Hunt 2: .pth file write to site-packages</span>
+<span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=WrittenProcessApiCall
+  TargetFileName=<span class="str">"*/site-packages/*.pth"</span>
+| <span class="fn">table</span> _time, ComputerName, UserName, TargetFileName, CommandLine
+| <span class="fn">eval</span> finding=<span class="str">".pth written to site-packages"</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="th-guide"><strong>&#10140; </strong><span data-en="For live host check: Linux: &lt;code&gt;find /usr -name '*.pth' | xargs grep -l 'subprocess\|base64\|exec'&lt;/code&gt; — Windows: &lt;code&gt;Get-ChildItem $env:LOCALAPPDATA\Programs\Python -Recurse -Filter '*.pth'&lt;/code&gt;" data-tr="Canlı host kontrolü için: Linux: &lt;code&gt;find /usr -name '*.pth' | xargs grep -l 'subprocess\|base64\|exec'&lt;/code&gt; — Windows: &lt;code&gt;Get-ChildItem $env:LOCALAPPDATA\Programs\Python -Recurse -Filter '*.pth'&lt;/code&gt;">For live host check: Linux: <code>find /usr -name '*.pth' | xargs grep -l 'subprocess\|base64\|exec'</code> — Windows: <code>Get-ChildItem $env:LOCALAPPDATA\Programs\Python -Recurse -Filter '*.pth'</code></span></div>
+      </div>
+
+      <!-- NETWORK GROUP -->
+      <div class="rule-group">
+        <div class="rule-group-hd">
+          <span class="rgb-pattern">Network</span>
+          <span class="rule-group-label" data-en="Hunt 7–8: DNS / Firewall / Proxy" data-tr="Avcılık 7–8: DNS / Firewall / Proxy">Hunt 7&ndash;8: DNS / Firewall / Proxy</span>
+        </div>
+        <div class="th-note"><strong>&#9432; </strong><span data-en="DNS queries to models.litellm.cloud or checkmarx.zone from any host that should not use these services = immediate compromise indicator. Most scalable hunt vector." data-tr="Bu servisleri kullanmaması gereken herhangi bir host'tan models.litellm.cloud veya checkmarx.zone'a yapılan DNS sorguları = anında ele geçirme göstergesi. En ölçeklenebilir avcılık vektörü.">DNS queries to models.litellm.cloud or checkmarx.zone from any host that should not use these services = immediate compromise indicator. Most scalable hunt vector.</span></div>
+
+        <div class="rule-card" onclick="toggleRule(this)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">DNS / Firewall</span>
+              <span data-en="LiteLLM C2 DNS + IP Beacon — Network Hunt" data-tr="LiteLLM C2 DNS + IP Beacon — Ağ Avı">LiteLLM C2 DNS + IP Beacon — Network Hunt</span>
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                network-hunt-litellm-c2.kql
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <div class="code-body"><span class="cmt">// Hunt 1: DNS queries to C2 domains (Sentinel)</span>
+<span class="fn">DnsEvents</span>
+| <span class="kw">where</span> Name <span class="fn">has_any</span>(<span class="str">"models.litellm.cloud"</span>, <span class="str">"checkmarx.zone"</span>)
+| <span class="fn">summarize</span> count(), make_set(ClientIP) by Name, bin(TimeGenerated, <span class="num">1</span>h)
+| <span class="fn">extend</span> Finding = <span class="str">"DNS to LiteLLM C2 domain"</span>
+
+<span class="cmt">// Hunt 2: Direct IP connections (Sentinel)</span>
+<span class="fn">CommonSecurityLog</span>
+| <span class="kw">where</span> DestinationIP <span class="fn">in</span>(<span class="str">"45.148.10.212"</span>, <span class="str">"83.142.209.11"</span>)
+| <span class="fn">project</span> TimeGenerated, SourceIP, DestinationIP, DestinationPort
+| <span class="fn">extend</span> Finding = <span class="str">"Direct connection to TeamPCP C2 server"</span>
+| <span class="fn">order by</span> TimeGenerated <span class="kw">desc</span>
+
+<span class="cmt">// Hunt 3: Splunk DNS hunt</span>
+<span class="fn">index</span>=network (<span class="kw">sourcetype</span>=dns OR <span class="kw">sourcetype</span>=zeek:dns)
+  (query=<span class="str">"*litellm.cloud*"</span> OR query=<span class="str">"*checkmarx.zone*"</span>)
+| <span class="fn">table</span> _time, src, query, answer
+| <span class="fn">eval</span> finding=<span class="str">"C2 DNS query — LiteLLM supply chain"</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="th-guide"><strong>&#10140; </strong><span data-en="Remediation if found: (1) Revoke all AI API keys immediately (2) Remove .pth: &lt;code&gt;find /usr -name 'sitecustomize.pth' -delete&lt;/code&gt; (3) Remove systemd service: &lt;code&gt;systemctl --user disable litellm-update.service&lt;/code&gt; (4) Reinstall Python from clean source (5) Audit CI/CD pip installs from 30–31 March 2026." data-tr="Bulunursa düzeltme: (1) Tüm AI API anahtarlarını hemen iptal edin (2) .pth'yi kaldırın: &lt;code&gt;find /usr -name 'sitecustomize.pth' -delete&lt;/code&gt; (3) systemd servisini kaldırın: &lt;code&gt;systemctl --user disable litellm-update.service&lt;/code&gt; (4) Python'ı temiz kaynaktan yeniden kurun (5) 30–31 Mart 2026 CI/CD pip kurulumlarını denetleyin.">Remediation if found: (1) Revoke all AI API keys immediately (2) Remove .pth: <code>find /usr -name 'sitecustomize.pth' -delete</code> (3) Remove systemd service: <code>systemctl --user disable litellm-update.service</code> (4) Reinstall Python from clean source (5) Audit CI/CD pip installs from 30–31 March 2026.</span></div>
+      </div>
+
+    </div><!-- /det-pane det-hunt -->
   </div>
 
   <!-- ══ RECOMMENDATIONS ══ -->
@@ -816,6 +1115,13 @@ const LANG_KEY  = 'ti-de-report-lang';
 const THEME_KEY = 'ti-de-report-theme';
 let _lang  = localStorage.getItem(LANG_KEY)  || 'en';
 let _theme = localStorage.getItem(THEME_KEY) || 'dark';
+
+function switchDetTab(tab, paneId) {
+  document.querySelectorAll('.det-tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.det-pane').forEach(function(p){ p.classList.remove('active'); });
+  tab.classList.add('active');
+  document.getElementById(paneId).classList.add('active');
+}
 
 function applyLang(lang) {
   _lang = lang;
@@ -1108,6 +1414,22 @@ applyLang(_lang);
     btn.classList.toggle('visible', window.scrollY > 400);
   }, {passive: true});
 })();
+function copyCode(btn) {
+  var body = btn.closest(".code-block").querySelector(".code-body");
+  var text = body.innerText;
+  var orig = btn.innerHTML;
+  navigator.clipboard.writeText(text).then(function() {
+    btn.textContent = "Copied!"; btn.classList.add("copied");
+    setTimeout(function() { btn.innerHTML = orig; btn.classList.remove("copied"); }, 2000);
+  }).catch(function() {
+    var ta = document.createElement("textarea");
+    ta.value = text; ta.style.cssText = "position:fixed;opacity:0";
+    document.body.appendChild(ta); ta.select(); document.execCommand("copy");
+    document.body.removeChild(ta);
+    btn.textContent = "Copied!"; btn.classList.add("copied");
+    setTimeout(function() { btn.innerHTML = orig; btn.classList.remove("copied"); }, 2000);
+  });
+}
 </script>
 </body>
 </html>
