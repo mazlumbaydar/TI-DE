@@ -498,7 +498,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
       </div>
 
       <!-- Rule 1: Sigma — community ref + TI-DE tuned -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Sigma (YAML)</span>
@@ -517,7 +517,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               proc_creation_win_node_abuse.yml &mdash; SigmaHQ id:6640f31c &mdash; T1127
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="cmt"># Source: SigmaHQ/sigma — github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_node_abuse.yml
 # status: test | level: high | author: Nasreddine Bencherchali (Nextron Systems)</span>
@@ -558,7 +558,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               registry_set_susp_run_key_img_folder.yml &mdash; SigmaHQ id:02ee49e2 &mdash; T1547.001
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="cmt"># Source: SigmaHQ/sigma — github.com/SigmaHQ/sigma/blob/master/rules/windows/registry/registry_set/registry_set_susp_run_key_img_folder.yml
 # status: experimental | level: high | Covers: WindowsUpdate Run key → %PROGRAMDATA%\wt.exe</span>
@@ -597,7 +597,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
       </div>
 
       <!-- Rule 2: Sentinel KQL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Sentinel (KQL)</span>
@@ -610,7 +610,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               sentinel-msie8-ua.kql &mdash; T1001 / T1071.001
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="cmt">// Proxy/firewall logs &mdash; MSIE 8.0 UA is impossible on modern systems</span>
 <span class="fn">W3CIISLog</span>
@@ -624,7 +624,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
       </div>
 
       <!-- Rule 3: Splunk SPL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Splunk (SPL)</span>
@@ -637,7 +637,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               splunk-schtask-from-node.spl &mdash; T1053.005
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="fn">index</span>=endpoint <span class="kw">sourcetype</span>=wineventlog EventCode=<span class="num">4698</span>
 | <span class="kw">where</span> <span class="fn">like</span>(TaskContent, <span class="str">"%schtasks%"</span>) OR <span class="fn">like</span>(TaskAction, <span class="str">"%TEMP%"</span>)
@@ -649,7 +649,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
       </div>
 
       <!-- Rule 4: QRadar AQL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">QRadar (AQL)</span>
@@ -662,7 +662,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               qradar-axios-c2.aql &mdash; T1071.001 / T1041
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">SELECT</span> sourceip, destinationip, <span class="str">"Destination Hostname"</span>,
        <span class="str">"User Agent"</span>, <span class="str">"Bytes Sent"</span>, starttime
@@ -685,7 +685,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
       </div>
 
       <!-- Rule 5: MDE KQL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Defender for Endpoint (KQL)</span>
@@ -698,7 +698,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               mde-node-drop-exe.kql &mdash; T1059.007 / T1195.001
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="fn">DeviceFileEvents</span>
 | <span class="kw">where</span> InitiatingProcessFileName =~ <span class="str">"node.exe"</span>
@@ -713,7 +713,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
       </div>
 
       <!-- Rule 6: Cortex XQL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Cortex XDR (XQL)</span>
@@ -726,7 +726,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               cortex-npm-postinstall-outbound.xql &mdash; T1059.007
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">dataset</span> = xdr_data
 | <span class="kw">filter</span> event_type = ENUM.EVENT_TYPE_NETWORK
@@ -740,7 +740,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
       </div>
 
       <!-- Rule 7: CrowdStrike SPL Hunting -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">CrowdStrike (SPL)</span>
@@ -753,7 +753,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               crowdstrike-msie8-beacon.spl &mdash; T1001 / T1071.001
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=NetworkConnect
 | <span class="kw">where</span> UserAgent LIKE <span class="str">"%MSIE 8.0%"</span>
@@ -765,7 +765,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
       </div>
 
       <!-- Rule 8: CrowdStrike Custom IOA -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">CrowdStrike (IOA)</span>
@@ -778,7 +778,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               crowdstrike-ioa-schtask-from-node.json &mdash; T1053.005
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body">{
   <span class="str">"name"</span>: <span class="str">"Axios npm RAT &mdash; Scheduled Task Created by Node.js"</span>,
@@ -810,7 +810,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
       </div>
 
       <!-- Rule 9: SentinelOne -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">SentinelOne (PowerQuery)</span>
@@ -823,7 +823,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               sentinelone-node-rat.pq &mdash; T1053.005 / T1059.007
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="cmt">-- Windows: node.exe spawning schtasks</span>
 src.process.name = <span class="str">"node.exe"</span> AND
@@ -839,7 +839,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
       </div>
 
       <!-- Rule 10: Carbon Black -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Carbon Black (CBQL)</span>
@@ -852,7 +852,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               carbon-black-axios-rat.cbql &mdash; T1195.001 / T1053.005 / T1041
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body">(process_name:node.exe parent_name:npm netconn_domain:sfrclak.com) OR
 (process_name:schtasks.exe parent_name:node.exe cmdline:<span class="str">"/create"</span>) OR
@@ -870,7 +870,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
       </div>
 
       <!-- Rule 11: YARA -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">YARA (Pattern)</span>
@@ -883,7 +883,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               axios_npm_rat_dropper.yar &mdash; Behavioral + IOC
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">rule</span> <span class="fn">Axios_npm_RAT_Dropper</span> {
     <span class="kw">meta</span>:
@@ -926,7 +926,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
         <div class="th-note"><strong>&#9432; SIEM Prerequisite:</strong> These queries require process execution logs (npm, node) forwarded to your SIEM from endpoints. If you only have network/firewall logs in SIEM, use EDR/XDR queries below instead. Logs must include full command-line arguments.</div>
 
         <!-- Hunt 1: Sentinel KQL -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Microsoft Sentinel (KQL)</span>
@@ -939,7 +939,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 sentinel-hunt-axios-install.kql &mdash; Hunt: Vulnerable Version Installed?
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">// Hunt: Was axios@1.14.1 or @0.30.4 ever installed on any host?
 // Source: Syslog (Linux auditd/execve) or SecurityEvent (Windows 4688)
@@ -965,7 +965,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
         </div>
 
         <!-- Hunt 2: Splunk SPL -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Splunk (SPL)</span>
@@ -978,7 +978,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 splunk-hunt-axios-version.spl &mdash; Hunt: Installed Version Check
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">| Hunt 1: Find npm install of malicious version in process logs</span>
 <span class="fn">index</span>=endpoint <span class="kw">sourcetype</span>=wineventlog EventCode=<span class="num">4688</span>
@@ -1001,7 +1001,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
         </div>
 
         <!-- Hunt 3: QRadar AQL -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">QRadar (AQL)</span>
@@ -1014,7 +1014,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 qradar-hunt-axios.aql &mdash; Hunt: Version Install + C2 DNS
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">-- Hunt 1: Process logs showing malicious npm install</span>
 <span class="kw">SELECT</span> sourceip, username, <span class="str">"Process Name"</span>, <span class="str">"Command"</span>, starttime
@@ -1056,7 +1056,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
         <div class="th-note"><strong>&#9432; EDR/XDR Avantajı:</strong> EDR ajanları endpoint üzerinde dosya sistemi görünürlüğü sağlar — SIEM'e process log gelmese bile <code>package.json</code> dosyası veya <code>node_modules/axios/</code> klasörünü doğrudan sorgulayabilirsiniz.</div>
 
         <!-- Hunt 4: MDE KQL -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Defender for Endpoint (KQL)</span>
@@ -1069,7 +1069,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 mde-hunt-axios.kql &mdash; Hunt: Version Presence + Artifacts
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">// Hunt 1: Was malicious axios ever installed? (process cmdline)</span>
 <span class="fn">DeviceProcessEvents</span>
@@ -1102,7 +1102,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
         </div>
 
         <!-- Hunt 5: Cortex XQL -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Cortex XDR (XQL)</span>
@@ -1115,7 +1115,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 cortex-hunt-axios.xql &mdash; Hunt: Version + C2 + Cron
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">// Hunt 1: npm install of malicious version</span>
 <span class="kw">dataset</span> = xdr_data
@@ -1146,7 +1146,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
         </div>
 
         <!-- Hunt 6: CrowdStrike SPL -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">CrowdStrike (SPL)</span>
@@ -1159,7 +1159,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 crowdstrike-hunt-axios.spl &mdash; Hunt: All Three Signals
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">| Hunt 1: npm install with malicious version in cmdline</span>
 <span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=ProcessRollup2
@@ -1186,7 +1186,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
         </div>
 
         <!-- Hunt 7: Carbon Black -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Carbon Black (CBQL)</span>
@@ -1199,7 +1199,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 cb-hunt-axios.cbql &mdash; Hunt: Version + Artifacts
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">-- Hunt 1: npm install of malicious axios version</span>
 process_cmdline:*axios@1.14.1* OR process_cmdline:*axios@0.30.4*
@@ -1221,7 +1221,7 @@ AND filemod_name:*Temp*
         </div>
 
         <!-- Hunt 8: SentinelOne -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">SentinelOne (PowerQuery)</span>
@@ -1234,7 +1234,7 @@ AND filemod_name:*Temp*
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 s1-hunt-axios.pq &mdash; Hunt: Install + C2 + Scheduled Task
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">-- Hunt 1: npm install of malicious version</span>
 EventType = "ProcessCreation" AND
@@ -1261,7 +1261,7 @@ TgtProcCmdLine Contains "WindowsUpdate"
         </div>
 
         <!-- Hunt 9: Kaspersky -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Kaspersky (SQL)</span>
@@ -1274,7 +1274,7 @@ TgtProcCmdLine Contains "WindowsUpdate"
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 kaspersky-hunt-axios.sql &mdash; Hunt: KSC Database Query
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">-- Kaspersky Security Center DB (MS SQL / PostgreSQL)
 -- Hunt 1: Process execution with malicious axios version</span>
@@ -1316,7 +1316,7 @@ TgtProcCmdLine Contains "WindowsUpdate"
 
         <div class="th-note"><strong>&#9432; Bu bölüm şunlar için:</strong> EDR/SIEM'de endpoint process log'u olmayan ama ağ cihazı logları (Cisco ASA/FTD, Palo Alto, Fortinet, Proxy, DNS sunucusu) olan ekipler. Bu sorgular vendor-agnostic arama mantığıdır — kendi platformunuzun query syntax'ına uyarlayın.</div>
 
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Firewall / Proxy / DNS</span>
@@ -1329,7 +1329,7 @@ TgtProcCmdLine Contains "WindowsUpdate"
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 firewall-dns-hunt-axios.txt &mdash; Platform-Agnostic Hunt Criteria
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">## Firewall / Proxy Hunt — What to look for:</span>
 
@@ -1678,7 +1678,10 @@ if (chainEl) chainObs.observe(chainEl);
 /* ═══════════════════════════════════════════════════════════════
    RULE CARD TOGGLES
 ═══════════════════════════════════════════════════════════════ */
-function toggleRule(card) { card.classList.toggle('open'); }
+function toggleRule(card, e) {
+  if (e && e.target.closest(".rule-body")) return;
+  card.classList.toggle("open");
+}
 
 /* ─── DETECTION / THREAT HUNTING TAB SWITCHER ─── */
 function switchDetTab(tab, paneId) {
@@ -1892,7 +1895,8 @@ function atvRun() {
     btn.classList.toggle('visible', window.scrollY > 400);
   }, {passive: true});
 })();
-function copyCode(btn) {
+function copyCode(btn, e) {
+  if (e) e.stopPropagation();
   var body = btn.closest(".code-block").querySelector(".code-body");
   var text = body.innerText;
   var orig = btn.innerHTML;

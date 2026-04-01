@@ -428,7 +428,7 @@ POST https://models.litellm.cloud/v1/telemetry
       </div>
 
       <!-- Rule 1: Sigma -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Sigma (YAML)</span>
@@ -441,7 +441,7 @@ POST https://models.litellm.cloud/v1/telemetry
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               sigma-pip-pth-write.yml &mdash; T1546 / T1195.001
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">title</span>: Malicious pip Package &mdash; .pth File Written to site-packages
 <span class="kw">id</span>: 9a3b5c7d-1e2f-4a6b-8c9d-0e1f2a3b4c5d
@@ -478,7 +478,7 @@ POST https://models.litellm.cloud/v1/telemetry
       </div>
 
       <!-- Rule 2: Sentinel KQL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Sentinel (KQL)</span>
@@ -491,7 +491,7 @@ POST https://models.litellm.cloud/v1/telemetry
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               sentinel-litellm-c2.kql &mdash; T1041 / T1071.001
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="cmt">// DNS and proxy logs — C2 domain detection</span>
 <span class="fn">DnsEvents</span>
@@ -508,7 +508,7 @@ POST https://models.litellm.cloud/v1/telemetry
       </div>
 
       <!-- Rule 3: Splunk SPL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Splunk (SPL)</span>
@@ -521,7 +521,7 @@ POST https://models.litellm.cloud/v1/telemetry
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               splunk-python-env-read.spl &mdash; T1552.001
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="fn">index</span>=endpoint <span class="kw">sourcetype</span>=auditd <span class="kw">type</span>=SYSCALL
 | <span class="kw">where</span> <span class="fn">like</span>(exe, <span class="str">"%python%"</span>)
@@ -535,7 +535,7 @@ POST https://models.litellm.cloud/v1/telemetry
       </div>
 
       <!-- Rule 4: QRadar AQL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">QRadar (AQL)</span>
@@ -548,7 +548,7 @@ POST https://models.litellm.cloud/v1/telemetry
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               qradar-litellm-c2.aql &mdash; T1041 / T1071.001
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">SELECT</span> sourceip, destinationip, <span class="str">"Destination Hostname"</span>,
        <span class="str">"URL"</span>, <span class="str">"Bytes Sent"</span>, starttime
@@ -571,7 +571,7 @@ POST https://models.litellm.cloud/v1/telemetry
       </div>
 
       <!-- Rule 5: MDE KQL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Defender (KQL)</span>
@@ -584,7 +584,7 @@ POST https://models.litellm.cloud/v1/telemetry
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               mde-python-litellm-c2.kql &mdash; T1041 / T1059.006
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="fn">DeviceNetworkEvents</span>
 | <span class="kw">where</span> InitiatingProcessFileName <span class="fn">in~</span> (<span class="str">"python.exe"</span>, <span class="str">"python3.exe"</span>, <span class="str">"python3"</span>)
@@ -598,7 +598,7 @@ POST https://models.litellm.cloud/v1/telemetry
       </div>
 
       <!-- Rule 6: Cortex XQL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Cortex XDR (XQL)</span>
@@ -611,7 +611,7 @@ POST https://models.litellm.cloud/v1/telemetry
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               cortex-pth-write.xql &mdash; T1546
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">dataset</span> = xdr_data
 | <span class="kw">filter</span> event_type = ENUM.EVENT_TYPE_FILE
@@ -625,7 +625,7 @@ POST https://models.litellm.cloud/v1/telemetry
       </div>
 
       <!-- Rule 7: CrowdStrike SPL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">CrowdStrike (SPL)</span>
@@ -638,7 +638,7 @@ POST https://models.litellm.cloud/v1/telemetry
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               crowdstrike-python-litellm-c2.spl &mdash; T1041
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=NetworkConnect
 | <span class="kw">where</span> ImageFileName LIKE <span class="str">"%python%"</span>
@@ -653,7 +653,7 @@ POST https://models.litellm.cloud/v1/telemetry
       </div>
 
       <!-- Rule 8: CrowdStrike (IOA) -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">CrowdStrike (IOA)</span>
@@ -666,7 +666,7 @@ POST https://models.litellm.cloud/v1/telemetry
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               crowdstrike-ioa-pth-write.json &mdash; T1546
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body">{
   <span class="str">"name"</span>: <span class="str">"CVE-2026-33634 LiteLLM &mdash; .pth Persistence Write"</span>,
@@ -693,7 +693,7 @@ POST https://models.litellm.cloud/v1/telemetry
       </div>
 
       <!-- Rule 9: Carbon Black -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Carbon Black (CBQL)</span>
@@ -706,7 +706,7 @@ POST https://models.litellm.cloud/v1/telemetry
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               cb-pip-pth.cbql &mdash; T1546
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body">process_name:pip OR process_name:pip3 OR process_name:python3
 AND filemod_name:*.pth
@@ -719,7 +719,7 @@ AND filemod_type:CREATE
       </div>
 
       <!-- Rule 10: SentinelOne -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">SentinelOne (PowerQuery)</span>
@@ -732,7 +732,7 @@ AND filemod_type:CREATE
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               s1-pth-persistence.pq &mdash; T1546 / T1195.001
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body">EventType = "FileCreation" AND
 SrcProcName In ("pip", "pip3", "python3") AND
@@ -753,7 +753,7 @@ TgtFileExtension = ".pth"
       </div>
 
       <!-- Rule 11: YARA -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">YARA (Pattern)</span>
@@ -766,7 +766,7 @@ TgtFileExtension = ".pth"
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               yara-litellm-pth.yar &mdash; T1546 / CVE-2026-33634
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">rule</span> LiteLLM_Supply_Chain_PTH_Persistence {
   <span class="kw">meta</span>:
@@ -809,7 +809,7 @@ TgtFileExtension = ".pth"
         </div>
         <div class="th-note"><strong>&#9432; </strong><span data-en="SIEM Prerequisite: Requires process execution logs (pip/python cmdline) and file write events forwarded from endpoints. If unavailable, use EDR/XDR queries below." data-tr="SIEM Önkoşulu: Endpoint'lerden iletilen süreç yürütme logları (pip/python cmdline) ve dosya yazma olayları gerektirir. Mevcut değilse aşağıdaki EDR/XDR sorgularını kullanın.">SIEM Prerequisite: Requires process execution logs (pip/python cmdline) and file write events forwarded from endpoints. If unavailable, use EDR/XDR queries below.</span></div>
 
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Sentinel (KQL)</span>
@@ -822,7 +822,7 @@ TgtFileExtension = ".pth"
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 sentinel-hunt-litellm-pth.kql
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">// Hunt 1: pip install litellm in process logs</span>
 <span class="fn">SecurityEvent</span>
@@ -849,7 +849,7 @@ TgtFileExtension = ".pth"
           </div>
         </div>
 
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Splunk (SPL)</span>
@@ -862,7 +862,7 @@ TgtFileExtension = ".pth"
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 splunk-hunt-litellm.spl
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">| Hunt 1: pip install litellm (Linux auditd)</span>
 <span class="fn">index</span>=endpoint <span class="kw">sourcetype</span>=auditd syscall=execve
@@ -885,7 +885,7 @@ TgtFileExtension = ".pth"
           </div>
         </div>
 
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">QRadar (AQL)</span>
@@ -898,7 +898,7 @@ TgtFileExtension = ".pth"
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 qradar-hunt-litellm.aql
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="kw">SELECT</span> sourceip, destinationip, destinationport,
        LOGSOURCENAME(logsourceid), starttime, username
@@ -921,7 +921,7 @@ TgtFileExtension = ".pth"
         </div>
         <div class="th-note"><strong>&#9432; </strong><span data-en="EDR provides the most reliable coverage for this threat — file writes to site-packages, Python network C2, and systemd persistence are all high-confidence signals." data-tr="EDR bu tehdit için en güvenilir kapsamı sağlar — site-packages'e dosya yazma, Python ağ C2 ve systemd kalıcılığı yüksek güvenilirlikte sinyallerdir.">EDR provides the most reliable coverage for this threat — file writes to site-packages, Python network C2, and systemd persistence are all high-confidence signals.</span></div>
 
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Defender (KQL)</span>
@@ -934,7 +934,7 @@ TgtFileExtension = ".pth"
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 mde-hunt-litellm-pth-c2.kql
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">// Hunt 1: .pth file written to site-packages</span>
 <span class="fn">DeviceFileEvents</span>
@@ -961,7 +961,7 @@ TgtFileExtension = ".pth"
           </div>
         </div>
 
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Cortex XDR (XQL)</span>
@@ -974,7 +974,7 @@ TgtFileExtension = ".pth"
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 cortex-hunt-litellm-c2.xql
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="kw">dataset</span> = xdr_data
 | <span class="fn">filter</span> actor_process_image_name <span class="fn">in</span> (<span class="str">"python3"</span>, <span class="str">"python"</span>)
@@ -988,7 +988,7 @@ TgtFileExtension = ".pth"
           </div>
         </div>
 
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">CrowdStrike (SPL)</span>
@@ -1001,7 +1001,7 @@ TgtFileExtension = ".pth"
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 crowdstrike-hunt-litellm.spl
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">| Hunt 1: Python beaconing to C2 IPs</span>
 <span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=NetworkConnect
@@ -1031,7 +1031,7 @@ TgtFileExtension = ".pth"
         </div>
         <div class="th-note"><strong>&#9432; </strong><span data-en="DNS queries to models.litellm.cloud or checkmarx.zone from any host that should not use these services = immediate compromise indicator. Most scalable hunt vector." data-tr="Bu servisleri kullanmaması gereken herhangi bir host'tan models.litellm.cloud veya checkmarx.zone'a yapılan DNS sorguları = anında ele geçirme göstergesi. En ölçeklenebilir avcılık vektörü.">DNS queries to models.litellm.cloud or checkmarx.zone from any host that should not use these services = immediate compromise indicator. Most scalable hunt vector.</span></div>
 
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">DNS / Firewall</span>
@@ -1044,7 +1044,7 @@ TgtFileExtension = ".pth"
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 network-hunt-litellm-c2.kql
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">// Hunt 1: DNS queries to C2 domains (Sentinel)</span>
 <span class="fn">DnsEvents</span>
@@ -1206,7 +1206,10 @@ if (chainEl) chainObs.observe(chainEl);
 /* ═══════════════════════════════════════════════════════════════
    RULE CARD TOGGLES
 ═══════════════════════════════════════════════════════════════ */
-function toggleRule(card) { card.classList.toggle('open'); }
+function toggleRule(card, e) {
+  if (e && e.target.closest(".rule-body")) return;
+  card.classList.toggle("open");
+}
 
 /* ═══════════════════════════════════════════════════════════════
    ATTACK SIMULATION
@@ -1414,7 +1417,8 @@ applyLang(_lang);
     btn.classList.toggle('visible', window.scrollY > 400);
   }, {passive: true});
 })();
-function copyCode(btn) {
+function copyCode(btn, e) {
+  if (e) e.stopPropagation();
   var body = btn.closest(".code-block").querySelector(".code-body");
   var text = body.innerText;
   var orig = btn.innerHTML;

@@ -440,7 +440,7 @@ Contents: "Your network is encrypted. Contact us at..."
       </div>
 
       <!-- Rule 1: Sigma -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Sigma (YAML)</span>
@@ -453,7 +453,7 @@ Contents: "Your network is encrypted. Contact us at..."
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               sigma-fmc-java-deser.yml &mdash; T1190 / CWE-502
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">title</span>: Cisco FMC &mdash; Java Deserialization Exploit Attempt
 <span class="kw">id</span>: 7f2a9b1c-4e5d-8f0a-2b3c-6d7e8f9a0b1c
@@ -483,7 +483,7 @@ Contents: "Your network is encrypted. Contact us at..."
       </div>
 
       <!-- Rule 2: Sentinel KQL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Sentinel (KQL)</span>
@@ -496,7 +496,7 @@ Contents: "Your network is encrypted. Contact us at..."
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               sentinel-fmc-reverse-shell.kql &mdash; T1059.004
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="cmt">// Syslog from FMC auditd — bash spawned by Java parent</span>
 <span class="fn">Syslog</span>
@@ -512,7 +512,7 @@ Contents: "Your network is encrypted. Contact us at..."
       </div>
 
       <!-- Rule 3: Splunk SPL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Splunk (SPL)</span>
@@ -525,7 +525,7 @@ Contents: "Your network is encrypted. Contact us at..."
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               splunk-fmc-ips-disabled.spl &mdash; T1562.001
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="fn">index</span>=cisco_fmc <span class="kw">sourcetype</span>=fmc_audit
 | <span class="kw">where</span> <span class="fn">like</span>(Description, <span class="str">"%intrusion_policy%enabled%0%"</span>)
@@ -539,7 +539,7 @@ Contents: "Your network is encrypted. Contact us at..."
       </div>
 
       <!-- Rule 4: QRadar AQL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">QRadar (AQL)</span>
@@ -552,7 +552,7 @@ Contents: "Your network is encrypted. Contact us at..."
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               qradar-fmc-java-post.aql &mdash; T1190
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">SELECT</span> sourceip, destinationip, <span class="str">"HTTP Method"</span>,
        <span class="str">"HTTP URI"</span>, <span class="str">"Content Type"</span>, eventcount
@@ -576,7 +576,7 @@ Contents: "Your network is encrypted. Contact us at..."
       </div>
 
       <!-- Rule 5: MDE KQL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Defender (KQL)</span>
@@ -589,7 +589,7 @@ Contents: "Your network is encrypted. Contact us at..."
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               mde-java-spawn-bash.kql &mdash; T1059.004 / T1203
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="fn">DeviceProcessEvents</span>
 | <span class="kw">where</span> InitiatingProcessFileName <span class="fn">in~</span> (<span class="str">"java"</span>, <span class="str">"java8"</span>, <span class="str">"java11"</span>)
@@ -603,7 +603,7 @@ Contents: "Your network is encrypted. Contact us at..."
       </div>
 
       <!-- Rule 6: Cortex XQL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Cortex XDR (XQL)</span>
@@ -616,7 +616,7 @@ Contents: "Your network is encrypted. Contact us at..."
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               cortex-java-shell.xql &mdash; T1059.004
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">dataset</span> = xdr_data
 | <span class="kw">filter</span> event_type = ENUM.EVENT_TYPE_PROCESS
@@ -631,7 +631,7 @@ Contents: "Your network is encrypted. Contact us at..."
       </div>
 
       <!-- Rule 7: CrowdStrike SPL Hunting -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">CrowdStrike (SPL)</span>
@@ -644,7 +644,7 @@ Contents: "Your network is encrypted. Contact us at..."
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               crowdstrike-java-revshell.spl &mdash; T1059.004
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=ProcessRollup2
 | <span class="kw">where</span> ParentBaseFileName LIKE <span class="str">"%java%"</span>
@@ -659,7 +659,7 @@ Contents: "Your network is encrypted. Contact us at..."
       </div>
 
       <!-- Rule 8: CrowdStrike (IOA) -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">CrowdStrike (IOA)</span>
@@ -672,7 +672,7 @@ Contents: "Your network is encrypted. Contact us at..."
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               crowdstrike-ioa-fmc-java-shell.json &mdash; T1059.004 / T1190
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body">{
   <span class="str">"name"</span>: <span class="str">"CVE-2026-20131 FMC RCE &mdash; Java Spawning Shell"</span>,
@@ -704,7 +704,7 @@ Contents: "Your network is encrypted. Contact us at..."
       </div>
 
       <!-- Rule 9: Carbon Black -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Carbon Black (CBQL)</span>
@@ -717,7 +717,7 @@ Contents: "Your network is encrypted. Contact us at..."
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               cb-java-netshell.cbql &mdash; T1059.004
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body">process_name:bash AND
 parent_name:java AND
@@ -729,7 +729,7 @@ process_cmdline:*"/dev/tcp"* OR process_cmdline:*"bash -i"*
       </div>
 
       <!-- Rule 10: SentinelOne -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">SentinelOne (PowerQuery)</span>
@@ -742,7 +742,7 @@ process_cmdline:*"/dev/tcp"* OR process_cmdline:*"bash -i"*
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               s1-java-shell.pq &mdash; T1059.004 / T1203
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body">EventType = "ProcessCreation" AND
 SrcProcName ContainsCIS "java" AND
@@ -763,7 +763,7 @@ TgtProcCmdLine Contains "/dev/tcp"
       </div>
 
       <!-- Rule 11: YARA -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">YARA (Pattern)</span>
@@ -776,7 +776,7 @@ TgtProcCmdLine Contains "/dev/tcp"
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               yara-fmc-java-deser.yar &mdash; T1190 / CWE-502
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">rule</span> FMC_Java_Deserialization_Exploit {
   <span class="kw">meta</span>:
@@ -822,7 +822,7 @@ TgtProcCmdLine Contains "/dev/tcp"
         <div class="th-note"><strong>&#9432; SIEM Prerequisite:</strong> Requires FMC audit logs or network appliance logs forwarded to SIEM. Cisco FMC can forward syslog to SIEM via RFC 5424. If unavailable, network-layer detection (firewall/IDS) below provides coverage.</div>
 
         <!-- Hunt 1: Sentinel -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Sentinel (KQL)</span>
@@ -835,7 +835,7 @@ TgtProcCmdLine Contains "/dev/tcp"
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 sentinel-hunt-fmc-java-deser.kql &mdash; Hunt: Serialized Object POST to FMC?
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">// Hunt: Has FMC received POST requests with Java serialization Content-Type?
 // Source: FMC audit syslog, network proxy logs, or WAF logs
@@ -860,7 +860,7 @@ TgtProcCmdLine Contains "/dev/tcp"
         </div>
 
         <!-- Hunt 2: Splunk -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Splunk (SPL)</span>
@@ -873,7 +873,7 @@ TgtProcCmdLine Contains "/dev/tcp"
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 splunk-hunt-fmc-jvm-shell.spl &mdash; Hunt: JVM Spawning Shell on FMC Host?
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">| Hunt 1: FMC auditd — Java spawning bash</span>
 <span class="fn">index</span>=cisco_fmc <span class="kw">sourcetype</span>=fmc_audit
@@ -899,7 +899,7 @@ TgtProcCmdLine Contains "/dev/tcp"
         </div>
 
         <!-- Hunt 3: QRadar -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">QRadar (AQL)</span>
@@ -912,7 +912,7 @@ TgtProcCmdLine Contains "/dev/tcp"
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 qradar-hunt-fmc-deser.aql &mdash; Hunt: Java Serialization to FMC?
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="kw">SELECT</span> sourceip, destinationip, destinationport,
        <span class="str">"HTTP Content Type"</span>, <span class="str">"HTTP Method"</span>, <span class="str">"URL"</span>,
@@ -940,7 +940,7 @@ TgtProcCmdLine Contains "/dev/tcp"
         <div class="th-note"><strong>&#9432; EDR Prerequisite:</strong> Requires EDR agent installed on the FMC appliance (Linux-based). Cisco FMC runs on a hardened Linux OS — if EDR is not deployed there, consider network-based detection as the primary hunt method.</div>
 
         <!-- Hunt 4: Defender -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Defender (KQL)</span>
@@ -953,7 +953,7 @@ TgtProcCmdLine Contains "/dev/tcp"
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 mde-hunt-fmc-jvm-shell.kql &mdash; Hunt: JVM Spawning Shell?
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">// Hunt: Java process spawning shell on Cisco FMC host (Linux)</span>
 <span class="fn">DeviceProcessEvents</span>
@@ -975,7 +975,7 @@ TgtProcCmdLine Contains "/dev/tcp"
         </div>
 
         <!-- Hunt 5: Cortex XDR -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Cortex XDR (XQL)</span>
@@ -988,7 +988,7 @@ TgtProcCmdLine Contains "/dev/tcp"
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 cortex-hunt-fmc-jvm.xql &mdash; Hunt: Java Process Network Activity
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="kw">dataset</span> = xdr_data
 | <span class="fn">filter</span> actor_process_image_name <span class="fn">contains</span> <span class="str">"java"</span>
@@ -1014,7 +1014,7 @@ TgtProcCmdLine Contains "/dev/tcp"
         <div class="th-note"><strong>&#9432; Network Prerequisite:</strong> Requires firewall logs showing traffic to/from FMC management IP (port 443/8443). IDS/IPS with Java deserialization signatures provides best coverage. These queries identify Interlock C2 IP 185.220.101.47.</div>
 
         <!-- Hunt 7: Firewall/IDS -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Firewall / IDS</span>
@@ -1027,7 +1027,7 @@ TgtProcCmdLine Contains "/dev/tcp"
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 network-hunt-fmc-interlock.txt &mdash; Hunt: C2 Traffic + Deserialization Payload
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">// Hunt 1: Connections TO FMC management IP from external (in Sentinel)</span>
 <span class="fn">CommonSecurityLog</span>
@@ -1200,7 +1200,10 @@ function switchDetTab(tab, paneId) {
   document.getElementById(paneId).classList.add("active");
 }
 
-function toggleRule(card) { card.classList.toggle('open'); }
+function toggleRule(card, e) {
+  if (e && e.target.closest(".rule-body")) return;
+  card.classList.toggle("open");
+}
 
 /* ═══════════════════════════════════════════════════════════════
    ATTACK SIMULATION
@@ -1408,7 +1411,8 @@ applyLang(_lang);
     btn.classList.toggle('visible', window.scrollY > 400);
   }, {passive: true});
 })();
-function copyCode(btn) {
+function copyCode(btn, e) {
+  if (e) e.stopPropagation();
   var body = btn.closest(".code-block").querySelector(".code-body");
   var text = body.innerText;
   var orig = btn.innerHTML;

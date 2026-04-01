@@ -430,7 +430,7 @@ DNS QUERIES from langflow-prod:
       </div>
 
       <!-- Sigma -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title"><span class="platform-badge">Sigma (YAML)</span><span data-en="Langflow Python exec() Exploitation — Shell Spawn" data-tr="Langflow Python exec() İstismarı — Shell Başlatma">Langflow Python exec() Exploitation — Shell Spawn</span></div>
           <div class="rule-toggle">▼</div>
@@ -440,7 +440,7 @@ DNS QUERIES from langflow-prod:
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               <span data-en="sigma-langflow-shell-spawn.yml" data-tr="sigma-langflow-shell-spawn.yml">sigma-langflow-shell-spawn.yml</span>
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">title</span>: <span class="str">Langflow AI Pipeline — Unexpected Shell from Web Process</span>
 <span class="kw">id</span>: <span class="str">2a4b6c8d-1e3f-5a7b-9c0d-2e4f6a8b0c1d</span>
@@ -478,7 +478,7 @@ DNS QUERIES from langflow-prod:
       </div>
 
       <!-- Sentinel KQL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title"><span class="platform-badge">Sentinel (KQL)</span><span data-en="Langflow API Key Exfiltration Pattern" data-tr="Langflow API Key Dışarıya Sızdırma Kalıbı">Langflow API Key Exfiltration Pattern</span></div>
           <div class="rule-toggle">▼</div>
@@ -488,7 +488,7 @@ DNS QUERIES from langflow-prod:
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               <span data-en="sentinel-langflow-exfil.kql" data-tr="sentinel-langflow-exfil.kql">sentinel-langflow-exfil.kql</span>
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="cmt">// Detects large base64-encoded POST to external domains from AI service hosts</span>
 <span class="fn">CommonSecurityLog</span>
@@ -505,7 +505,7 @@ DNS QUERIES from langflow-prod:
       </div>
 
       <!-- Splunk SPL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title"><span class="platform-badge">Splunk (SPL)</span><span data-en="Langflow Process — Outbound Socket Connection" data-tr="Langflow Süreci — Giden Soket Bağlantısı">Langflow Process — Outbound Socket Connection</span></div>
           <div class="rule-toggle">▼</div>
@@ -515,7 +515,7 @@ DNS QUERIES from langflow-prod:
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               <span data-en="splunk-langflow-socket.spl" data-tr="splunk-langflow-socket.spl">splunk-langflow-socket.spl</span>
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body">index=endpoint sourcetype=linux_audit
 | <span class="kw">where</span> process_name IN (<span class="str">"langflow"</span>, <span class="str">"uvicorn"</span>, <span class="str">"python3"</span>, <span class="str">"python"</span>)
@@ -533,7 +533,7 @@ DNS QUERIES from langflow-prod:
       </div>
 
       <!-- QRadar AQL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title"><span class="platform-badge">QRadar (AQL)</span><span data-en="Langflow Unauthorized Code Execution" data-tr="Langflow Yetkisiz Kod Yürütme">Langflow Unauthorized Code Execution</span></div>
           <div class="rule-toggle">▼</div>
@@ -543,7 +543,7 @@ DNS QUERIES from langflow-prod:
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               <span data-en="qradar-langflow-rce.aql" data-tr="qradar-langflow-rce.aql">qradar-langflow-rce.aql</span>
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">SELECT</span> sourceip, username, <span class="str">"Process Name"</span>, <span class="str">"Command"</span>,
        <span class="str">"Parent Process Name"</span>, <span class="str">"Destination IP"</span>, starttime
@@ -567,7 +567,7 @@ DNS QUERIES from langflow-prod:
       </div>
 
       <!-- MDE KQL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title"><span class="platform-badge">Defender (KQL)</span><span data-en="Langflow — Python Child Reverse Shell" data-tr="Langflow — Python Alt Reverse Shell">Langflow — Python Child Reverse Shell</span></div>
           <div class="rule-toggle">▼</div>
@@ -577,7 +577,7 @@ DNS QUERIES from langflow-prod:
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               <span data-en="mde-langflow-child-shell.kql" data-tr="mde-langflow-child-shell.kql">mde-langflow-child-shell.kql</span>
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="fn">DeviceProcessEvents</span>
 | <span class="kw">where</span> InitiatingProcessFileName in~ (<span class="str">"langflow"</span>, <span class="str">"uvicorn"</span>, <span class="str">"python3"</span>, <span class="str">"python"</span>)
@@ -591,7 +591,7 @@ DNS QUERIES from langflow-prod:
       </div>
 
       <!-- Cortex XDR XQL -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title"><span class="platform-badge">Cortex XDR (XQL)</span><span data-en="Langflow Web Process Shell Spawn (BIOC)" data-tr="Langflow Web Süreci Shell Başlatma (BIOC)">Langflow Web Process Shell Spawn (BIOC)</span></div>
           <div class="rule-toggle">▼</div>
@@ -601,7 +601,7 @@ DNS QUERIES from langflow-prod:
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               <span data-en="cortex-xdr-langflow-shell.xql" data-tr="cortex-xdr-langflow-shell.xql">cortex-xdr-langflow-shell.xql</span>
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body">dataset = xdr_data
 | <span class="kw">filter</span> event_type = ENUM.EVENT_TYPE_PROCESS
@@ -616,7 +616,7 @@ DNS QUERIES from langflow-prod:
       </div>
 
       <!-- CrowdStrike Hunting -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title"><span class="platform-badge">CrowdStrike (SPL)</span><span data-en="Python Web Server Anomalous Child Process — Hunting" data-tr="Python Web Sunucusu Anormal Alt Süreci — Tehdit Avcılığı">Python Web Server Anomalous Child Process — Hunting</span></div>
           <div class="rule-toggle">▼</div>
@@ -626,7 +626,7 @@ DNS QUERIES from langflow-prod:
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               <span data-en="crowdstrike-hunting-langflow.spl" data-tr="crowdstrike-hunting-langflow.spl">crowdstrike-hunting-langflow.spl</span>
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body">index=crowdstrike event_simpleName=ProcessRollup2
 | <span class="kw">where</span> ParentBaseFileName IN (<span class="str">"python3"</span>, <span class="str">"python"</span>, <span class="str">"uvicorn"</span>, <span class="str">"langflow"</span>)
@@ -638,7 +638,7 @@ DNS QUERIES from langflow-prod:
       </div>
 
       <!-- CrowdStrike IOA -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title"><span class="platform-badge">CrowdStrike (IOA)</span><span data-en="Langflow exec() Exploitation — Custom IOA" data-tr="Langflow exec() İstismarı — Özel IOA">Langflow exec() Exploitation — Custom IOA</span></div>
           <div class="rule-toggle">▼</div>
@@ -648,7 +648,7 @@ DNS QUERIES from langflow-prod:
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               <span data-en="crowdstrike-ioa-langflow-rce.json" data-tr="crowdstrike-ioa-langflow-rce.json">crowdstrike-ioa-langflow-rce.json</span>
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body">{
   <span class="kw">"name"</span>: <span class="str">"CVE-2026-33017 - Langflow Python RCE Shell Spawn"</span>,
@@ -680,7 +680,7 @@ DNS QUERIES from langflow-prod:
       </div>
 
       <!-- SentinelOne -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title"><span class="platform-badge">SentinelOne (PowerQuery)</span><span data-en="AI Service Process Spawning Shell (PowerQuery)" data-tr="AI Servis Süreci Shell Başlatma (PowerQuery)">AI Service Process Spawning Shell (PowerQuery)</span></div>
           <div class="rule-toggle">▼</div>
@@ -690,7 +690,7 @@ DNS QUERIES from langflow-prod:
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               <span data-en="sentinelone-langflow-shell.pq" data-tr="sentinelone-langflow-shell.pq">sentinelone-langflow-shell.pq</span>
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body">src.process.name in (<span class="str">"langflow"</span>, <span class="str">"uvicorn"</span>, <span class="str">"python3"</span>) AND
 tgt.process.name in (<span class="str">"bash"</span>, <span class="str">"sh"</span>) AND
@@ -702,7 +702,7 @@ tgt.process.name in (<span class="str">"bash"</span>, <span class="str">"sh"</sp
       </div>
 
       <!-- Carbon Black -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title"><span class="platform-badge">Carbon Black (CBQL)</span><span data-en="Langflow Shell Spawn Detection (CBQL)" data-tr="Langflow Shell Başlatma Tespiti (CBQL)">Langflow Shell Spawn Detection (CBQL)</span></div>
           <div class="rule-toggle">▼</div>
@@ -712,7 +712,7 @@ tgt.process.name in (<span class="str">"bash"</span>, <span class="str">"sh"</sp
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               <span data-en="carbonblack-langflow-shell.cbql" data-tr="carbonblack-langflow-shell.cbql">carbonblack-langflow-shell.cbql</span>
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body">parent_name:uvicorn process_name:bash <span class="kw">OR</span>
 parent_name:langflow process_name:bash <span class="kw">OR</span>
@@ -730,7 +730,7 @@ parent_name:langflow process_name:bash <span class="kw">OR</span>
       </div>
 
       <!-- YARA -->
-      <div class="rule-card" onclick="toggleRule(this)">
+      <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
           <div class="rule-title"><span class="platform-badge">YARA (Pattern)</span><span data-en="Langflow exec() Exploitation Payload" data-tr="Langflow exec() İstismar Yükü">Langflow exec() Exploitation Payload</span></div>
           <div class="rule-toggle">▼</div>
@@ -740,7 +740,7 @@ parent_name:langflow process_name:bash <span class="kw">OR</span>
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
               <span data-en="langflow-exec-injection.yar" data-tr="langflow-exec-injection.yar">langflow-exec-injection.yar</span>
-              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">rule</span> <span class="fn">Langflow_exec_Injection_CVE_2026_33017</span> {
     <span class="kw">meta</span>:
@@ -783,7 +783,7 @@ parent_name:langflow process_name:bash <span class="kw">OR</span>
         <div class="th-note"><strong>&#9432; SIEM Prerequisite:</strong> Requires web/application server access logs forwarded to SIEM. Nginx/uvicorn request logs must include HTTP method, path, status code, and source IP. If not available, use EDR/XDR queries below.</div>
 
         <!-- Hunt 1: Sentinel KQL -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Sentinel (KQL)</span>
@@ -796,7 +796,7 @@ parent_name:langflow process_name:bash <span class="kw">OR</span>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 sentinel-hunt-langflow-api.kql &mdash; Hunt: Unauthenticated RCE Endpoint Accessed?
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">// Hunt: Has /api/v1/validate/code been called from external IPs?
 // Source: Nginx/uvicorn access logs via Syslog or CommonSecurityLog
@@ -821,7 +821,7 @@ parent_name:langflow process_name:bash <span class="kw">OR</span>
         </div>
 
         <!-- Hunt 2: Splunk -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Splunk (SPL)</span>
@@ -834,7 +834,7 @@ parent_name:langflow process_name:bash <span class="kw">OR</span>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 splunk-hunt-langflow-process.spl &mdash; Hunt: Langflow Installed and Running?
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">| Hunt 1: Is langflow installed? Check pip install in process logs</span>
 <span class="fn">index</span>=endpoint <span class="kw">sourcetype</span>=auditd
@@ -859,7 +859,7 @@ parent_name:langflow process_name:bash <span class="kw">OR</span>
         </div>
 
         <!-- Hunt 3: QRadar -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">QRadar (AQL)</span>
@@ -872,7 +872,7 @@ parent_name:langflow process_name:bash <span class="kw">OR</span>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 qradar-hunt-langflow.aql &mdash; Hunt: RCE Endpoint Called?
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="kw">SELECT</span> sourceip, destinationip, <span class="str">"URL"</span>, <span class="str">"HTTP Method"</span>,
        <span class="str">"HTTP Response Code"</span>, LOGSOURCENAME(logsourceid), starttime
@@ -898,7 +898,7 @@ parent_name:langflow process_name:bash <span class="kw">OR</span>
         <div class="th-note"><strong>&#9432; EDR Prerequisite:</strong> Requires endpoint agent on the server hosting Langflow. EDR must capture process creation events with full command-line arguments. These queries look for Python spawning shell processes — a direct exploitation indicator.</div>
 
         <!-- Hunt 4: Defender KQL -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Defender (KQL)</span>
@@ -911,7 +911,7 @@ parent_name:langflow process_name:bash <span class="kw">OR</span>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 mde-hunt-langflow-rce.kql &mdash; Hunt: Shell Spawn from AI Service
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">// Hunt: Python/uvicorn web process spawning shell commands</span>
 <span class="fn">DeviceProcessEvents</span>
@@ -927,7 +927,7 @@ parent_name:langflow process_name:bash <span class="kw">OR</span>
         </div>
 
         <!-- Hunt 5: Cortex XDR -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Cortex XDR (XQL)</span>
@@ -940,7 +940,7 @@ parent_name:langflow process_name:bash <span class="kw">OR</span>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 cortex-hunt-langflow.xql &mdash; Hunt: Python Lateral/Outbound Post-Exec
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="kw">dataset</span> = xdr_data
 | <span class="fn">filter</span> actor_process_image_name <span class="fn">contains</span> <span class="str">"python"</span>
@@ -956,7 +956,7 @@ parent_name:langflow process_name:bash <span class="kw">OR</span>
         </div>
 
         <!-- Hunt 6: CrowdStrike -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">CrowdStrike (SPL)</span>
@@ -969,7 +969,7 @@ parent_name:langflow process_name:bash <span class="kw">OR</span>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 crowdstrike-hunt-langflow.spl &mdash; Hunt: Python Spawning Shell
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=ProcessRollup2
   ParentBaseFileName IN (<span class="str">"python3"</span>, <span class="str">"python"</span>, <span class="str">"uvicorn"</span>)
@@ -995,7 +995,7 @@ parent_name:langflow process_name:bash <span class="kw">OR</span>
         <div class="th-note"><strong>&#9432; Network Prerequisite:</strong> Requires firewall or proxy logs showing inbound HTTP to Langflow hosts (port 7860/7861/443) and outbound connections from Langflow hosts. DNS logs help identify C2 beaconing from compromised hosts.</div>
 
         <!-- Hunt 7: Firewall -->
-        <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">Firewall / Proxy</span>
@@ -1008,7 +1008,7 @@ parent_name:langflow process_name:bash <span class="kw">OR</span>
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
                 firewall-hunt-langflow-exposure.txt &mdash; Hunt: Is Langflow Internet-Exposed?
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">// Hunt 1: Inbound traffic to Langflow default port 7860/7861 from external IPs</span>
 <span class="cmt">// In Sentinel (CommonSecurityLog):</span>
@@ -1384,8 +1384,9 @@ function switchDetTab(tab, paneId) {
   document.getElementById(paneId).classList.add("active");
 }
 
-function toggleRule(card) {
-  card.classList.toggle('open');
+function toggleRule(card, e) {
+  if (e && e.target.closest(".rule-body")) return;
+  card.classList.toggle("open");
 }
 
 // ── SCROLL EFFECTS ────────────────────────────────────────────
@@ -1468,7 +1469,8 @@ function animateStats() {
     btn.classList.toggle('visible', window.scrollY > 400);
   }, {passive: true});
 })();
-function copyCode(btn) {
+function copyCode(btn, e) {
+  if (e) e.stopPropagation();
   var body = btn.closest(".code-block").querySelector(".code-body");
   var text = body.innerText;
   var orig = btn.innerHTML;
