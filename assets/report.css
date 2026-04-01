@@ -386,3 +386,47 @@ code { font-family: 'Cascadia Code','Fira Code',monospace; font-size: 0.83em; co
 footer { text-align: center; padding: 36px 24px; font-size: 0.76rem; color: var(--muted); border-top: 1px solid var(--border); }
 footer a { color: var(--accent2); text-decoration: none; }
 footer strong { color: var(--text); }
+
+/* ── SCROLL TO TOP BUTTON ── */
+.scroll-top-btn {
+  position: fixed;
+  bottom: 28px;
+  right: 24px;
+  z-index: 9999;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.25s, transform 0.25s, background 0.15s, border-color 0.15s;
+  pointer-events: none;
+  line-height: 1;
+  user-select: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+.scroll-top-btn.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.scroll-top-btn:hover {
+  background: rgba(232,93,4,0.12);
+  border-color: var(--accent);
+}
+[data-theme="light"] .scroll-top-btn {
+  background: #fff;
+  border-color: #d1d5db;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+[data-theme="light"] .scroll-top-btn:hover {
+  background: rgba(232,93,4,0.06);
+  border-color: var(--accent);
+}

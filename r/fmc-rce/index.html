@@ -1114,6 +1114,19 @@ function atvRun() {
 ═══════════════════════════════════════════════════════════════ */
 applyTheme(_theme);
 applyLang(_lang);
+
+// Scroll-to-top button
+(function() {
+  var btn = document.createElement('div');
+  btn.className = 'scroll-top-btn';
+  btn.innerHTML = '&#8679;';
+  btn.title = 'Back to top';
+  btn.onclick = function() { window.scrollTo({top: 0, behavior: 'smooth'}); };
+  document.body.appendChild(btn);
+  window.addEventListener('scroll', function() {
+    btn.classList.toggle('visible', window.scrollY > 400);
+  }, {passive: true});
+})();
 </script>
 </body>
 </html>
