@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>TI-DE — Threat Intelligence & Detection Engineering</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='36' y2='36' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23e85d04'/%3E%3Cstop offset='100%25' stop-color='%23f48c06'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M18 2L4 7v10c0 8.5 5.9 16.4 14 18.5C26.1 33.4 32 25.5 32 17V7L18 2Z' fill='url(%23g)' opacity='.9'/%3E%3Ccircle cx='18' cy='18' r='6' stroke='%23fff' stroke-width='1.2' fill='none' opacity='.7'/%3E%3Ccircle cx='18' cy='18' r='2.5' fill='%23fff' opacity='.9'/%3E%3Cline x1='18' y1='10' x2='18' y2='26' stroke='%23fff' stroke-width='.8' opacity='.5'/%3E%3Cline x1='10' y1='18' x2='26' y2='18' stroke='%23fff' stroke-width='.8' opacity='.5'/%3E%3C/svg%3E">
 <style>
 /* ═══════════════════════════════════
    THEME TOKENS
@@ -427,7 +428,6 @@ nav.scrolled{
   <div style="display:flex;align-items:center">
     <div class="nav-links">
       <a class="nav-lnk" href="#reports" data-en="Reports" data-tr="Raporlar">Reports</a>
-      <a class="nav-lnk" href="#methodology" data-en="Methodology" data-tr="Metodoloji">Methodology</a>
       <a class="nav-lnk" href="https://github.com/mazlumbaydar/TI-DE" target="_blank" rel="noopener">GitHub</a>
     </div>
     <div class="nav-controls">
@@ -482,33 +482,6 @@ nav.scrolled{
   </div>
 </section>
 
-<!-- ══ PLATFORM TICKER ══ -->
-<div class="strip reveal">
-  <div class="strip-track">
-    <span class="strip-item"><span>⚔️</span> Sigma</span>
-    <span class="strip-item"><span>🔬</span> YARA</span>
-    <span class="strip-item"><span>☁️</span> Microsoft Sentinel</span>
-    <span class="strip-item"><span>🦅</span> CrowdStrike Falcon</span>
-    <span class="strip-item"><span>🔥</span> Cortex XDR / BIOC</span>
-    <span class="strip-item"><span>📊</span> Splunk SPL</span>
-    <span class="strip-item"><span>🔵</span> IBM QRadar</span>
-    <span class="strip-item"><span>⬛</span> VMware Carbon Black</span>
-    <span class="strip-item"><span>🟣</span> SentinelOne</span>
-    <span class="strip-item"><span>🟢</span> Kaspersky EDR</span>
-    <!-- duplicate -->
-    <span class="strip-item"><span>⚔️</span> Sigma</span>
-    <span class="strip-item"><span>🔬</span> YARA</span>
-    <span class="strip-item"><span>☁️</span> Microsoft Sentinel</span>
-    <span class="strip-item"><span>🦅</span> CrowdStrike Falcon</span>
-    <span class="strip-item"><span>🔥</span> Cortex XDR / BIOC</span>
-    <span class="strip-item"><span>📊</span> Splunk SPL</span>
-    <span class="strip-item"><span>🔵</span> IBM QRadar</span>
-    <span class="strip-item"><span>⬛</span> VMware Carbon Black</span>
-    <span class="strip-item"><span>🟣</span> SentinelOne</span>
-    <span class="strip-item"><span>🟢</span> Kaspersky EDR</span>
-  </div>
-</div>
-
 <!-- ══ REPORTS ══ -->
 <div class="section" id="reports">
   <div class="sec-hd reveal">
@@ -517,7 +490,7 @@ nav.scrolled{
   </div>
 
   <!-- Featured -->
-  <a class="featured reveal" href="daily-reports/31-03-2026/THREAT-Axios-npm-Supply-Chain-RAT.html">
+  <a class="featured reveal" href="r/axios-sc/">
     <div class="featured-body">
       <div>
         <div class="featured-label"><span class="dot"></span><span data-en="Latest Report" data-tr="Son Rapor">Latest Report</span></div>
@@ -575,7 +548,7 @@ nav.scrolled{
   <!-- Report grid -->
   <div class="rg">
 
-    <a class="rcard reveal" href="daily-reports/27-03-2026/CVE-2026-20131_Cisco-FMC-Interlock-RCE.html" data-sev="critical">
+    <a class="rcard reveal" href="r/fmc-rce/" data-sev="critical">
       <div class="rcard-top">
         <div class="rcard-badges">
           <span class="badge b-crit">CVSS 10.0</span>
@@ -603,7 +576,7 @@ nav.scrolled{
       </div>
     </a>
 
-    <a class="rcard reveal" href="daily-reports/27-03-2026/CVE-2026-33017_Langflow-AI-RCE.html" data-sev="critical">
+    <a class="rcard reveal" href="r/langflow-rce/" data-sev="critical">
       <div class="rcard-top">
         <div class="rcard-badges">
           <span class="badge b-crit">CVSS 9.8</span>
@@ -630,7 +603,7 @@ nav.scrolled{
       </div>
     </a>
 
-    <a class="rcard reveal" href="daily-reports/26-03-2026/CVE-2026-33634_LiteLLM-PyPI-Supply-Chain-TeamPCP.html" data-sev="critical">
+    <a class="rcard reveal" href="r/litellm-sc/" data-sev="critical">
       <div class="rcard-top">
         <div class="rcard-badges">
           <span class="badge b-crit">CVSS 9.4</span>
@@ -663,68 +636,43 @@ nav.scrolled{
 
 <hr class="divider">
 
-<!-- ══ METHODOLOGY ══ -->
-<div class="section" id="methodology">
+<!-- ══ ABOUT ══ -->
+<div class="section" id="about">
   <div class="sec-hd reveal">
-    <div class="sec-eye" data-en="Engineering Standards" data-tr="Mühendislik Standartları">Engineering Standards</div>
-    <h2 class="sec-title" data-en="Detection Methodology" data-tr="Tespit Metodolojisi">Detection Methodology</h2>
+    <div class="sec-eye" data-en="About This Project" data-tr="Bu Proje Hakkında">About This Project</div>
+    <h2 class="sec-title" data-en="What is TI-DE?" data-tr="TI-DE Nedir?">What is TI-DE?</h2>
   </div>
 
   <div class="pillars reveal">
     <div class="pillar">
       <div class="p-ico">🎯</div>
-      <div class="p-num" data-en="Rule 01" data-tr="Kural 01">Rule 01</div>
-      <div class="p-title" data-en="TTP Over IOC" data-tr="IOC Yerine TTP">TTP Over IOC</div>
-      <div class="p-desc" data-en="Never hardcoded IPs or domains. Attacker infrastructure rotates in hours; adversary TTPs persist for years." data-tr="Asla hardcoded IP veya domain yok. Saldırgan altyapısı saatler içinde değişir; TTP'ler yıllarca geçerlidir.">Never hardcoded IPs or domains. Attacker infrastructure rotates in hours; adversary TTPs persist for years.</div>
+      <div class="p-title" data-en="TTP-Based Detection Only" data-tr="Yalnızca TTP Tabanlı Tespit">TTP-Based Detection Only</div>
+      <div class="p-desc" data-en="No hardcoded IPs or domains. Attacker infrastructure rotates in hours — adversary TTPs persist for years. Every rule targets behavior, not indicators." data-tr="Hardcoded IP veya domain yok. Saldırgan altyapısı saatler içinde değişir — TTP'ler yıllarca geçerlidir. Her kural gösterge değil, davranışı hedefler.">No hardcoded IPs or domains. Attacker infrastructure rotates in hours — adversary TTPs persist for years. Every rule targets behavior, not indicators.</div>
     </div>
     <div class="pillar">
-      <div class="p-ico">🔗</div>
-      <div class="p-num" data-en="Rule 02" data-tr="Kural 02">Rule 02</div>
-      <div class="p-title" data-en="Min. 2 AND Conditions" data-tr="Min. 2 AND Koşulu">Min. 2 AND Conditions</div>
-      <div class="p-desc" data-en="Every rule requires at least 2 correlated conditions. Single-signal detections produce excessive noise." data-tr="Her kural en az 2 ilişkili koşul gerektirir. Tek sinyalli tespitler aşırı gürültü üretir.">Every rule requires at least 2 correlated conditions. Single-signal detections produce excessive noise.</div>
-    </div>
-    <div class="pillar">
-      <div class="p-ico">📐</div>
-      <div class="p-num" data-en="Rule 03" data-tr="Kural 03">Rule 03</div>
-      <div class="p-title" data-en="Max 2 Rules / Threat" data-tr="Tehdit Başına Maks 2 Kural">Max 2 Rules / Threat</div>
-      <div class="p-desc" data-en="Rule 1 targets process chain. Rule 2 targets artifact/file activity. Consolidation prevents alert fatigue." data-tr="Kural 1 süreç zincirini hedefler. Kural 2 artefakt/dosya aktivitesini. Konsolidasyon uyarı yorgunluğunu önler.">Rule 1 targets process chain. Rule 2 targets artifact/file activity. Consolidation prevents alert fatigue.</div>
-    </div>
-    <div class="pillar">
-      <div class="p-ico">✅</div>
-      <div class="p-num" data-en="Rule 04" data-tr="Kural 04">Rule 04</div>
-      <div class="p-title" data-en="Platform Field Verified" data-tr="Platform Alanı Doğrulama">Platform Field Verified</div>
-      <div class="p-desc" data-en="All field names verified against official docs. Cortex XDR rules are BIOC-compatible — no joins, one event_type per rule." data-tr="Tüm alan adları resmi dokümantasyona göre doğrulanır. Cortex XDR kuralları BIOC uyumludur — join yok, kural başına bir event_type.">All field names verified against official docs. Cortex XDR rules are BIOC-compatible — no joins, one event_type per rule.</div>
+      <div class="p-ico">🔵</div>
+      <div class="p-title" data-en="11 Security Platforms" data-tr="11 Güvenlik Platformu">11 Security Platforms</div>
+      <div class="p-desc" data-en="Each report ships detection rules for SIEM and EDR/XDR platforms: Sigma, Sentinel, Splunk, QRadar, Defender, Cortex XDR, CrowdStrike (SPL + IOA), Carbon Black, SentinelOne, Kaspersky, YARA." data-tr="Her rapor SIEM ve EDR/XDR platformları için kural içerir: Sigma, Sentinel, Splunk, QRadar, Defender, Cortex XDR, CrowdStrike (SPL + IOA), Carbon Black, SentinelOne, Kaspersky, YARA.">Each report ships detection rules for SIEM and EDR/XDR platforms: Sigma, Sentinel, Splunk, QRadar, Defender, Cortex XDR, CrowdStrike (SPL + IOA), Carbon Black, SentinelOne, Kaspersky, YARA.</div>
     </div>
     <div class="pillar">
       <div class="p-ico">⚡</div>
-      <div class="p-num" data-en="Rule 05" data-tr="Kural 05">Rule 05</div>
-      <div class="p-title" data-en="KEV Priority" data-tr="KEV Önceliği">KEV Priority</div>
-      <div class="p-desc" data-en="CISA KEV entries and actively exploited CVEs processed within 24 hours of confirmed exploitation intelligence." data-tr="CISA KEV kayıtları ve aktif olarak sömürülen CVE'ler, onaylı sömürü istihbaratından 24 saat içinde işlenir.">CISA KEV entries and actively exploited CVEs processed within 24 hours of confirmed exploitation intelligence.</div>
+      <div class="p-title" data-en="Published Within 24 Hours" data-tr="24 Saat İçinde Yayınlanır">Published Within 24 Hours</div>
+      <div class="p-desc" data-en="CISA KEV entries and actively exploited CVEs are processed within 24 hours of confirmed exploitation intelligence. Speed matters in the detection gap window." data-tr="CISA KEV kayıtları ve aktif sömürülen CVE'ler, onaylı istihbaratın 24 saati içinde işlenir. Tespit boşluğu penceresinde hız kritiktir.">CISA KEV entries and actively exploited CVEs are processed within 24 hours of confirmed exploitation intelligence. Speed matters in the detection gap window.</div>
+    </div>
+    <div class="pillar">
+      <div class="p-ico">🔴</div>
+      <div class="p-title" data-en="Red Team → Blue Team Flow" data-tr="Kırmızı → Mavi Takım Akışı">Red Team → Blue Team Flow</div>
+      <div class="p-desc" data-en="Every report follows attacker perspective first: attack chain, live simulation, MITRE timeline with forensic evidence. Then blue team: SIEM rules, EDR rules, response playbook." data-tr="Her rapor önce saldırgan perspektifini izler: saldırı zinciri, canlı simülasyon, adli kanıtlı MITRE zaman çizelgesi. Ardından mavi takım: SIEM kuralları, EDR kuralları, müdahale playbook.">Every report follows attacker perspective first: attack chain, live simulation, MITRE timeline with forensic evidence. Then blue team: SIEM rules, EDR rules, response playbook.</div>
     </div>
     <div class="pillar">
       <div class="p-ico">🌍</div>
-      <div class="p-num" data-en="Rule 06" data-tr="Kural 06">Rule 06</div>
       <div class="p-title" data-en="Open Source · TLP:WHITE" data-tr="Açık Kaynak · TLP:WHITE">Open Source · TLP:WHITE</div>
-      <div class="p-desc" data-en="All detection rules freely available on GitHub. No paywalls. The community grows stronger when detection logic is shared openly." data-tr="Tüm tespit kuralları GitHub'da özgürce erişilebilir. Ücretli engel yok. Tespit mantığı açıkça paylaşıldığında topluluk güçlenir.">All detection rules freely available on GitHub. No paywalls. The community grows stronger when detection logic is shared openly.</div>
+      <div class="p-desc" data-en="All detection rules freely available on GitHub. No paywalls, no registration. The security community grows stronger when detection logic is shared openly." data-tr="Tüm tespit kuralları GitHub'da özgürce erişilebilir. Ücret yok, kayıt yok. Tespit mantığı açıkça paylaşıldığında güvenlik topluluğu güçlenir.">All detection rules freely available on GitHub. No paywalls, no registration. The security community grows stronger when detection logic is shared openly.</div>
     </div>
-  </div>
-
-  <div class="prin-grid reveal">
-    <div class="prin">
-      <div class="prin-hd"><span class="prin-ico">🔗</span><span class="prin-t" data-en="Parent-Child Process Correlation" data-tr="Parent-Child Süreç Korelasyonu">Parent-Child Process Correlation</span></div>
-      <div class="prin-b" data-en="Target the spawn relationship, not just the child. <code>langflow → bash</code> is a detection; <code>bash</code> alone is noise." data-tr="Sadece child süreci değil, spawn ilişkisini hedefle. <code>langflow → bash</code> bir tespittir; <code>bash</code> tek başına gürültüdür.">Target the spawn relationship, not just the child. <code>langflow → bash</code> is a detection; <code>bash</code> alone is noise.</div>
-    </div>
-    <div class="prin">
-      <div class="prin-hd"><span class="prin-ico">🚫</span><span class="prin-t" data-en="No Specific Filenames as IOCs" data-tr="IOC Olarak Özel Dosya Adı Yok">No Specific Filenames as IOCs</span></div>
-      <div class="prin-b" data-en="Not <code>wt.exe</code> — the signal is writer process + staging directory. Attackers rename trivially; path patterns are durable." data-tr="<code>wt.exe</code> değil — sinyal yazan süreç + staging dizinidir. Saldırganlar dosyaları kolayca yeniden adlandırır; yol desenleri kalıcıdır.">Not <code>wt.exe</code> — the signal is writer process + staging directory. Attackers rename trivially; path patterns are durable.</div>
-    </div>
-    <div class="prin">
-      <div class="prin-hd"><span class="prin-ico">📌</span><span class="prin-t" data-en="MITRE ATT&amp;CK Mapped" data-tr="MITRE ATT&amp;CK Eşlemeli">MITRE ATT&amp;CK Mapped</span></div>
-      <div class="prin-b" data-en="Every rule maps to ≥1 MITRE technique. Enables correlation with actor profiles and coverage gap analysis." data-tr="Her kural ≥1 MITRE tekniğiyle eşleşir. Aktör profilleriyle korelasyon ve kapsam boşluğu analizini mümkün kılar.">Every rule maps to ≥1 MITRE technique. Enables correlation with actor profiles and coverage gap analysis.</div>
-    </div>
-    <div class="prin">
-      <div class="prin-hd"><span class="prin-ico">🛡️</span><span class="prin-t" data-en="BIOC-Compatible XDR Rules" data-tr="BIOC Uyumlu XDR Kuralları">BIOC-Compatible XDR Rules</span></div>
-      <div class="prin-b" data-en="Cortex XDR rules use <code>xdr_data</code> with single <code>event_type</code> per rule — no joins. Ready to import as Behavioral Indicators." data-tr="Cortex XDR kuralları kural başına tek <code>event_type</code> ile <code>xdr_data</code> kullanır — join yok. Davranışsal Göstergeler olarak içe aktarmaya hazır.">Cortex XDR rules use <code>xdr_data</code> with single <code>event_type</code> per rule — no joins. Ready to import as Behavioral Indicators.</div>
+    <div class="pillar">
+      <div class="p-ico">📖</div>
+      <div class="p-title" data-en="Bilingual Reports (EN / TR)" data-tr="İki Dilli Raporlar (EN / TR)">Bilingual Reports (EN / TR)</div>
+      <div class="p-desc" data-en="Every report is fully available in English and Turkish. Toggle language at any time — content, labels, and navigation switch instantly without page reload." data-tr="Her rapor tamamen İngilizce ve Türkçe mevcuttur. İstediğiniz zaman dili değiştirin — içerik, etiketler ve gezinme anında değişir, sayfa yenilenmez.">Every report is fully available in English and Turkish. Toggle language at any time — content, labels, and navigation switch instantly without page reload.</div>
     </div>
   </div>
 </div>
@@ -749,7 +697,7 @@ nav.scrolled{
       <a href="https://github.com/mazlumbaydar/TI-DE" target="_blank" rel="noopener">GitHub</a>
       <a href="https://linkedin.com/in/mazlumbaydar/" target="_blank" rel="noopener">LinkedIn</a>
       <a href="#reports" data-en="Reports" data-tr="Raporlar">Reports</a>
-      <a href="#methodology" data-en="Methodology" data-tr="Metodoloji">Methodology</a>
+      <a href="#about" data-en="About" data-tr="Hakkında">About</a>
     </div>
   </div>
 </div>

