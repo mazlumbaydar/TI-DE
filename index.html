@@ -199,11 +199,11 @@ nav.scrolled{
 .hero-p strong{color:var(--text2)}
 
 /* MASCOT */
-.mascot-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;margin:0 auto 32px}
-.mascot-svg{width:96px;height:96px;filter:drop-shadow(0 0 18px rgba(232,93,4,0.25));animation:mascotFloat 4s ease-in-out infinite}
-@keyframes mascotFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.mascot-label{font-size:.6rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);opacity:.7}
-[data-theme="light"] .mascot-svg{filter:drop-shadow(0 0 14px rgba(232,93,4,0.2))}
+.mascot-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;margin:0 auto 32px}
+.mascot-svg{width:110px;height:110px;filter:drop-shadow(0 0 20px rgba(232,93,4,0.35));animation:mascotFloat 3.5s ease-in-out infinite}
+@keyframes mascotFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-10px) rotate(1deg)}}
+.mascot-label{font-size:.6rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent2);opacity:.85}
+[data-theme="light"] .mascot-svg{filter:drop-shadow(0 0 16px rgba(232,93,4,0.25))}
 
 /* CTA buttons */
 .ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:52px}
@@ -482,49 +482,135 @@ nav.scrolled{
 
     <!-- MASCOT -->
     <div class="mascot-wrap" aria-hidden="true">
-      <svg class="mascot-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-        <!-- Body / shield base -->
-        <path d="M60 8 L16 24 v28 c0 26 18 49 44 56 26-7 44-30 44-56 V24 Z"
-              fill="url(#shieldGrad)" opacity=".18"/>
-        <path d="M60 8 L16 24 v28 c0 26 18 49 44 56 26-7 44-30 44-56 V24 Z"
-              fill="none" stroke="url(#shieldGrad)" stroke-width="2" opacity=".5">
-          <animate attributeName="stroke-opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
-        </path>
-        <!-- Face -->
-        <circle cx="60" cy="52" r="22" fill="url(#faceGrad)"/>
-        <!-- Eyes -->
-        <circle cx="52" cy="48" r="4" fill="#0a0c10"/>
-        <circle cx="68" cy="48" r="4" fill="#0a0c10"/>
-        <!-- Eye shine -->
-        <circle cx="53.5" cy="46.5" r="1.5" fill="#fff" opacity=".8"/>
-        <circle cx="69.5" cy="46.5" r="1.5" fill="#fff" opacity=".8"/>
-        <!-- Smile -->
-        <path d="M50 57 Q60 65 70 57" fill="none" stroke="#0a0c10" stroke-width="2.5" stroke-linecap="round"/>
-        <!-- Antenna -->
-        <line x1="60" y1="30" x2="60" y2="20" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
-        <circle cx="60" cy="18" r="4" fill="var(--accent)">
-          <animate attributeName="r" values="4;5.5;4" dur="1.8s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="1;0.5;1" dur="1.8s" repeatCount="indefinite"/>
-        </circle>
-        <!-- Ears -->
-        <rect x="36" y="44" width="8" height="14" rx="4" fill="url(#faceGrad)"/>
-        <rect x="76" y="44" width="8" height="14" rx="4" fill="url(#faceGrad)"/>
-        <!-- Tiny scan line across eyes -->
-        <rect x="40" y="51" width="40" height="2" rx="1" fill="var(--accent)" opacity="0">
-          <animate attributeName="opacity" values="0;0.7;0" dur="2.5s" begin="1s" repeatCount="indefinite"/>
-          <animate attributeName="y" values="45;59;45" dur="2.5s" begin="1s" repeatCount="indefinite"/>
-        </rect>
-        <!-- Defs -->
+      <svg class="mascot-svg" viewBox="0 0 120 130" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient id="shieldGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#e85d04"/>
-            <stop offset="100%" stop-color="#f48c06"/>
+          <!-- Fox body gradient — warm amber/orange -->
+          <radialGradient id="foxBody" cx="50%" cy="45%" r="55%">
+            <stop offset="0%"   stop-color="#f9a825"/>
+            <stop offset="60%"  stop-color="#e85d04"/>
+            <stop offset="100%" stop-color="#bf360c"/>
+          </radialGradient>
+          <!-- Face / muzzle lighter cream -->
+          <radialGradient id="foxMuzzle" cx="50%" cy="60%" r="50%">
+            <stop offset="0%"   stop-color="#fff8e1"/>
+            <stop offset="100%" stop-color="#ffe082"/>
+          </radialGradient>
+          <!-- Screen glow -->
+          <radialGradient id="screenGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stop-color="#4cf0d0" stop-opacity=".9"/>
+            <stop offset="100%" stop-color="#0d9488" stop-opacity=".3"/>
+          </radialGradient>
+          <!-- Glasses lens -->
+          <linearGradient id="lensGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#4cf0d0" stop-opacity=".35"/>
+            <stop offset="100%" stop-color="#0d9488" stop-opacity=".15"/>
           </linearGradient>
-          <linearGradient id="faceGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#1e2532"/>
-            <stop offset="100%" stop-color="#141820"/>
-          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="2" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
         </defs>
+
+        <!-- ── EARS ── -->
+        <polygon points="28,42 22,14 44,34" fill="#e85d04"/>
+        <polygon points="31,40 26,20 42,35" fill="#f9a825"/>
+        <polygon points="92,42 98,14 76,34" fill="#e85d04"/>
+        <polygon points="89,40 94,20 78,35" fill="#f9a825"/>
+
+        <!-- ── TAIL (behind body, bottom) ── -->
+        <path d="M78 100 Q110 115 105 128 Q90 135 82 122 Q76 112 78 100Z" fill="#e85d04" opacity=".9">
+          <animateTransform attributeName="transform" type="rotate" values="-6,90,110;6,90,110;-6,90,110" dur="2s" repeatCount="indefinite"/>
+        </path>
+        <path d="M85 122 Q92 132 88 128" fill="#fff8e1" opacity=".7"/>
+
+        <!-- ── BODY ── -->
+        <ellipse cx="60" cy="95" rx="26" ry="22" fill="#e85d04"/>
+        <!-- Chest patch -->
+        <ellipse cx="60" cy="98" rx="14" ry="13" fill="#fff8e1" opacity=".6"/>
+
+        <!-- ── HEAD ── -->
+        <circle cx="60" cy="55" r="30" fill="url(#foxBody)"/>
+
+        <!-- ── MUZZLE ── -->
+        <ellipse cx="60" cy="68" rx="13" ry="9" fill="url(#foxMuzzle)"/>
+
+        <!-- ── NOSE ── -->
+        <ellipse cx="60" cy="62" rx="4" ry="2.8" fill="#4a1502"/>
+        <ellipse cx="60" cy="62" rx="4" ry="2.8" fill="none" stroke="#7c2d00" stroke-width=".5" opacity=".4"/>
+        <!-- nose shine -->
+        <ellipse cx="58.5" cy="61" rx="1.2" ry=".8" fill="#fff" opacity=".4"/>
+
+        <!-- ── MOUTH ── -->
+        <path d="M54 67 Q60 73 66 67" fill="none" stroke="#7c2d00" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M60 67 L60 72" fill="none" stroke="#7c2d00" stroke-width="1.2" stroke-linecap="round"/>
+
+        <!-- ── EYES (behind glasses) ── -->
+        <circle cx="48" cy="52" r="5.5" fill="#fff"/>
+        <circle cx="72" cy="52" r="5.5" fill="#fff"/>
+        <!-- Pupils -->
+        <circle cx="48.5" cy="52.5" r="3.2" fill="#3d1c00">
+          <!-- blink animation -->
+          <animate attributeName="ry" values="3.2;0.3;3.2" dur="4s" begin="1.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+        </circle>
+        <circle cx="72.5" cy="52.5" r="3.2" fill="#3d1c00">
+          <animate attributeName="ry" values="3.2;0.3;3.2" dur="4s" begin="1.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+        </circle>
+        <!-- Eye shine -->
+        <circle cx="47" cy="51" r="1.2" fill="#fff" opacity=".9"/>
+        <circle cx="71" cy="51" r="1.2" fill="#fff" opacity=".9"/>
+
+        <!-- ── GLASSES ── -->
+        <rect x="40" y="46" width="17" height="14" rx="7" fill="url(#lensGrad)" stroke="#4cf0d0" stroke-width="1.6">
+          <animate attributeName="stroke-opacity" values="0.8;1;0.8" dur="2.2s" repeatCount="indefinite"/>
+        </rect>
+        <rect x="63" y="46" width="17" height="14" rx="7" fill="url(#lensGrad)" stroke="#4cf0d0" stroke-width="1.6">
+          <animate attributeName="stroke-opacity" values="0.8;1;0.8" dur="2.2s" repeatCount="indefinite"/>
+        </rect>
+        <!-- Bridge -->
+        <path d="M57 53 L63 53" fill="none" stroke="#4cf0d0" stroke-width="1.6" stroke-linecap="round"/>
+        <!-- Temples -->
+        <line x1="40" y1="53" x2="32" y2="55" stroke="#4cf0d0" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>
+        <line x1="80" y1="53" x2="88" y2="55" stroke="#4cf0d0" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>
+        <!-- Lens scan line -->
+        <rect x="41" y="54" width="15" height="1.5" rx="0.7" fill="#4cf0d0" opacity="0">
+          <animate attributeName="opacity" values="0;0.6;0" dur="3s" begin="0.8s" repeatCount="indefinite"/>
+          <animate attributeName="y" values="48;58;48" dur="3s" begin="0.8s" repeatCount="indefinite"/>
+        </rect>
+        <rect x="64" y="54" width="15" height="1.5" rx="0.7" fill="#4cf0d0" opacity="0">
+          <animate attributeName="opacity" values="0;0.6;0" dur="3s" begin="0.8s" repeatCount="indefinite"/>
+          <animate attributeName="y" values="48;58;48" dur="3s" begin="0.8s" repeatCount="indefinite"/>
+        </rect>
+
+        <!-- ── LAPTOP / SCREEN ── -->
+        <rect x="36" y="108" width="48" height="3" rx="1.5" fill="#2d3748"/>
+        <rect x="32" y="84" width="56" height="25" rx="4" fill="#1a2235" stroke="#2d4a5a" stroke-width="1.2"/>
+        <rect x="34" y="86" width="52" height="21" rx="3" fill="url(#screenGlow)" opacity=".85">
+          <animate attributeName="opacity" values="0.85;1;0.85" dur="2.8s" repeatCount="indefinite"/>
+        </rect>
+        <!-- Code lines on screen -->
+        <rect x="37" y="89" width="20" height="2" rx="1" fill="#4cf0d0" opacity=".8"/>
+        <rect x="37" y="93" width="14" height="2" rx="1" fill="#f48c06" opacity=".7"/>
+        <rect x="37" y="97" width="28" height="2" rx="1" fill="#4cf0d0" opacity=".6"/>
+        <rect x="37" y="101" width="10" height="2" rx="1" fill="#ff7b72" opacity=".7"/>
+        <!-- Blinking cursor -->
+        <rect x="48" y="101" width="1.5" height="2" rx=".5" fill="#fff" opacity="0">
+          <animate attributeName="opacity" values="0;1;0" dur="1s" repeatCount="indefinite"/>
+        </rect>
+
+        <!-- ── CHEEK MARKS ── -->
+        <ellipse cx="36" cy="63" rx="5" ry="3.5" fill="#bf360c" opacity=".35" transform="rotate(-15,36,63)"/>
+        <ellipse cx="84" cy="63" rx="5" ry="3.5" fill="#bf360c" opacity=".35" transform="rotate(15,84,63)"/>
+
+        <!-- ── PAWS on keyboard ── -->
+        <ellipse cx="50" cy="111" rx="8" ry="5" fill="#e85d04" opacity=".9"/>
+        <ellipse cx="70" cy="111" rx="8" ry="5" fill="#e85d04" opacity=".9"/>
+        <!-- paw toes -->
+        <circle cx="46" cy="108" r="2.2" fill="#f9a825"/>
+        <circle cx="50" cy="107" r="2.2" fill="#f9a825"/>
+        <circle cx="54" cy="108" r="2.2" fill="#f9a825"/>
+        <circle cx="66" cy="108" r="2.2" fill="#f9a825"/>
+        <circle cx="70" cy="107" r="2.2" fill="#f9a825"/>
+        <circle cx="74" cy="108" r="2.2" fill="#f9a825"/>
       </svg>
       <div class="mascot-label" data-en="ARIA &bull; TI-DE Analyst" data-tr="ARIA &bull; TI-DE Analisti">ARIA &bull; TI-DE Analyst</div>
     </div>
