@@ -68,7 +68,7 @@
       <div class="stat-label" data-en="MITRE TTPs" data-tr="MITRE TTP Sayısı">MITRE TTPs</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num" data-t="9">0</div>
+      <div class="stat-num" data-t="10">0</div>
       <div class="stat-label" data-en="Detection Platforms" data-tr="Tespit Platformu">Detection Platforms</div>
     </div>
   </div>
@@ -408,7 +408,7 @@ POST https://models.litellm.cloud/v1/telemetry
   <div class="reveal" id="detection">
     <div class="team-label team-blue">&#128309; Blue Team</div>
     <div class="section-label" data-en="Detection Engineering" data-tr="Tespit Mühendisliği">Detection Engineering</div>
-    <h2 data-en="Detection Rules — 9 Platforms" data-tr="Tespit Kuralları — 9 Platform">Detection Rules &mdash; 9 Platforms</h2>
+    <h2 data-en="Detection Rules — 10 Platforms" data-tr="Tespit Kuralları — 10 Platform">Detection Rules &mdash; 10 Platforms</h2>
     <p data-en="All rules are TTP-based and behavioral. Key detection signals: Python reading .env files at startup (not import time), unexpected outbound connections from Python processes to non-standard ports, new .pth files written to site-packages by pip." data-tr="Tüm kurallar TTP tabanlı ve davranışsaldır. Temel tespit sinyalleri: Python'ın başlangıçta (import zamanı değil) .env dosyalarını okuması, Python süreçlerinden standart dışı portlara beklenmedik giden bağlantılar, pip tarafından site-packages'e yazılan yeni .pth dosyaları.">All rules are <strong>TTP-based and behavioral</strong>. Key detection signals: Python reading .env files at startup (not import time), unexpected outbound connections from Python processes to non-standard ports, new .pth files written to site-packages by pip.</p>
 
     <!-- TAB SWITCHER -->
@@ -510,7 +510,7 @@ POST https://models.litellm.cloud/v1/telemetry
     <div class="rule-group">
       <div class="rule-group-hd">
         <span class="rgb-edr">EDR / XDR</span>
-        <span class="rule-group-label">Rules 5&ndash;10: Defender (KQL) / Cortex XDR (XQL) / CrowdStrike (SPL) / CrowdStrike IOA / Carbon Black (CBQL) / SentinelOne (PowerQuery)</span>
+        <span class="rule-group-label">Rules 3&ndash;8: Defender (KQL) / Cortex XDR (XQL) / CrowdStrike (SPL) / CrowdStrike IOA / Carbon Black (CBQL) / SentinelOne (PowerQuery)</span>
       </div>
 
       <!-- Rule 5: MDE KQL -->
@@ -745,7 +745,7 @@ TgtFileExtension = ".pth"
       <div class="rule-group">
         <div class="rule-group-hd">
           <span class="rgb-siem">SIEM</span>
-          <span class="rule-group-label" data-en="Hunt 1–3: Sentinel (KQL) / Splunk (SPL) / QRadar (AQL)" data-tr="Avcılık 1–3: Sentinel (KQL) / Splunk (SPL) / QRadar (AQL)">Hunt 1&ndash;3: Sentinel (KQL) / Splunk (SPL) / QRadar (AQL)</span>
+          <span class="rule-group-label" data-en="Hunt 1–2: Sentinel (KQL) / Splunk (SPL)" data-tr="Avcılık 1–2: Sentinel (KQL) / Splunk (SPL)">Hunt 1&ndash;2: Sentinel (KQL) / Splunk (SPL)</span>
         </div>
         <div class="th-note"><strong>&#9432; </strong><span data-en="SIEM Prerequisite: Requires process execution logs (pip/python cmdline) and file write events forwarded from endpoints. If unavailable, use EDR/XDR queries below." data-tr="SIEM Önkoşulu: Endpoint'lerden iletilen süreç yürütme logları (pip/python cmdline) ve dosya yazma olayları gerektirir. Mevcut değilse aşağıdaki EDR/XDR sorgularını kullanın.">SIEM Prerequisite: Requires process execution logs (pip/python cmdline) and file write events forwarded from endpoints. If unavailable, use EDR/XDR queries below.</span></div>
 
@@ -818,7 +818,7 @@ TgtFileExtension = ".pth"
       <div class="rule-group">
         <div class="rule-group-hd">
           <span class="rgb-edr">EDR / XDR</span>
-          <span class="rule-group-label" data-en="Hunt 4–6: Defender (KQL) / Cortex XDR (XQL) / CrowdStrike (SPL)" data-tr="Avcılık 4–6: Defender (KQL) / Cortex XDR (XQL) / CrowdStrike (SPL)">Hunt 4&ndash;6: Defender (KQL) / Cortex XDR (XQL) / CrowdStrike (SPL)</span>
+          <span class="rule-group-label" data-en="Hunt 3–5: Defender (KQL) / Cortex XDR (XQL) / CrowdStrike (SPL)" data-tr="Avcılık 3–5: Defender (KQL) / Cortex XDR (XQL) / CrowdStrike (SPL)">Hunt 3&ndash;5: Defender (KQL) / Cortex XDR (XQL) / CrowdStrike (SPL)</span>
         </div>
         <div class="th-note"><strong>&#9432; </strong><span data-en="EDR provides the most reliable coverage for this threat — file writes to site-packages, Python network C2, and systemd persistence are all high-confidence signals." data-tr="EDR bu tehdit için en güvenilir kapsamı sağlar — site-packages'e dosya yazma, Python ağ C2 ve systemd kalıcılığı yüksek güvenilirlikte sinyallerdir.">EDR provides the most reliable coverage for this threat — file writes to site-packages, Python network C2, and systemd persistence are all high-confidence signals.</span></div>
 
@@ -911,9 +911,41 @@ TgtFileExtension = ".pth"
       <div class="rule-group">
         <div class="rule-group-hd">
           <span class="rgb-pattern">Network</span>
-          <span class="rule-group-label" data-en="Hunt 7–8: DNS / Firewall / Proxy" data-tr="Avcılık 7–8: DNS / Firewall / Proxy">Hunt 7&ndash;8: DNS / Firewall / Proxy</span>
+          <span class="rule-group-label" data-en="Hunt 6: QRadar (AQL) — Python Unexpected Outbound" data-tr="Avcılık 6: QRadar (AQL) — Python Beklenmedik Giden Trafik">Hunt 6: QRadar (AQL) &mdash; Python Unexpected Outbound</span>
         </div>
-        <div class="th-note"><strong>&#9432; </strong><span data-en="DNS queries to models.litellm.cloud or checkmarx.zone from any host that should not use these services = immediate compromise indicator. Most scalable hunt vector." data-tr="Bu servisleri kullanmaması gereken herhangi bir host'tan models.litellm.cloud veya checkmarx.zone'a yapılan DNS sorguları = anında ele geçirme göstergesi. En ölçeklenebilir avcılık vektörü.">DNS queries to models.litellm.cloud or checkmarx.zone from any host that should not use these services = immediate compromise indicator. Most scalable hunt vector.</span></div>
+        <div class="th-note"><strong>&#9432; </strong><span data-en="Python processes making outbound connections to non-standard ports (not 80/443) or to non-RFC1918 destinations are strong behavioral indicators of .pth-injected exfiltration." data-tr="Standart dışı portlara (80/443 dışı) veya RFC1918 dışı hedeflere giden bağlantı yapan Python süreçleri, .pth-enjeksiyonlu sızdırmanın güçlü davranışsal göstergeleridir.">Python processes making outbound connections to non-standard ports (not 80/443) or to non-RFC1918 destinations are strong behavioral indicators of .pth-injected exfiltration.</span></div>
+
+        <div class="rule-card" onclick="toggleRule(this,event)">
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="platform-badge">QRadar (AQL)</span>
+              <span data-en="Python Unexpected Outbound — Non-Standard Port" data-tr="Python Beklenmedik Giden Trafik — Standart Dışı Port">Python Unexpected Outbound &mdash; Non-Standard Port</span>
+            </div>
+            <div class="rule-toggle">&#9660;</div>
+          </div>
+          <div class="rule-body">
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+                qradar-python-outbound.aql &mdash; T1041 / T1546
+                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+              </div>
+              <div class="code-body"><span class="cmt">-- Hunt: Python making outbound to non-standard ports
+-- Behavioral signal: .pth-injected exfil doesn't use 80/443
+-- Source: TI-DE authored</span>
+<span class="kw">SELECT</span> sourceip, destinationip, destinationport,
+       <span class="str">"Application"</span>, <span class="str">"BytesSent"</span>, starttime
+<span class="kw">FROM</span> flows
+<span class="kw">WHERE</span> <span class="str">"Application"</span> <span class="kw">ILIKE</span> <span class="str">'%python%'</span>
+  <span class="kw">AND</span> destinationport <span class="kw">NOT IN</span> (<span class="num">80</span>, <span class="num">443</span>, <span class="num">8080</span>, <span class="num">8443</span>)
+  <span class="kw">AND</span> destinationip <span class="kw">NOT ILIKE</span> <span class="str">'10.%'</span>
+  <span class="kw">AND</span> destinationip <span class="kw">NOT ILIKE</span> <span class="str">'192.168.%'</span>
+  <span class="kw">AND</span> destinationip <span class="kw">NOT ILIKE</span> <span class="str">'172.1[6-9].%'</span>
+  <span class="kw">AND</span> starttime > <span class="fn">NOW</span>() - <span class="num">72</span> HOURS
+<span class="kw">ORDER BY</span> <span class="str">"BytesSent"</span> <span class="kw">DESC</span></div>
+            </div>
+          </div>
+        </div>
 
         <div class="th-guide"><strong>&#10140; </strong><span data-en="Remediation if found: (1) Revoke all AI API keys immediately (2) Remove .pth: &lt;code&gt;find /usr -name 'sitecustomize.pth' -delete&lt;/code&gt; (3) Remove systemd service: &lt;code&gt;systemctl --user disable litellm-update.service&lt;/code&gt; (4) Reinstall Python from clean source (5) Audit CI/CD pip installs from 30–31 March 2026." data-tr="Bulunursa düzeltme: (1) Tüm AI API anahtarlarını hemen iptal edin (2) .pth'yi kaldırın: &lt;code&gt;find /usr -name 'sitecustomize.pth' -delete&lt;/code&gt; (3) systemd servisini kaldırın: &lt;code&gt;systemctl --user disable litellm-update.service&lt;/code&gt; (4) Python'ı temiz kaynaktan yeniden kurun (5) 30–31 Mart 2026 CI/CD pip kurulumlarını denetleyin.">Remediation if found: (1) Revoke all AI API keys immediately (2) Remove .pth: <code>find /usr -name 'sitecustomize.pth' -delete</code> (3) Remove systemd service: <code>systemctl --user disable litellm-update.service</code> (4) Reinstall Python from clean source (5) Audit CI/CD pip installs from 30–31 March 2026.</span></div>
       </div>
