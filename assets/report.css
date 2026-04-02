@@ -577,3 +577,8 @@ footer strong { color: var(--text); }
   background: rgba(232,93,4,0.06);
   border-color: var(--accent);
 }
+
+/* ── VIDEO EMBED ── */
+.video-wrap{position:relative;padding-top:56.25%;margin:12px 0 0;border-radius:6px;overflow:hidden;background:#0a0a0f;}
+.video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;}
+.poc-tag.video{background:rgba(229,57,53,.18);color:#ef9a9a;border:1px solid rgba(229,57,53,.3);}
