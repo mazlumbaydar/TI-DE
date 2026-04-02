@@ -67,7 +67,7 @@
       <div class="stat-label" data-en="MITRE TTPs" data-tr="MITRE TTP'leri">MITRE TTPs</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num" data-t="11">0</div>
+      <div class="stat-num" data-t="13">0</div>
       <div class="stat-label" data-en="Platforms" data-tr="Platform">Platforms</div>
     </div>
   </div>
@@ -726,7 +726,7 @@ parent_name:langflow process_name:bash <span class="kw">OR</span>
     <div class="rule-group">
       <div class="rule-group-hd">
         <span class="rgb-pattern" data-en="Pattern" data-tr="Kalıp">Pattern</span>
-        <span class="rule-group-label" data-en="Signature &amp; Pattern Matching" data-tr="İmza ve Kalıp Eşleştirme">Signature &amp; Pattern Matching</span>
+        <span class="rule-group-label" data-en="Signature &amp; Pattern Matching / Community Rules 12–13" data-tr="İmza ve Kalıp Eşleştirme / Topluluk Kuralları 12–13">Signature &amp; Pattern Matching / Community Rules 12–13</span>
       </div>
 
       <!-- YARA -->
@@ -762,6 +762,99 @@ parent_name:langflow process_name:bash <span class="kw">OR</span>
           </div>
         </div>
       </div>
+      <!-- Rule 12: SigmaHQ Python Reverse Shell -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Sigma (YAML)</span>
+            <span data-en="Python Reverse Shell via PTY and Socket Modules — SigmaHQ Community" data-tr="Python Reverse Shell — PTY ve Socket Modülleri — SigmaHQ Topluluk Kuralı">Python Reverse Shell via PTY and Socket Modules — SigmaHQ Community</span>
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              proc_creation_lnx_python_reverse_shell.yml &mdash; SigmaHQ id:32e62bc7 &mdash; T1059.006
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt"># Source: SigmaHQ/sigma — github.com/SigmaHQ/sigma/blob/master/rules/linux/process_creation/proc_creation_lnx_python_reverse_shell.yml
+# author: @d4ns4n_, Nasreddine Bencherchali (Nextron Systems) | status: test | level: high
+# Covers Langflow CVE-2026-33017 post-exploitation: Python exec() spawns reverse shell via socket+pty</span>
+<span class="kw">title</span>: Python Reverse Shell Execution Via PTY And Socket Modules
+<span class="kw">id</span>: <span class="num">32e62bc7-3de0-4bb1-90af-532978fe42c0</span>
+<span class="kw">status</span>: test
+<span class="kw">description</span>: Detects the execution of python with calls to the socket and pty
+             module to connect and spawn a reverse shell — matches Langflow
+             exec() post-exploitation shell spawn (CVE-2026-33017)
+<span class="kw">references</span>:
+  - <span class="str">https://www.revshells.com/</span>
+<span class="kw">author</span>: <span class="str">"@d4ns4n_, Nasreddine Bencherchali (Nextron Systems)"</span>
+<span class="kw">date</span>: <span class="num">2023/04/24</span>
+<span class="kw">tags</span>:
+  - attack.execution
+  - attack.t1059.006
+<span class="kw">logsource</span>:
+  category: process_creation
+  product: linux
+<span class="kw">detection</span>:
+  selection:
+    Image|contains: <span class="str">'python'</span>
+    CommandLine|contains|all:
+      - <span class="str">' -c '</span>
+      - <span class="str">'import'</span>
+      - <span class="str">'pty'</span>
+      - <span class="str">'socket'</span>
+      - <span class="str">'spawn'</span>
+      - <span class="str">'.connect'</span>
+  condition: selection
+<span class="kw">falsepositives</span>:
+  - Unknown
+<span class="kw">level</span>: high</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 13: Elastic EQL — Unusual Web Server Child -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Elastic (EQL)</span>
+            <span data-en="Unusual Process from Web Server Parent (Python/uvicorn) — Elastic Community" data-tr="Web Sunucu Ebeveyninden Anormal Süreç (Python/uvicorn) — Elastic Topluluk Kuralı">Unusual Process from Web Server Parent (Python/uvicorn) — Elastic Community</span>
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              persistence_web_server_sus_child_spawned.toml &mdash; Elastic rule_id:976b2391 &mdash; T1505.003 / T1190
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt"># Source: Elastic detection-rules — github.com/elastic/detection-rules/blob/main/rules/linux/persistence_web_server_sus_child_spawned.toml
+# rule_id: 976b2391-413f-4a94-acb4-7911f3803346 | author: Elastic | severity: low | maturity: production
+# Threat: T1505.003 (Web Shell) / T1059 (Command Interpreter) / T1190 (Exploit Public-Facing Application)
+# Description: Detects low-frequency shell/interpreter spawning from web server parents including
+#   Python/uvicorn — directly applicable to Langflow CVE-2026-33017 exec() post-exploitation.</span>
+
+<span class="cmt">// Simplified ESQL hunt query (adapt to your Elastic environment)</span>
+<span class="kw">FROM</span> logs-endpoint.events.process*
+| <span class="kw">WHERE</span> host.os.type == <span class="str">"linux"</span>
+  <span class="kw">AND</span> process.parent.name <span class="kw">in</span> (
+    <span class="str">"python"</span>, <span class="str">"python3"</span>, <span class="str">"uvicorn"</span>, <span class="str">"gunicorn"</span>,
+    <span class="str">"langflow"</span>, <span class="str">"fastapi"</span>, <span class="str">"apache2"</span>, <span class="str">"httpd"</span>, <span class="str">"nginx"</span>
+  )
+  <span class="kw">AND</span> process.name <span class="kw">in</span> (
+    <span class="str">"bash"</span>, <span class="str">"sh"</span>, <span class="str">"zsh"</span>, <span class="str">"python"</span>, <span class="str">"python3"</span>,
+    <span class="str">"curl"</span>, <span class="str">"wget"</span>, <span class="str">"nc"</span>, <span class="str">"ncat"</span>, <span class="str">"socat"</span>
+  )
+| <span class="kw">STATS</span> count = COUNT(*) <span class="kw">BY</span> agent.id, process.parent.name, process.name
+| <span class="kw">WHERE</span> count &lt; <span class="num">5</span>
+| <span class="kw">SORT</span> count <span class="kw">ASC</span></div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /Pattern group -->
     </div><!-- /det-pane det-rules -->
 

@@ -68,7 +68,7 @@
       <div class="stat-label" data-en="MITRE TTPs" data-tr="MITRE TTP Sayısı">MITRE TTPs</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num" data-t="10">0</div>
+      <div class="stat-num" data-t="12">0</div>
       <div class="stat-label" data-en="Detection Platforms" data-tr="Tespit Platformu">Detection Platforms</div>
     </div>
   </div>
@@ -424,7 +424,7 @@ POST https://models.litellm.cloud/v1/telemetry
     <div class="rule-group">
       <div class="rule-group-hd">
         <span class="rgb-siem">SIEM</span>
-        <span class="rule-group-label">Rules 1&ndash;2: Sigma (YAML) / Splunk (SPL)</span>
+        <span class="rule-group-label">Rules 1&ndash;4: Sigma (YAML) / Splunk (SPL) / Elastic EQL / Sentinel (KQL)</span>
       </div>
 
       <!-- Rule 1: Sigma -->
@@ -504,13 +504,91 @@ POST https://models.litellm.cloud/v1/telemetry
         </div>
       </div>
 
+      <!-- Rule 3: Elastic EQL Community -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Elastic (EQL)</span>
+            Python Path File (.pth) Creation in site-packages — Elastic Community
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              persistence_pth_file_creation.toml &mdash; Elastic rule_id:7f65f984 &mdash; T1546.018
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt"># Source: Elastic detection-rules — github.com/elastic/detection-rules/blob/main/rules/linux/persistence_pth_file_creation.toml
+# author: Elastic | license: Elastic License v2 | severity: low | maturity: production
+# Directly covers CVE-2026-33634: sitecustomize.pth written to site-packages by pip install litellm</span>
+<span class="cmt">// EQL query (Elastic Security / Kibana)</span>
+<span class="fn">file</span> <span class="kw">where</span> host.os.type == <span class="str">"linux"</span>
+  <span class="kw">and</span> event.action == <span class="str">"creation"</span>
+  <span class="kw">and</span> file.extension == <span class="str">"pth"</span>
+  <span class="kw">and</span> file.path <span class="kw">like</span> (
+    <span class="str">"/usr/local/lib/python*/dist-packages/*"</span>,
+    <span class="str">"/usr/lib/python*/dist-packages/*"</span>,
+    <span class="str">"/usr/local/lib/python*/site-packages/*"</span>,
+    <span class="str">"/usr/lib/python*/site-packages/*"</span>,
+    <span class="str">"/home/*/.local/lib/python*/site-packages/*"</span>,
+    <span class="str">"/opt/*/lib/python*/site-packages/*"</span>
+  )
+  <span class="kw">and</span> process.executable != <span class="kw">null</span>
+  <span class="kw">and not</span> (
+    process.executable <span class="kw">in</span> (
+      <span class="str">"/usr/bin/restic"</span>, <span class="str">"/usr/bin/pacman"</span>, <span class="str">"/usr/bin/dockerd"</span>,
+      <span class="str">"/usr/bin/podman"</span>, <span class="str">"/usr/bin/dnf"</span>, <span class="str">"/usr/bin/dnf5"</span>,
+      <span class="str">"/opt/splunk/bin/splunkd"</span>, <span class="str">"/opt/Tanium/TaniumClient/TaniumCX"</span>
+    )
+  )</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 4: Sentinel KQL -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Sentinel (KQL)</span>
+            <span data-en=".pth File Created in Python site-packages (Sentinel)" data-tr="Python site-packages'e .pth Dosyası Oluşturuldu (Sentinel)">.pth File Created in Python site-packages (Sentinel)</span>
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              sentinel-pth-file-creation.kql &mdash; T1546.018 / CVE-2026-33634
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt">// Detects .pth file creation in Python site-packages — LiteLLM supply chain persistence
+// Source: TI-DE authored (inspired by Elastic rule_id:7f65f984)
+// Requires: Sysmon for Linux or Defender for Endpoint file creation events in Sentinel</span>
+<span class="fn">DeviceFileEvents</span>
+| <span class="kw">where</span> ActionType == <span class="str">"FileCreated"</span>
+| <span class="kw">where</span> FileName <span class="fn">endswith</span> <span class="str">".pth"</span>
+| <span class="kw">where</span> FolderPath <span class="fn">has_any</span>(
+    <span class="str">"site-packages"</span>, <span class="str">"dist-packages"</span>
+  )
+| <span class="kw">where</span> InitiatingProcessFileName <span class="fn">!in~</span>(
+    <span class="str">"pip"</span>, <span class="str">"pip3"</span>, <span class="str">"pacman"</span>, <span class="str">"dnf"</span>, <span class="str">"apt"</span>, <span class="str">"dockerd"</span>
+  )
+| <span class="fn">project</span> Timestamp, DeviceName, FileName, FolderPath,
+          InitiatingProcessCommandLine, InitiatingProcessParentFileName
+| <span class="fn">extend</span> Alert = <span class="str">"Unexpected .pth written to site-packages — possible supply chain persistence"</span></div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /SIEM group -->
 
     <!-- EDR/XDR GROUP -->
     <div class="rule-group">
       <div class="rule-group-hd">
         <span class="rgb-edr">EDR / XDR</span>
-        <span class="rule-group-label">Rules 3&ndash;8: Defender (KQL) / Cortex XDR (XQL) / CrowdStrike (SPL) / CrowdStrike IOA / Carbon Black (CBQL) / SentinelOne (PowerQuery)</span>
+        <span class="rule-group-label">Rules 5&ndash;10: Defender (KQL) / Cortex XDR (XQL) / CrowdStrike (SPL) / CrowdStrike IOA / Carbon Black (CBQL) / SentinelOne (PowerQuery)</span>
       </div>
 
       <!-- Rule 5: MDE KQL -->
@@ -693,7 +771,7 @@ TgtFileExtension = ".pth"
     <div class="rule-group">
       <div class="rule-group-hd">
         <span class="rgb-pattern">Pattern</span>
-        <span class="rule-group-label">Rule 11: YARA (Pattern)</span>
+        <span class="rule-group-label">Rules 11–12: YARA (Pattern) / Elastic Community EQL</span>
       </div>
 
       <!-- Rule 11: YARA -->
@@ -731,6 +809,52 @@ TgtFileExtension = ".pth"
           </div>
         </div>
       </div>
+      <!-- Rule 12: Elastic Community EQL — additional note card -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Elastic (EQL)</span>
+            Python Startup Hook (.pth) Persistence — Elastic Community
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              persistence_pth_file_creation.toml &mdash; Elastic rule_id:7f65f984 &mdash; T1546.018 (T1574 / T1059.006)
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt"># Source: Elastic detection-rules — github.com/elastic/detection-rules/blob/main/rules/linux/persistence_pth_file_creation.toml
+# rule_id: 7f65f984-5642-4291-a0a0-2bbefce4c617 | author: Elastic | maturity: production | updated: 2026/03/30
+# Threat: T1546 (Event Triggered Execution) / T1546.018 (Python Startup Hooks) / T1574 (Hijack Execution Flow)
+# Description: Detects .pth file creation in system-wide/user-specific Python package dirs
+#   abused for persistent code execution. Directly covers CVE-2026-33634 sitecustomize.pth.
+# Deploy this rule in Elastic Security (Kibana) via detection-rules CLI or UI import.</span>
+
+<span class="cmt">// EQL query — Elastic Defend / logs-endpoint.events.file* index</span>
+<span class="fn">file</span> <span class="kw">where</span> host.os.type == <span class="str">"linux"</span>
+  <span class="kw">and</span> event.action == <span class="str">"creation"</span>
+  <span class="kw">and</span> file.extension == <span class="str">"pth"</span>
+  <span class="kw">and</span> file.path <span class="kw">like</span> (
+    <span class="str">"/usr/local/lib/python*/dist-packages/*"</span>,
+    <span class="str">"/usr/lib/python*/dist-packages/*"</span>,
+    <span class="str">"/usr/local/lib/python*/site-packages/*"</span>,
+    <span class="str">"/usr/lib/python*/site-packages/*"</span>,
+    <span class="str">"/home/*/.local/lib/python*/site-packages/*"</span>,
+    <span class="str">"/opt/*/lib/python*/site-packages/*"</span>
+  )
+  <span class="kw">and</span> process.executable != <span class="kw">null</span>
+  <span class="kw">and not</span> process.executable <span class="kw">in</span> (
+    <span class="str">"/usr/bin/restic"</span>, <span class="str">"/usr/bin/pacman"</span>, <span class="str">"/usr/bin/dockerd"</span>,
+    <span class="str">"/usr/bin/podman"</span>, <span class="str">"/usr/bin/dnf"</span>, <span class="str">"/usr/bin/dnf5"</span>,
+    <span class="str">"/bin/dnf5"</span>, <span class="str">"/bin/podman"</span>, <span class="str">"/kaniko/executor"</span>,
+    <span class="str">"/opt/splunk/bin/splunkd"</span>, <span class="str">"/opt/Tanium/TaniumClient/TaniumCX"</span>
+  )</div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /Pattern group -->
     </div><!-- /det-pane det-rules -->
 

@@ -68,7 +68,7 @@
       <div class="stat-label" data-en="MITRE TTPs" data-tr="MITRE TTP Sayısı">MITRE TTPs</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num" data-t="11">0</div>
+      <div class="stat-num" data-t="13">0</div>
       <div class="stat-label" data-en="Detection Platforms" data-tr="Tespit Platformu">Detection Platforms</div>
     </div>
   </div>
@@ -759,7 +759,7 @@ TgtProcCmdLine Contains "/dev/tcp"
     <div class="rule-group">
       <div class="rule-group-hd">
         <span class="rgb-pattern">Pattern</span>
-        <span class="rule-group-label">Rule 11: YARA (Pattern)</span>
+        <span class="rule-group-label">Rules 11–13: YARA (Pattern) / Elastic Community EQL (Java RevShell + Web Server Child)</span>
       </div>
 
       <!-- Rule 11: YARA -->
@@ -801,6 +801,96 @@ TgtProcCmdLine Contains "/dev/tcp"
           </div>
         </div>
       </div>
+      <!-- Rule 12: Elastic EQL — Java Reverse Shell -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Elastic (EQL)</span>
+            Potential Reverse Shell via Java — Elastic Community
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              execution_shell_via_java_revshell_linux.toml &mdash; Elastic rule_id:5a3d5447 &mdash; T1059.004
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt"># Source: Elastic detection-rules — github.com/elastic/detection-rules/blob/main/rules/linux/execution_shell_via_java_revshell_linux.toml
+# rule_id: 5a3d5447-31c9-409a-aed1-72f9921594fd | author: Elastic | severity: medium | maturity: production
+# Threat: T1059 (Command and Scripting Interpreter) / T1059.004 (Unix Shell) / T1071 (Application Layer Protocol)
+# Description: Java process accepts network connection then spawns shell — exactly matches
+#   CVE-2026-20131: FMC Java services receive serialized payload → Runtime.exec() → bash</span>
+
+<span class="cmt">// EQL sequence query — Elastic Defend / logs-endpoint.events.* index</span>
+<span class="fn">sequence</span> <span class="kw">by</span> host.id <span class="kw">with maxspan</span>=<span class="num">5s</span>
+  [<span class="fn">network</span> <span class="kw">where</span> host.os.type == <span class="str">"linux"</span>
+    <span class="kw">and</span> event.action <span class="kw">in</span> (<span class="str">"connection_accepted"</span>, <span class="str">"connection_attempted"</span>)
+    <span class="kw">and</span> process.executable <span class="kw">like</span> (
+      <span class="str">"/usr/bin/java"</span>, <span class="str">"/bin/java"</span>, <span class="str">"/usr/lib/jvm/*"</span>, <span class="str">"/usr/java/*"</span>
+    )
+    <span class="kw">and not</span> cidrmatch(
+      destination.ip,
+      <span class="str">"10.0.0.0/8"</span>, <span class="str">"127.0.0.0/8"</span>, <span class="str">"169.254.0.0/16"</span>,
+      <span class="str">"172.16.0.0/12"</span>, <span class="str">"192.168.0.0/16"</span>
+    )
+  ] <span class="kw">by</span> process.entity_id
+  [<span class="fn">process</span> <span class="kw">where</span> host.os.type == <span class="str">"linux"</span>
+    <span class="kw">and</span> event.action == <span class="str">"exec"</span>
+    <span class="kw">and</span> process.parent.executable <span class="kw">like</span> (
+      <span class="str">"/usr/bin/java"</span>, <span class="str">"/bin/java"</span>, <span class="str">"/usr/lib/jvm/*"</span>, <span class="str">"/usr/java/*"</span>
+    )
+    <span class="kw">and</span> process.parent.args <span class="kw">like</span> <span class="str">"-jar"</span>
+    <span class="kw">and</span> process.name <span class="kw">in</span> (
+      <span class="str">"bash"</span>, <span class="str">"dash"</span>, <span class="str">"ash"</span>, <span class="str">"sh"</span>, <span class="str">"tcsh"</span>, <span class="str">"csh"</span>, <span class="str">"zsh"</span>, <span class="str">"ksh"</span>, <span class="str">"fish"</span>
+    )
+  ] <span class="kw">by</span> process.parent.entity_id</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 13: Elastic EQL — Unusual Web Server Child -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Elastic (EQL)</span>
+            Unusual Process Spawned from Web Server Parent — Elastic Community
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              persistence_web_server_sus_child_spawned.toml &mdash; Elastic rule_id:976b2391 &mdash; T1505.003 / T1190
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt"># Source: Elastic detection-rules — github.com/elastic/detection-rules/blob/main/rules/linux/persistence_web_server_sus_child_spawned.toml
+# rule_id: 976b2391-413f-4a94-acb4-7911f3803346 | author: Elastic | severity: low | maturity: production
+# Threat: T1505.003 (Web Shell) / T1059 / T1071 / T1190 (Exploit Public-Facing Application)
+# Description: Detects low-frequency shell/interpreter spawning from web server parents (Apache, Nginx,
+#   Java, Gunicorn etc.) — applicable to FMC's Java management service spawning bash via CVE-2026-20131.
+# Rule uses ESQL with frequency threshold (fewer than 5 occurrences per agent).</span>
+
+<span class="cmt">// Simplified ESQL hunt query (adapt to your Elastic environment)</span>
+<span class="kw">FROM</span> logs-endpoint.events.process*
+| <span class="kw">WHERE</span> host.os.type == <span class="str">"linux"</span>
+  <span class="kw">AND</span> process.parent.name <span class="kw">in</span> (
+    <span class="str">"java"</span>, <span class="str">"python"</span>, <span class="str">"python3"</span>, <span class="str">"gunicorn"</span>, <span class="str">"uvicorn"</span>,
+    <span class="str">"apache2"</span>, <span class="str">"httpd"</span>, <span class="str">"nginx"</span>, <span class="str">"php-fpm"</span>, <span class="str">"tomcat"</span>
+  )
+  <span class="kw">AND</span> process.name <span class="kw">in</span> (
+    <span class="str">"bash"</span>, <span class="str">"sh"</span>, <span class="str">"zsh"</span>, <span class="str">"python"</span>, <span class="str">"python3"</span>,
+    <span class="str">"curl"</span>, <span class="str">"wget"</span>, <span class="str">"nc"</span>, <span class="str">"ncat"</span>, <span class="str">"socat"</span>
+  )
+| <span class="kw">STATS</span> count = COUNT(*) <span class="kw">BY</span> agent.id, process.parent.name, process.name, process.working_directory
+| <span class="kw">WHERE</span> count &lt; <span class="num">5</span>
+| <span class="kw">SORT</span> count <span class="kw">ASC</span></div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /Pattern group -->
     </div><!-- /det-pane det-rules -->
 

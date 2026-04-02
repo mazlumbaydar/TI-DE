@@ -72,7 +72,7 @@
       <div class="stat-label" id="sl2">MITRE TTPs</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num" data-t="11">0</div>
+      <div class="stat-num" data-t="13">0</div>
       <div class="stat-label" id="sl3">Detection Platforms</div>
     </div>
   </div>
@@ -863,7 +863,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
     <div class="rule-group">
       <div class="rule-group-hd">
         <span class="rgb-pattern">Pattern</span>
-        <span class="rule-group-label">Rule 11: YARA</span>
+        <span class="rule-group-label">Rule 11: YARA / Rules 12–13: SigmaHQ Community (schtasks + cron)</span>
       </div>
 
       <!-- Rule 11: YARA -->
@@ -902,6 +902,113 @@ tgt.file.type = <span class="str">"executable"</span></div>
         </div>
       </div>
     </div><!-- /Pattern group -->
+
+    <!-- COMMUNITY SIGMA GROUP: schtasks from TEMP + cron from tmp -->
+    <div class="rule-group">
+      <div class="rule-group-hd">
+        <span class="rgb-siem">SIEM</span>
+        <span class="rule-group-label">Rules 12–13: SigmaHQ Community — Scheduled Task / Cron from TEMP</span>
+      </div>
+
+      <!-- Rule 12: SigmaHQ schtasks from TEMP -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Sigma (YAML)</span>
+            Suspicious Scheduled Task from Temp Folder — SigmaHQ Community
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              proc_creation_win_schtasks_creation_temp_folder.yml &mdash; SigmaHQ id:39019a4e &mdash; T1053.005
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt"># Source: SigmaHQ/sigma — github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_schtasks_creation_temp_folder.yml
+# author: Florian Roth (Nextron Systems) | status: test | level: high
+# Covers axios Windows payload: schtasks /create /tn "WindowsUpdate" /tr "%TEMP%\svchost_update.exe"</span>
+<span class="kw">title</span>: Suspicious Scheduled Task Creation Involving Temp Folder
+<span class="kw">id</span>: <span class="num">39019a4e-317f-4ce3-ae63-309a8c6b53c5</span>
+<span class="kw">status</span>: test
+<span class="kw">description</span>: Detects the creation of scheduled tasks that involves a temporary
+             folder — matches axios RAT WindowsUpdate schtask persistence
+<span class="kw">references</span>:
+  - <span class="str">https://discuss.elastic.co/t/detection-and-response-for-hafnium-activity/266289/3</span>
+<span class="kw">author</span>: Florian Roth (Nextron Systems)
+<span class="kw">date</span>: <span class="num">2021/03/11</span>
+<span class="kw">tags</span>:
+  - attack.privilege-escalation
+  - attack.execution
+  - attack.persistence
+  - attack.t1053.005
+<span class="kw">logsource</span>:
+  category: process_creation
+  product: windows
+<span class="kw">detection</span>:
+  selection:
+    Image|endswith: <span class="str">'\schtasks.exe'</span>
+    CommandLine|contains|all:
+      - <span class="str">' /create '</span>
+      - <span class="str">'\Temp\'</span>
+  condition: selection
+<span class="kw">falsepositives</span>:
+  - Administrative activity
+  - Software installation
+<span class="kw">level</span>: high</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 13: SigmaHQ Linux cron from tmp -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Sigma (YAML)</span>
+            Linux Crontab Job from Temp Directory — SigmaHQ Community
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              proc_creation_lnx_schedule_task_job_cron.yml &mdash; SigmaHQ id:6b14bac8 &mdash; T1053.003
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt"># Source: SigmaHQ/sigma — github.com/SigmaHQ/sigma/blob/master/rules/linux/process_creation/proc_creation_lnx_schedule_task_job_cron.yml
+# author: Alejandro Ortuno, oscd.community | status: test | level: medium
+# Covers axios Linux/macOS payload: crontab -e adding */5 * * * * ~/.local/bin/update</span>
+<span class="kw">title</span>: Scheduled Cron Task/Job from Temp Directory &mdash; Linux
+<span class="kw">id</span>: <span class="num">6b14bac8-3e3a-4324-8109-42f0546a347f</span>
+<span class="kw">status</span>: test
+<span class="kw">description</span>: Detects abuse of crontab for task scheduling when command references
+             /tmp — matches axios Linux RAT crontab persistence
+<span class="kw">references</span>:
+  - <span class="str">https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1053.003/T1053.003.md</span>
+<span class="kw">author</span>: Alejandro Ortuno, oscd.community
+<span class="kw">date</span>: <span class="num">2020/10/06</span>
+<span class="kw">tags</span>:
+  - attack.execution
+  - attack.persistence
+  - attack.t1053.003
+<span class="kw">logsource</span>:
+  category: process_creation
+  product: linux
+<span class="kw">detection</span>:
+  selection:
+    Image|endswith: <span class="str">'crontab'</span>
+    CommandLine|contains: <span class="str">'/tmp/'</span>
+  condition: selection
+<span class="kw">falsepositives</span>:
+  - Legitimate administration activities
+<span class="kw">level</span>: medium</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /Community Sigma group -->
     </div><!-- /det-pane: det-rules -->
 
     <!-- PANE 2: THREAT HUNTING -->
