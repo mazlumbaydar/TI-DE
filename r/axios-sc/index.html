@@ -653,7 +653,7 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">QRadar (AQL)</span>
-            C2 Communication to Axios RAT Infrastructure
+            MSIE 8.0 UA Behavioral Beacon (QRadar)
           </div>
           <div class="rule-toggle">&#9660;</div>
         </div>
@@ -661,15 +661,13 @@ DNS query: sfrclak.com resolved to 142.11.206.73</div>
           <div class="code-block">
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
-              qradar-axios-c2.aql &mdash; T1071.001 / T1041
+              qradar-axios-c2.aql &mdash; T1071.001 / T1001
               <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">SELECT</span> sourceip, destinationip, <span class="str">"Destination Hostname"</span>,
        <span class="str">"User Agent"</span>, <span class="str">"Bytes Sent"</span>, starttime
 <span class="kw">FROM</span> flows
-<span class="kw">WHERE</span> (<span class="str">"Destination Hostname"</span> <span class="kw">ILIKE</span> <span class="str">'%sfrclak.com%'</span>
-   <span class="kw">OR</span> destinationip = <span class="str">'142.11.206.73'</span>)
-   <span class="kw">OR</span> <span class="str">"User Agent"</span> <span class="kw">ILIKE</span> <span class="str">'%MSIE 8.0%'</span>
+<span class="kw">WHERE</span> <span class="str">"User Agent"</span> <span class="kw">ILIKE</span> <span class="str">'%MSIE 8.0%'</span>
 <span class="kw">AND</span> starttime > <span class="fn">NOW</span>() - <span class="num">24</span> HOURS
 <span class="kw">ORDER BY</span> starttime <span class="kw">DESC</span></div>
           </div>
@@ -854,8 +852,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
               carbon-black-axios-rat.cbql &mdash; T1195.001 / T1053.005 / T1041
               <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
-            <div class="code-body">(process_name:node.exe parent_name:npm netconn_domain:sfrclak.com) OR
-(process_name:schtasks.exe parent_name:node.exe cmdline:<span class="str">"/create"</span>) OR
+            <div class="code-body">(process_name:schtasks.exe parent_name:node.exe cmdline:<span class="str">"/create"</span>) OR
 (process_name:node.exe filemod:*TEMP*.exe)</div>
           </div>
         </div>
@@ -874,7 +871,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">YARA (Pattern)</span>
-            Axios npm RAT Dropper &mdash; Behavioral + Infrastructure
+            Axios npm RAT Dropper &mdash; Behavioral
           </div>
           <div class="rule-toggle">&#9660;</div>
         </div>
@@ -882,7 +879,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
           <div class="code-block">
             <div class="code-header">
               <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
-              axios_npm_rat_dropper.yar &mdash; Behavioral + IOC
+              axios_npm_rat_dropper.yar &mdash; Behavioral
               <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
             </div>
             <div class="code-body"><span class="kw">rule</span> <span class="fn">Axios_npm_RAT_Dropper</span> {
@@ -894,12 +891,11 @@ tgt.file.type = <span class="str">"executable"</span></div>
     <span class="kw">strings</span>:
         $npm_hook   = <span class="str">"postinstall"</span>  ascii
         $install_js = <span class="str">"install.js"</span>   ascii
-        $sfrclak    = <span class="str">"sfrclak.com"</span>  ascii
         $msie_ua    = <span class="str">"MSIE 8.0"</span>     ascii
         $xor_decode = <span class="str">"^ k"</span>          ascii
         $os_detect  = <span class="str">"process.platform"</span> ascii
     <span class="kw">condition</span>:
-        ($sfrclak <span class="kw">or</span> $msie_ua) <span class="kw">and</span>
+        $msie_ua <span class="kw">and</span>
         ($install_js <span class="kw">or</span> ($npm_hook <span class="kw">and</span> $os_detect))
 }</div>
           </div>
@@ -1005,7 +1001,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
           <div class="rule-header">
             <div class="rule-title">
               <span class="platform-badge">QRadar (AQL)</span>
-              npm Malicious Version Install + C2 Domain Presence
+              npm Malicious Version Install — Process Log Hunt
             </div>
             <div class="rule-toggle">&#9660;</div>
           </div>
@@ -1013,7 +1009,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
             <div class="code-block">
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
-                qradar-hunt-axios.aql &mdash; Hunt: Version Install + C2 DNS
+                qradar-hunt-axios.aql &mdash; Hunt: Version Install
                 <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
               <div class="code-body"><span class="cmt">-- Hunt 1: Process logs showing malicious npm install</span>
@@ -1024,14 +1020,6 @@ tgt.file.type = <span class="str">"executable"</span></div>
   <span class="kw">AND</span> (<span class="str">"Command"</span> <span class="kw">ILIKE</span> <span class="str">'%axios@1.14.1%'</span>
     <span class="kw">OR</span> <span class="str">"Command"</span> <span class="kw">ILIKE</span> <span class="str">'%axios@0.30.4%'</span>)
 <span class="kw">AND</span> starttime > <span class="fn">NOW</span>() - <span class="num">30</span> DAYS
-
-<span class="kw">UNION ALL</span>
-
-<span class="cmt">-- Hunt 2: DNS query for C2 (sfrclak.com) — if DNS logs in QRadar</span>
-<span class="kw">SELECT</span> sourceip, <span class="str">"DNS Name"</span>, starttime
-<span class="kw">FROM</span> events
-<span class="kw">WHERE</span> LOGSOURCETYPENAME(logsourceid) <span class="kw">ILIKE</span> <span class="str">'%DNS%'</span>
-  <span class="kw">AND</span> <span class="str">"DNS Name"</span> <span class="kw">ILIKE</span> <span class="str">'%sfrclak.com%'</span>
 <span class="kw">ORDER BY</span> starttime <span class="kw">DESC</span></div>
             </div>
           </div>
@@ -1086,16 +1074,6 @@ tgt.file.type = <span class="str">"executable"</span></div>
   | <span class="fn">project</span> Timestamp, DeviceName, AccountName, ProcessCommandLine
   | <span class="fn">extend</span> Finding = <span class="str">"RAT persistence: WindowsUpdate schtask from node"</span>
 )
-
-<span class="fn">union</span> (
-  <span class="cmt">// Hunt 3: Outbound connection to C2 (sfrclak.com / 142.11.206.73)</span>
-  <span class="fn">DeviceNetworkEvents</span>
-  | <span class="kw">where</span> RemoteUrl <span class="fn">contains</span> <span class="str">"sfrclak.com"</span>
-     <span class="kw">or</span> RemoteIP == <span class="str">"142.11.206.73"</span>
-  | <span class="fn">project</span> Timestamp, DeviceName, InitiatingProcessFileName,
-            RemoteUrl, RemoteIP, RemotePort
-  | <span class="fn">extend</span> Finding = <span class="str">"C2 beacon — host likely compromised"</span>
-)
 | <span class="fn">order by</span> Timestamp <span class="kw">desc</span></div>
             </div>
           </div>
@@ -1126,15 +1104,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
 | <span class="fn">fields</span> _time, agent_hostname, actor_process_command_line,
          actor_process_os_pid, actor_effective_username
 
-<span class="cmt">// Hunt 2: Network connection to C2</span>
-<span class="kw">dataset</span> = xdr_data
-| <span class="kw">filter</span> event_type = ENUM.EVENT_TYPE_NETWORK
-| <span class="kw">filter</span> action_remote_ip = <span class="str">"142.11.206.73"</span>
-   <span class="kw">or</span> action_remote_hostname <span class="kw">contains</span> <span class="str">"sfrclak.com"</span>
-| <span class="fn">fields</span> _time, agent_hostname, actor_process_image_name,
-         action_remote_ip, action_remote_port, action_local_ip
-
-<span class="cmt">// Hunt 3: Cron entry written (Linux persistence)</span>
+<span class="cmt">// Hunt 2: Cron entry written (Linux persistence)</span>
 <span class="kw">dataset</span> = xdr_data
 | <span class="kw">filter</span> event_type = ENUM.EVENT_TYPE_FILE
 | <span class="kw">filter</span> action_file_path <span class="kw">contains</span> <span class="str">"/var/spool/cron"</span>
@@ -1174,13 +1144,7 @@ tgt.file.type = <span class="str">"executable"</span></div>
   AND ParentBaseFileName IN (<span class="str">"node.exe"</span>, <span class="str">"npm.cmd"</span>)
   AND CommandLine LIKE <span class="str">"%WindowsUpdate%"</span>
   AND NOT CommandLine LIKE <span class="str">"%Microsoft%"</span>
-| <span class="fn">table</span> _time, ComputerName, CommandLine, ParentBaseFileName
-
-<span class="cmt">| Hunt 3: C2 connection to sfrclak.com or 142.11.206.73</span>
-<span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=NetworkConnect
-| <span class="kw">where</span> RemoteIP="142.11.206.73"
-   OR RemoteDomainName LIKE <span class="str">"%sfrclak.com%"</span>
-| <span class="fn">table</span> _time, ComputerName, UserName, FileName, RemoteIP, RemotePort</div>
+| <span class="fn">table</span> _time, ComputerName, CommandLine, ParentBaseFileName</div>
             </div>
           </div>
         </div>
@@ -1206,12 +1170,7 @@ process_cmdline:*axios@1.14.1* OR process_cmdline:*axios@0.30.4*
 | fields device_name, username, process_name,
           process_cmdline, process_start_time
 
-<span class="cmt">-- Hunt 2: C2 network connection</span>
-netconn_domain:sfrclak.com OR netconn_ipv4:142.11.206.73
-| fields device_name, username, process_name, netconn_domain,
-          netconn_ipv4, netconn_port
-
-<span class="cmt">-- Hunt 3: File written to %TEMP% by node.exe (Windows payload drop)</span>
+<span class="cmt">-- Hunt 2: File written to %TEMP% by node.exe (Windows payload drop)</span>
 process_name:node.exe AND
 filemod_type:CREATE AND filemod_name:*.exe
 AND filemod_name:*Temp*
@@ -1243,13 +1202,7 @@ SrcProcName In ("npm", "npm.cmd", "node", "node.exe") AND
  OR SrcProcCmdLine Contains "axios@0.30.4")
 | columns EndpointName, SrcUserName, SrcProcCmdLine, EventTime
 
-<span class="cmt">-- Hunt 2: C2 network beaconing</span>
-EventType = "IP Connect" AND
-(DstIP = "142.11.206.73" OR DstDNS Contains "sfrclak.com")
-| columns EndpointName, SrcUserName, SrcProcName,
-           DstIP, DstPort, DstDNS, EventTime
-
-<span class="cmt">-- Hunt 3: schtasks.exe spawned by node (Windows persistence)</span>
+<span class="cmt">-- Hunt 2: schtasks.exe spawned by node (Windows persistence)</span>
 EventType = "ProcessCreation" AND
 TgtProcName = "schtasks.exe" AND
 SrcProcName In ("node.exe", "npm.cmd") AND
@@ -1285,14 +1238,6 @@ TgtProcCmdLine Contains "WindowsUpdate"
 <span class="kw">WHERE</span> (e.wstrParam2 <span class="kw">LIKE</span> <span class="str">'%axios@1.14.1%'</span>
     <span class="kw">OR</span>  e.wstrParam2 <span class="kw">LIKE</span> <span class="str">'%axios@0.30.4%'</span>)
   <span class="kw">AND</span> e.tmOccur > <span class="fn">DATEADD</span>(day, -<span class="num">30</span>, <span class="fn">GETDATE</span>())
-<span class="kw">ORDER BY</span> e.tmOccur <span class="kw">DESC</span>
-
-<span class="cmt">-- Hunt 2: Network events to C2 IP (Kaspersky network control events)</span>
-<span class="kw">SELECT</span> h.wstrNetName, e.tmOccur, e.wstrParam1 <span class="kw">AS</span> Process,
-       e.wstrParam3 <span class="kw">AS</span> RemoteIP, e.wstrParam4 <span class="kw">AS</span> RemotePort
-<span class="kw">FROM</span> v_events e
-<span class="kw">JOIN</span> v_hosts h <span class="kw">ON</span> e.nHostId = h.nId
-<span class="kw">WHERE</span> e.wstrParam3 = <span class="str">'142.11.206.73'</span>
 <span class="kw">ORDER BY</span> e.tmOccur <span class="kw">DESC</span></div>
             </div>
           </div>
@@ -1319,8 +1264,8 @@ TgtProcCmdLine Contains "WindowsUpdate"
         <div class="rule-card" onclick="toggleRule(this,event)">
           <div class="rule-header">
             <div class="rule-title">
-              <span class="platform-badge">Firewall / Proxy / DNS</span>
-              C2 Communication — sfrclak.com + MSIE 8.0 UA Hunt
+              <span class="platform-badge">Firewall / Proxy</span>
+              MSIE 8.0 UA Behavioral Beacon — Proxy Log Hunt
             </div>
             <div class="rule-toggle">&#9660;</div>
           </div>
@@ -1328,40 +1273,23 @@ TgtProcCmdLine Contains "WindowsUpdate"
             <div class="code-block">
               <div class="code-header">
                 <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
-                firewall-dns-hunt-axios.txt &mdash; Platform-Agnostic Hunt Criteria
+                firewall-proxy-hunt-axios.txt &mdash; Platform-Agnostic Hunt Criteria
                 <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
-              <div class="code-body"><span class="cmt">## Firewall / Proxy Hunt — What to look for:</span>
+              <div class="code-body"><span class="cmt">## Proxy Hunt — What to look for:</span>
 
-<span class="cmt"># 1. DNS queries to C2 domain</span>
-Destination domain: sfrclak.com
-&rarr; Any internal host querying this = potential compromise
-&rarr; Check: DNS server logs / Proxy DNS resolution logs
-
-<span class="cmt"># 2. IP-based C2 connections</span>
-Destination IP:   142.11.206.73
-Destination port: 8000 (primary C2 port)
-Protocol:         TCP/HTTPS
-&rarr; Cisco ASA: show conn | include 142.11.206.73
-&rarr; Palo Alto: Traffic logs → Destination = 142.11.206.73
-&rarr; Fortinet: Forward traffic log → dstip=142.11.206.73
-&rarr; Generic Syslog/CEF: grep "142.11.206.73" /var/log/firewall.log
-
-<span class="cmt"># 3. HTTP User-Agent in proxy logs (zero false-positive signal)</span>
+<span class="cmt"># 1. HTTP User-Agent in proxy logs (zero false-positive behavioral signal)</span>
 User-Agent contains: "MSIE 8.0" or "Trident/4.0"
 Source: any internal IP
 &rarr; This string is impossible on any modern system (IE8 = 2009)
 &rarr; Any match = active RAT beacon from that source IP
+&rarr; Cisco ASA: show conn | grep MSIE
+&rarr; Palo Alto: Traffic logs → User-Agent filter MSIE 8.0
+&rarr; Fortinet: Forward traffic log → User-Agent field
+&rarr; Generic Syslog/CEF: grep "MSIE 8.0" /var/log/proxy.log
 
-<span class="cmt"># 4. npm registry bypass (package download from non-registry host)</span>
-Request URL contains: sfrclak.com/d/
-&rarr; Binary download path for Windows/Linux/macOS RAT payload
-&rarr; If seen in proxy logs → payload was downloaded (host likely infected)
-
-<span class="cmt">## Priority order if you have limited visibility:</span>
-<span class="cmt"># HIGH: MSIE 8.0 UA → source host is actively beaconing</span>
-<span class="cmt"># HIGH: DNS to sfrclak.com → C2 lookup happened</span>
-<span class="cmt"># MED:  IP 142.11.206.73:8000 → C2 communication ongoing</span></div>
+<span class="cmt">## Priority signal:</span>
+<span class="cmt"># HIGH: MSIE 8.0 UA → source host is actively beaconing (behavioral, zero false positive)</span></div>
             </div>
           </div>
         </div>

@@ -1011,7 +1011,7 @@ TgtProcCmdLine Contains "/dev/tcp"
           <span class="rule-group-label">Hunt 7&ndash;8: Firewall / IDS / Proxy</span>
         </div>
 
-        <div class="th-note"><strong>&#9432; Network Prerequisite:</strong> Requires firewall logs showing traffic to/from FMC management IP (port 443/8443). IDS/IPS with Java deserialization signatures provides best coverage. These queries identify Interlock C2 IP 185.220.101.47.</div>
+        <div class="th-note"><strong>&#9432; Network Prerequisite:</strong> Requires firewall logs showing traffic to/from FMC management IP (port 443/8443). IDS/IPS with Java deserialization signatures provides best coverage. These queries identify inbound exploitation attempts and anomalous outbound connections from FMC.</div>
 
         <!-- Hunt 7: Firewall/IDS -->
         <div class="rule-card" onclick="toggleRule(this,event)">
@@ -1036,14 +1036,7 @@ TgtProcCmdLine Contains "/dev/tcp"
 | <span class="kw">where</span> SourceIP <span class="fn">!startswith</span> <span class="str">"10."</span> <span class="kw">and</span> SourceIP <span class="fn">!startswith</span> <span class="str">"192.168."</span>
 | <span class="fn">summarize</span> count(), make_set(DestinationPort) by SourceIP, bin(TimeGenerated, <span class="num">1</span>h)
 
-<span class="cmt">// Hunt 2: Connections FROM FMC to known Interlock C2 IP</span>
-<span class="fn">CommonSecurityLog</span>
-| <span class="kw">where</span> SourceIP == <span class="str">"[FMC_MGMT_IP]"</span>
-| <span class="kw">where</span> DestinationIP == <span class="str">"185.220.101.47"</span>  <span class="cmt">// Known Interlock ransomware C2</span>
-| <span class="fn">project</span> TimeGenerated, SourceIP, DestinationIP, DestinationPort, RequestURL
-| <span class="fn">extend</span> Finding = <span class="str">"FMC communicating with Interlock ransomware C2"</span>
-
-<span class="cmt">// Hunt 3: Any outbound from FMC to Tor exit node ranges</span>
+<span class="cmt">// Hunt 2: Any outbound from FMC to non-standard ports (post-exploitation C2)</span>
 <span class="fn">CommonSecurityLog</span>
 | <span class="kw">where</span> SourceIP == <span class="str">"[FMC_MGMT_IP]"</span>
 | <span class="kw">where</span> DestinationPort <span class="fn">not in</span> (<span class="num">443</span>, <span class="num">80</span>, <span class="num">53</span>, <span class="num">123</span>, <span class="num">514</span>)

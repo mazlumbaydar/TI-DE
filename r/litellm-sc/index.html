@@ -68,7 +68,7 @@
       <div class="stat-label" data-en="MITRE TTPs" data-tr="MITRE TTP Sayısı">MITRE TTPs</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num" data-t="11">0</div>
+      <div class="stat-num" data-t="9">0</div>
       <div class="stat-label" data-en="Detection Platforms" data-tr="Tespit Platformu">Detection Platforms</div>
     </div>
   </div>
@@ -408,8 +408,8 @@ POST https://models.litellm.cloud/v1/telemetry
   <div class="reveal" id="detection">
     <div class="team-label team-blue">&#128309; Blue Team</div>
     <div class="section-label" data-en="Detection Engineering" data-tr="Tespit Mühendisliği">Detection Engineering</div>
-    <h2 data-en="Detection Rules — 11 Platforms" data-tr="Tespit Kuralları — 11 Platform">Detection Rules &mdash; 11 Platforms</h2>
-    <p data-en="All rules are TTP-based and behavioral. Key detection signals: Python reading .env files at startup (not import time), outbound HTTPS to models.litellm.cloud, new .pth files written to site-packages by pip." data-tr="Tüm kurallar TTP tabanlı ve davranışsaldır. Temel tespit sinyalleri: Python'ın başlangıçta (import zamanı değil) .env dosyalarını okuması, models.litellm.cloud'a giden HTTPS trafiği, pip tarafından site-packages'e yazılan yeni .pth dosyaları.">All rules are <strong>TTP-based and behavioral</strong>. Key detection signals: Python reading .env files at startup (not import time), outbound HTTPS to models.litellm.cloud, new .pth files written to site-packages by pip.</p>
+    <h2 data-en="Detection Rules — 9 Platforms" data-tr="Tespit Kuralları — 9 Platform">Detection Rules &mdash; 9 Platforms</h2>
+    <p data-en="All rules are TTP-based and behavioral. Key detection signals: Python reading .env files at startup (not import time), unexpected outbound connections from Python processes to non-standard ports, new .pth files written to site-packages by pip." data-tr="Tüm kurallar TTP tabanlı ve davranışsaldır. Temel tespit sinyalleri: Python'ın başlangıçta (import zamanı değil) .env dosyalarını okuması, Python süreçlerinden standart dışı portlara beklenmedik giden bağlantılar, pip tarafından site-packages'e yazılan yeni .pth dosyaları.">All rules are <strong>TTP-based and behavioral</strong>. Key detection signals: Python reading .env files at startup (not import time), unexpected outbound connections from Python processes to non-standard ports, new .pth files written to site-packages by pip.</p>
 
     <!-- TAB SWITCHER -->
     <div class="det-tabs">
@@ -424,7 +424,7 @@ POST https://models.litellm.cloud/v1/telemetry
     <div class="rule-group">
       <div class="rule-group-hd">
         <span class="rgb-siem">SIEM</span>
-        <span class="rule-group-label">Rules 1&ndash;4: Sigma (YAML) / Sentinel (KQL) / Splunk (SPL) / QRadar (AQL)</span>
+        <span class="rule-group-label">Rules 1&ndash;2: Sigma (YAML) / Splunk (SPL)</span>
       </div>
 
       <!-- Rule 1: Sigma -->
@@ -477,36 +477,6 @@ POST https://models.litellm.cloud/v1/telemetry
         </div>
       </div>
 
-      <!-- Rule 2: Sentinel KQL -->
-      <div class="rule-card" onclick="toggleRule(this,event)">
-        <div class="rule-header">
-          <div class="rule-title">
-            <span class="platform-badge">Sentinel (KQL)</span>
-            Outbound HTTPS to models.litellm.cloud or checkmarx.zone
-          </div>
-          <div class="rule-toggle">&#9660;</div>
-        </div>
-        <div class="rule-body">
-          <div class="code-block">
-            <div class="code-header">
-              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
-              sentinel-litellm-c2.kql &mdash; T1041 / T1071.001
-              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
-            </div>
-            <div class="code-body"><span class="cmt">// DNS and proxy logs — C2 domain detection</span>
-<span class="fn">DnsEvents</span>
-| <span class="kw">where</span> Name <span class="fn">has_any</span> (<span class="str">"models.litellm.cloud"</span>, <span class="str">"checkmarx.zone"</span>)
-| <span class="fn">union</span> (<span class="fn">CommonSecurityLog</span>
-  | <span class="kw">where</span> DestinationHostName <span class="fn">has_any</span> (<span class="str">"models.litellm.cloud"</span>, <span class="str">"checkmarx.zone"</span>)
-  | <span class="fn">project</span> TimeGenerated, SourceIP, DestinationHostName, RequestURL)
-| <span class="fn">project</span> TimeGenerated, Computer, ClientIP, Name, DestinationHostName
-| <span class="fn">extend</span> Severity = <span class="str">"High"</span>,
-         TTP = <span class="str">"T1041 - LiteLLM Supply Chain C2"</span>,
-         CVE = <span class="str">"CVE-2026-33634"</span></div>
-          </div>
-        </div>
-      </div>
-
       <!-- Rule 3: Splunk SPL -->
       <div class="rule-card" onclick="toggleRule(this,event)">
         <div class="rule-header">
@@ -534,33 +504,6 @@ POST https://models.litellm.cloud/v1/telemetry
         </div>
       </div>
 
-      <!-- Rule 4: QRadar AQL -->
-      <div class="rule-card" onclick="toggleRule(this,event)">
-        <div class="rule-header">
-          <div class="rule-title">
-            <span class="platform-badge">QRadar (AQL)</span>
-            LiteLLM Supply Chain — C2 Network Connection
-          </div>
-          <div class="rule-toggle">&#9660;</div>
-        </div>
-        <div class="rule-body">
-          <div class="code-block">
-            <div class="code-header">
-              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
-              qradar-litellm-c2.aql &mdash; T1041 / T1071.001
-              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
-            </div>
-            <div class="code-body"><span class="kw">SELECT</span> sourceip, destinationip, <span class="str">"Destination Hostname"</span>,
-       <span class="str">"URL"</span>, <span class="str">"Bytes Sent"</span>, starttime
-<span class="kw">FROM</span> flows
-<span class="kw">WHERE</span> (<span class="str">"Destination Hostname"</span> <span class="kw">ILIKE</span> <span class="str">'%litellm.cloud%'</span>
-   <span class="kw">OR</span> <span class="str">"Destination Hostname"</span> <span class="kw">ILIKE</span> <span class="str">'%checkmarx.zone%'</span>
-   <span class="kw">OR</span> destinationip <span class="kw">IN</span> (<span class="str">'45.148.10.212'</span>, <span class="str">'83.142.209.11'</span>))
-<span class="kw">AND</span> starttime > <span class="fn">NOW</span>() - <span class="num">24</span> HOURS
-<span class="kw">ORDER BY</span> starttime <span class="kw">DESC</span></div>
-          </div>
-        </div>
-      </div>
     </div><!-- /SIEM group -->
 
     <!-- EDR/XDR GROUP -->
@@ -575,7 +518,7 @@ POST https://models.litellm.cloud/v1/telemetry
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">Defender (KQL)</span>
-            Python Process Making Outbound Connection to C2
+            Python Process Making Unexpected Outbound Connection
           </div>
           <div class="rule-toggle">&#9660;</div>
         </div>
@@ -588,8 +531,8 @@ POST https://models.litellm.cloud/v1/telemetry
             </div>
             <div class="code-body"><span class="fn">DeviceNetworkEvents</span>
 | <span class="kw">where</span> InitiatingProcessFileName <span class="fn">in~</span> (<span class="str">"python.exe"</span>, <span class="str">"python3.exe"</span>, <span class="str">"python3"</span>)
-| <span class="kw">where</span> RemoteUrl <span class="fn">has_any</span> (<span class="str">"litellm.cloud"</span>, <span class="str">"checkmarx.zone"</span>)
-   <span class="kw">or</span> RemoteIP <span class="fn">in</span> (<span class="str">"45.148.10.212"</span>, <span class="str">"83.142.209.11"</span>)
+| <span class="kw">where</span> RemotePort <span class="fn">not in</span> (<span class="num">443</span>, <span class="num">80</span>)
+   <span class="kw">or</span> InitiatingProcessCommandLine <span class="fn">has_any</span> (<span class="str">"sitecustomize"</span>, <span class="str">".pth"</span>)
 | <span class="fn">project</span> Timestamp, DeviceName, InitiatingProcessCommandLine,
           RemoteUrl, RemoteIP, RemotePort, InitiatingProcessAccountName
 | <span class="fn">extend</span> TTP = <span class="str">"T1041 - LiteLLM Supply Chain Exfil (CVE-2026-33634)"</span></div>
@@ -629,7 +572,7 @@ POST https://models.litellm.cloud/v1/telemetry
         <div class="rule-header">
           <div class="rule-title">
             <span class="platform-badge">CrowdStrike (SPL)</span>
-            Python Connecting to LiteLLM Typosquat Domain
+            Python Making Unexpected External Network Connection
           </div>
           <div class="rule-toggle">&#9660;</div>
         </div>
@@ -642,11 +585,12 @@ POST https://models.litellm.cloud/v1/telemetry
             </div>
             <div class="code-body"><span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=NetworkConnect
 | <span class="kw">where</span> ImageFileName LIKE <span class="str">"%python%"</span>
-  AND (RemoteDomainName LIKE <span class="str">"%litellm.cloud%"</span>
-       OR RemoteDomainName LIKE <span class="str">"%checkmarx.zone%"</span>
-       OR RemoteIP IN (<span class="str">"45.148.10.212"</span>, <span class="str">"83.142.209.11"</span>))
+  AND RemotePort NOT IN (<span class="str">"443"</span>, <span class="str">"80"</span>)
+  AND NOT (RemoteAddressIP4 LIKE <span class="str">"10.%"</span>
+           OR RemoteAddressIP4 LIKE <span class="str">"192.168.%"</span>
+           OR RemoteAddressIP4 LIKE <span class="str">"172.16.%"</span>)
 | <span class="fn">table</span> _time, ComputerName, UserName, ImageFileName,
-         RemoteDomainName, RemoteIP, RemotePort
+         RemoteDomainName, RemoteAddressIP4, RemotePort
 | <span class="fn">eval</span> ttp=<span class="str">"T1041 - CVE-2026-33634 LiteLLM C2"</span></div>
           </div>
         </div>
@@ -778,15 +722,11 @@ TgtFileExtension = ".pth"
   <span class="kw">strings</span>:
     <span class="cmt">// Base64+exec pattern in .pth files</span>
     $pth_exec   = <span class="str">"import subprocess,os,base64;exec("</span>
-    <span class="cmt">// C2 domain reference</span>
-    $c2_primary = <span class="str">"models.litellm.cloud"</span>
-    $c2_second  = <span class="str">"checkmarx.zone"</span>
     <span class="cmt">// AI key target pattern</span>
     $key_target = <span class="str">"OPENAI_API_KEY"</span>
 
   <span class="kw">condition</span>:
-    $pth_exec or ($c2_primary and $key_target)
-    or ($c2_second and $key_target)
+    $pth_exec or $key_target
 }</div>
           </div>
         </div>
@@ -836,15 +776,7 @@ TgtFileExtension = ".pth"
 | <span class="kw">where</span> EventID == <span class="num">4663</span>
 | <span class="kw">where</span> ObjectName <span class="fn">has</span> <span class="str">"site-packages"</span> <span class="kw">and</span> ObjectName <span class="fn">endswith</span> <span class="str">".pth"</span>
 | <span class="fn">project</span> TimeGenerated, Computer, Account, ObjectName, ProcessName
-| <span class="fn">extend</span> Finding = <span class="str">".pth file in site-packages — persistence mechanism"</span>)
-
-<span class="cmt">// Hunt 3: Python connecting to LiteLLM C2</span>
-<span class="fn">union</span> (<span class="fn">DeviceNetworkEvents</span>
-| <span class="kw">where</span> InitiatingProcessFileName <span class="fn">in~</span>(<span class="str">"python"</span>, <span class="str">"python3"</span>)
-| <span class="kw">where</span> RemoteIP <span class="fn">in</span>(<span class="str">"45.148.10.212"</span>, <span class="str">"83.142.209.11"</span>)
-    <span class="kw">or</span> RemoteUrl <span class="fn">has_any</span>(<span class="str">"models.litellm.cloud"</span>, <span class="str">"checkmarx.zone"</span>)
-| <span class="fn">project</span> Timestamp, DeviceName, RemoteIP, RemoteUrl
-| <span class="fn">extend</span> Finding = <span class="str">"Python C2 beacon — LiteLLM supply chain"</span>)</div>
+| <span class="fn">extend</span> Finding = <span class="str">".pth file in site-packages — persistence mechanism"</span>)</div>
             </div>
           </div>
         </div>
@@ -874,38 +806,7 @@ TgtFileExtension = ".pth"
 <span class="fn">index</span>=endpoint <span class="kw">sourcetype</span>=auditd syscall=open
   name=<span class="str">"*/site-packages/*.pth"</span>
 | <span class="fn">table</span> _time, host, user, pid, name, comm
-| <span class="fn">eval</span> finding=<span class="str">".pth persistence file written"</span>
-
-<span class="cmt">| Hunt 3: Python outbound to C2 IPs (Zeek)</span>
-<span class="fn">index</span>=network <span class="kw">sourcetype</span>=zeek:conn
-  id.resp_h IN (<span class="str">"45.148.10.212"</span>, <span class="str">"83.142.209.11"</span>)
-| <span class="fn">table</span> _time, id.orig_h, id.resp_h, id.resp_p
-| <span class="fn">eval</span> finding=<span class="str">"LiteLLM supply chain C2 connection"</span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="rule-card" onclick="toggleRule(this,event)">
-          <div class="rule-header">
-            <div class="rule-title">
-              <span class="platform-badge">QRadar (AQL)</span>
-              <span data-en="LiteLLM C2 IP Hunt + .pth File Write" data-tr="LiteLLM C2 IP Avı + .pth Dosya Yazması">LiteLLM C2 IP Hunt + .pth File Write</span>
-            </div>
-            <div class="rule-toggle">&#9660;</div>
-          </div>
-          <div class="rule-body">
-            <div class="code-block">
-              <div class="code-header">
-                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
-                qradar-hunt-litellm.aql
-                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
-              </div>
-              <div class="code-body"><span class="kw">SELECT</span> sourceip, destinationip, destinationport,
-       LOGSOURCENAME(logsourceid), starttime, username
-<span class="kw">FROM</span> events
-<span class="kw">WHERE</span> destinationip IN (<span class="str">'45.148.10.212'</span>, <span class="str">'83.142.209.11'</span>)
-  <span class="kw">AND</span> starttime > <span class="fn">CURRENT_TIMESTAMP</span> - <span class="num">30</span> DAYS
-<span class="kw">ORDER BY</span> starttime <span class="kw">DESC</span></div>
+| <span class="fn">eval</span> finding=<span class="str">".pth persistence file written"</span></div>
             </div>
           </div>
         </div>
@@ -943,15 +844,7 @@ TgtFileExtension = ".pth"
     InitiatingProcessFileName, InitiatingProcessCommandLine
 | <span class="fn">extend</span> Finding = <span class="str">".pth in site-packages — backdoor persistence possible"</span>
 
-<span class="cmt">// Hunt 2: Python connecting to LiteLLM C2</span>
-<span class="fn">union</span> (<span class="fn">DeviceNetworkEvents</span>
-| <span class="kw">where</span> InitiatingProcessFileName <span class="fn">in~</span>(<span class="str">"python"</span>, <span class="str">"python3"</span>)
-| <span class="kw">where</span> RemoteIP <span class="fn">in</span>(<span class="str">"45.148.10.212"</span>, <span class="str">"83.142.209.11"</span>)
-    <span class="kw">or</span> RemoteUrl <span class="fn">has_any</span>(<span class="str">"models.litellm.cloud"</span>, <span class="str">"checkmarx.zone"</span>)
-| <span class="fn">project</span> Timestamp, DeviceName, RemoteIP, RemoteUrl, RemotePort
-| <span class="fn">extend</span> Finding = <span class="str">"Python C2 beacon — LiteLLM supply chain"</span>)
-
-<span class="cmt">// Hunt 3: systemd user service created by Python</span>
+<span class="cmt">// Hunt 2: systemd user service created by Python</span>
 <span class="fn">union</span> (<span class="fn">DeviceFileEvents</span>
 | <span class="kw">where</span> FolderPath <span class="fn">has</span> <span class="str">".config/systemd/user"</span>
     <span class="kw">and</span> InitiatingProcessFileName <span class="fn">in~</span>(<span class="str">"python"</span>, <span class="str">"python3"</span>)
@@ -978,9 +871,8 @@ TgtFileExtension = ".pth"
               </div>
               <div class="code-body"><span class="kw">dataset</span> = xdr_data
 | <span class="fn">filter</span> actor_process_image_name <span class="fn">in</span> (<span class="str">"python3"</span>, <span class="str">"python"</span>)
-| <span class="fn">filter</span> action_remote_ip <span class="fn">in</span> (<span class="str">"45.148.10.212"</span>, <span class="str">"83.142.209.11"</span>)
-    <span class="kw">or</span> dns_query_name <span class="fn">contains</span> <span class="str">"litellm.cloud"</span>
-    <span class="kw">or</span> dns_query_name <span class="fn">contains</span> <span class="str">"checkmarx.zone"</span>
+| <span class="fn">filter</span> action_remote_port <span class="fn">not in</span> (<span class="num">443</span>, <span class="num">80</span>)
+    <span class="kw">and</span> action_remote_ip <span class="fn">not in cidrs</span> (<span class="str">"10.0.0.0/8"</span>, <span class="str">"172.16.0.0/12"</span>, <span class="str">"192.168.0.0/16"</span>)
 | <span class="fn">fields</span> _time, agent_hostname, actor_process_cmd_line,
     action_remote_ip, dns_query_name, action_remote_port
 | <span class="fn">sort</span> desc _time</div>
@@ -1003,15 +895,7 @@ TgtFileExtension = ".pth"
                 crowdstrike-hunt-litellm.spl
                 <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
               </div>
-              <div class="code-body"><span class="cmt">| Hunt 1: Python beaconing to C2 IPs</span>
-<span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=NetworkConnect
-  ImageFileName IN (<span class="str">"*/python3"</span>, <span class="str">"*/python"</span>)
-  RemoteAddressIP4 IN (<span class="str">"45.148.10.212"</span>, <span class="str">"83.142.209.11"</span>)
-| <span class="fn">table</span> _time, ComputerName, UserName, ImageFileName,
-    RemoteAddressIP4, RemotePort
-| <span class="fn">eval</span> finding=<span class="str">"Python C2 beacon to LiteLLM IOC"</span>
-
-<span class="cmt">| Hunt 2: .pth file write to site-packages</span>
+              <div class="code-body"><span class="cmt">| Hunt 1: .pth file write to site-packages</span>
 <span class="fn">index</span>=crowdstrike <span class="kw">event_simpleName</span>=WrittenProcessApiCall
   TargetFileName=<span class="str">"*/site-packages/*.pth"</span>
 | <span class="fn">table</span> _time, ComputerName, UserName, TargetFileName, CommandLine
@@ -1030,43 +914,6 @@ TgtFileExtension = ".pth"
           <span class="rule-group-label" data-en="Hunt 7–8: DNS / Firewall / Proxy" data-tr="Avcılık 7–8: DNS / Firewall / Proxy">Hunt 7&ndash;8: DNS / Firewall / Proxy</span>
         </div>
         <div class="th-note"><strong>&#9432; </strong><span data-en="DNS queries to models.litellm.cloud or checkmarx.zone from any host that should not use these services = immediate compromise indicator. Most scalable hunt vector." data-tr="Bu servisleri kullanmaması gereken herhangi bir host'tan models.litellm.cloud veya checkmarx.zone'a yapılan DNS sorguları = anında ele geçirme göstergesi. En ölçeklenebilir avcılık vektörü.">DNS queries to models.litellm.cloud or checkmarx.zone from any host that should not use these services = immediate compromise indicator. Most scalable hunt vector.</span></div>
-
-        <div class="rule-card" onclick="toggleRule(this,event)">
-          <div class="rule-header">
-            <div class="rule-title">
-              <span class="platform-badge">DNS / Firewall</span>
-              <span data-en="LiteLLM C2 DNS + IP Beacon — Network Hunt" data-tr="LiteLLM C2 DNS + IP Beacon — Ağ Avı">LiteLLM C2 DNS + IP Beacon — Network Hunt</span>
-            </div>
-            <div class="rule-toggle">&#9660;</div>
-          </div>
-          <div class="rule-body">
-            <div class="code-block">
-              <div class="code-header">
-                <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
-                network-hunt-litellm-c2.kql
-                <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
-              </div>
-              <div class="code-body"><span class="cmt">// Hunt 1: DNS queries to C2 domains (Sentinel)</span>
-<span class="fn">DnsEvents</span>
-| <span class="kw">where</span> Name <span class="fn">has_any</span>(<span class="str">"models.litellm.cloud"</span>, <span class="str">"checkmarx.zone"</span>)
-| <span class="fn">summarize</span> count(), make_set(ClientIP) by Name, bin(TimeGenerated, <span class="num">1</span>h)
-| <span class="fn">extend</span> Finding = <span class="str">"DNS to LiteLLM C2 domain"</span>
-
-<span class="cmt">// Hunt 2: Direct IP connections (Sentinel)</span>
-<span class="fn">CommonSecurityLog</span>
-| <span class="kw">where</span> DestinationIP <span class="fn">in</span>(<span class="str">"45.148.10.212"</span>, <span class="str">"83.142.209.11"</span>)
-| <span class="fn">project</span> TimeGenerated, SourceIP, DestinationIP, DestinationPort
-| <span class="fn">extend</span> Finding = <span class="str">"Direct connection to TeamPCP C2 server"</span>
-| <span class="fn">order by</span> TimeGenerated <span class="kw">desc</span>
-
-<span class="cmt">// Hunt 3: Splunk DNS hunt</span>
-<span class="fn">index</span>=network (<span class="kw">sourcetype</span>=dns OR <span class="kw">sourcetype</span>=zeek:dns)
-  (query=<span class="str">"*litellm.cloud*"</span> OR query=<span class="str">"*checkmarx.zone*"</span>)
-| <span class="fn">table</span> _time, src, query, answer
-| <span class="fn">eval</span> finding=<span class="str">"C2 DNS query — LiteLLM supply chain"</span></div>
-            </div>
-          </div>
-        </div>
 
         <div class="th-guide"><strong>&#10140; </strong><span data-en="Remediation if found: (1) Revoke all AI API keys immediately (2) Remove .pth: &lt;code&gt;find /usr -name 'sitecustomize.pth' -delete&lt;/code&gt; (3) Remove systemd service: &lt;code&gt;systemctl --user disable litellm-update.service&lt;/code&gt; (4) Reinstall Python from clean source (5) Audit CI/CD pip installs from 30–31 March 2026." data-tr="Bulunursa düzeltme: (1) Tüm AI API anahtarlarını hemen iptal edin (2) .pth'yi kaldırın: &lt;code&gt;find /usr -name 'sitecustomize.pth' -delete&lt;/code&gt; (3) systemd servisini kaldırın: &lt;code&gt;systemctl --user disable litellm-update.service&lt;/code&gt; (4) Python'ı temiz kaynaktan yeniden kurun (5) 30–31 Mart 2026 CI/CD pip kurulumlarını denetleyin.">Remediation if found: (1) Revoke all AI API keys immediately (2) Remove .pth: <code>find /usr -name 'sitecustomize.pth' -delete</code> (3) Remove systemd service: <code>systemctl --user disable litellm-update.service</code> (4) Reinstall Python from clean source (5) Audit CI/CD pip installs from 30–31 March 2026.</span></div>
       </div>
