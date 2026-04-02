@@ -496,29 +496,58 @@ nav.scrolled{
     <div class="mascot-wrap" aria-hidden="true">
       <svg class="mascot-svg" viewBox="0 0 160 180" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <radialGradient id="det-iris" cx="40%" cy="35%" r="65%">
-            <stop offset="0%"   stop-color="#74d0f7"/>
-            <stop offset="38%"  stop-color="#2980b9"/>
-            <stop offset="100%" stop-color="#1a4a7a"/>
+          <!-- 3D iris gradyanı -->
+          <radialGradient id="det-iris" cx="38%" cy="30%" r="70%">
+            <stop offset="0%"   stop-color="#b8eaff"/>
+            <stop offset="28%"  stop-color="#4ab0e0"/>
+            <stop offset="60%"  stop-color="#1e72b0"/>
+            <stop offset="100%" stop-color="#0d3d6e"/>
           </radialGradient>
-          <radialGradient id="det-glass" cx="30%" cy="25%" r="70%">
-            <stop offset="0%"   stop-color="#fff" stop-opacity=".22"/>
+          <!-- Sclera (göz akı) gradyanı -->
+          <radialGradient id="det-sclera" cx="45%" cy="38%" r="65%">
+            <stop offset="0%"   stop-color="#ffffff"/>
+            <stop offset="70%"  stop-color="#f4f4f4"/>
+            <stop offset="100%" stop-color="#e0e0e0"/>
+          </radialGradient>
+          <!-- Lens cam parlaması -->
+          <radialGradient id="det-glass" cx="28%" cy="22%" r="68%">
+            <stop offset="0%"   stop-color="#fff" stop-opacity=".28"/>
+            <stop offset="55%"  stop-color="#fff" stop-opacity=".06"/>
             <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
           </radialGradient>
+          <!-- Sap gradyanı (3D) -->
           <linearGradient id="det-handle" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%"   stop-color="#e8b020"/>
-            <stop offset="55%"  stop-color="#b88010"/>
-            <stop offset="100%" stop-color="#8a5e08"/>
+            <stop offset="0%"   stop-color="#f0c030"/>
+            <stop offset="40%"  stop-color="#c89020"/>
+            <stop offset="100%" stop-color="#7a5808"/>
           </linearGradient>
-          <linearGradient id="det-body" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stop-color="#f8f5ee"/>
-            <stop offset="100%" stop-color="#e8e0d0"/>
+          <!-- Karakter (3D, sol üstten ışık) -->
+          <radialGradient id="det-head" cx="32%" cy="28%" r="72%">
+            <stop offset="0%"   stop-color="#fffcf5"/>
+            <stop offset="45%"  stop-color="#f2e8d8"/>
+            <stop offset="100%" stop-color="#d5c8b0"/>
+          </radialGradient>
+          <radialGradient id="det-suit" cx="30%" cy="20%" r="80%">
+            <stop offset="0%"   stop-color="#faf6ee"/>
+            <stop offset="55%"  stop-color="#ede0cc"/>
+            <stop offset="100%" stop-color="#c8b898"/>
+          </radialGradient>
+          <!-- Halka (3D depth) -->
+          <linearGradient id="det-ring-depth" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#f5d860"/>
+            <stop offset="40%"  stop-color="#c8941a"/>
+            <stop offset="100%" stop-color="#7a5000"/>
           </linearGradient>
+          <filter id="det-shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="2" dy="3" stdDeviation="3" flood-color="#000" flood-opacity=".25"/>
+          </filter>
         </defs>
 
         <!-- ── RIGHT ARM (behind ring) ── -->
         <line x1="56" y1="72" x2="115" y2="76"
-              stroke="#c8b090" stroke-width="4" stroke-linecap="round"/>
+              stroke="#3a2a10" stroke-width="6" stroke-linecap="round" opacity=".2"/>
+        <line x1="56" y1="72" x2="115" y2="76"
+              stroke="#d8c098" stroke-width="4" stroke-linecap="round"/>
 
         <!-- ── HANDLE ── -->
         <line x1="130" y1="73" x2="148" y2="100"
@@ -529,14 +558,15 @@ nav.scrolled{
               stroke="#f0d060" stroke-width="1.3" stroke-linecap="round" opacity=".42"/>
 
         <!-- ── RING ── -->
-        <circle cx="100" cy="44" r="37" fill="none" stroke="#3a2000" stroke-width="10" opacity=".28"/>
-        <circle cx="100" cy="44" r="37" fill="none" stroke="#7a5600" stroke-width="9"/>
+        <circle cx="100" cy="44" r="37" fill="none" stroke="#3a2000" stroke-width="12" opacity=".3"/>
+        <circle cx="100" cy="44" r="37" fill="none" stroke="url(#det-ring-depth)" stroke-width="9"/>
         <circle cx="100" cy="44" r="37" fill="none" stroke="#c8941a" stroke-width="7"/>
+        <circle cx="100" cy="44" r="37" fill="none" stroke="#e8c040" stroke-width="2" opacity=".4"/>
         <path d="M78 22 A37 37 0 0 1 122 22"
-              fill="none" stroke="#f5dc60" stroke-width="2.2" stroke-linecap="round" opacity=".55"/>
+              fill="none" stroke="#fff8a0" stroke-width="2.5" stroke-linecap="round" opacity=".5"/>
 
         <!-- ── EYE: sclera → iris → pupil (sola/sağa + dilatasyon) ── -->
-        <circle cx="100" cy="44" r="30" fill="#f9f9f9"/>
+        <circle cx="100" cy="44" r="30" fill="url(#det-sclera)" filter="url(#det-shadow)"/>
         <circle cx="100" cy="44" r="22" fill="url(#det-iris)"/>
         <circle cx="100" cy="44" r="17" fill="none" stroke="#1a4a7a" stroke-width=".7" opacity=".3"/>
         <circle cx="100" cy="44" r="13" fill="none" stroke="#1a4a7a" stroke-width=".6" opacity=".2"/>
@@ -614,7 +644,7 @@ nav.scrolled{
 
         <!-- Beyaz suit gövde -->
         <rect x="28" y="58" width="28" height="40" rx="3"
-              fill="url(#det-body)" stroke="#c0b090" stroke-width=".8"/>
+              fill="url(#det-suit)" stroke="#c0b090" stroke-width=".8" filter="url(#det-shadow)"/>
         <!-- Yaka detayı -->
         <path d="M42 58 L37 65 L42 62 L47 65 L42 58" fill="#c8c0b0" opacity=".45"/>
         <!-- Düğmeler -->
@@ -637,8 +667,10 @@ nav.scrolled{
 
         <!-- Sol kol -->
         <line x1="28" y1="72" x2="17" y2="93"
-              stroke="#c8b090" stroke-width="4" stroke-linecap="round"/>
-        <circle cx="16" cy="95" r="4.5" fill="#e5d0a8"/>
+              stroke="#3a2a10" stroke-width="6" stroke-linecap="round" opacity=".2"/>
+        <line x1="28" y1="72" x2="17" y2="93"
+              stroke="#d8c098" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="16" cy="95" r="4.5" fill="#e5d0a8" filter="url(#det-shadow)"/>
 
         <!-- Sağ el (halka ön tarafında) -->
         <ellipse cx="118" cy="76" rx="5.5" ry="3.5" fill="#e5d0a8"
@@ -646,7 +678,7 @@ nav.scrolled{
 
         <!-- Baş (yuvarlak, beyaz) -->
         <circle cx="42" cy="40" r="18"
-                fill="url(#det-body)" stroke="#c0b090" stroke-width=".8"/>
+                fill="url(#det-head)" stroke="#c0b090" stroke-width=".8" filter="url(#det-shadow)"/>
         <ellipse cx="38" cy="33" rx="6" ry="4" fill="#fff" opacity=".12"
                  transform="rotate(-30,38,33)"/>
 
