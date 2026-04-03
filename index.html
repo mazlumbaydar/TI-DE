@@ -1216,6 +1216,19 @@ function applyTheme(theme) {
 }
 function toggleTheme() { applyTheme(currentTheme==='dark'?'light':'dark'); }
 
+/* ─── CALENDAR: scroll to date group ─── */
+function scrollToGroup(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const y = el.getBoundingClientRect().top + window.scrollY - 80;
+  window.scrollTo({ top: y, behavior: 'smooth' });
+}
+
+/* ─── CALENDAR: view toggle ─── */
+function setView(view) {
+  document.querySelectorAll('.cvt').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+}
+
 /* ─── INIT ─── */
 applyTheme(currentTheme);
 applyLang(currentLang);
