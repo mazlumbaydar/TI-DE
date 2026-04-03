@@ -387,74 +387,160 @@ nav.scrolled{
 .rcard-arr{color:var(--accent2);font-weight:800;font-size:.82rem}
 
 /* ═══════════════════════════════════
-   MILESTONE TRACK (Option C)
+   DATE DIVIDER STRIP
 ═══════════════════════════════════ */
-.milestone-track{
-  position:relative;
-  display:flex;align-items:center;
-  padding:28px 0 20px;
-  margin-bottom:32px;
-  overflow-x:auto;
-  scrollbar-width:none;
+.date-divider{
+  display:flex;align-items:center;gap:14px;
+  margin:32px 0 18px;
+  animation:fadeSlideIn .4s ease both;
 }
-.milestone-track::-webkit-scrollbar{display:none;}
-.milestone-track::before{
-  content:'';
-  position:absolute;top:50%;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,
-    var(--accent) 0%,
-    var(--accent2) 35%,
-    var(--border2) 80%,
-    transparent 100%
-  );
-  transform:translateY(-12px);
-  pointer-events:none;
+.date-divider:first-child{margin-top:0;}
+@keyframes fadeSlideIn{
+  from{opacity:0;transform:translateY(6px);}
+  to{opacity:1;transform:translateY(0);}
 }
-.ms-node{
-  position:relative;z-index:1;
-  display:flex;flex-direction:column;align-items:center;
-  flex-shrink:0;padding:0 40px;
-  cursor:default;
+.dd-line{
+  flex:1;height:1px;
+  background:linear-gradient(90deg,transparent,var(--border2) 40%,transparent);
 }
-.ms-dot{
-  width:18px;height:18px;border-radius:50%;
+.dd-pill{
+  display:flex;align-items:center;gap:8px;
+  background:var(--surface2);
+  border:1px solid var(--border2);
+  border-radius:24px;
+  padding:5px 14px 5px 10px;
+  white-space:nowrap;flex-shrink:0;
+  transition:border-color .2s,background .2s;
+}
+.dd-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--border2);flex-shrink:0;
+  transition:background .3s,box-shadow .3s;
+}
+.dd-dot.active{
   background:var(--accent);
-  border:3px solid var(--bg);
-  box-shadow:0 0 0 2px var(--accent),0 0 14px rgba(232,93,4,.45);
-  margin-bottom:10px;
-  transition:transform .2s;
+  animation:dd-pulse 2.4s ease-in-out infinite;
 }
-.ms-dot.past{
-  background:var(--border2);
-  box-shadow:0 0 0 2px var(--border2);
+@keyframes dd-pulse{
+  0%,100%{box-shadow:0 0 0 2px rgba(232,93,4,.25),0 0 8px rgba(232,93,4,.35);}
+  50%{box-shadow:0 0 0 5px rgba(232,93,4,.1),0 0 18px rgba(232,93,4,.55);}
 }
-.ms-dot.latest{
-  background:var(--accent);
-  animation:ms-pulse 2.4s ease-in-out infinite;
+.dd-text{
+  font-size:.75rem;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--text2);
 }
-@keyframes ms-pulse{
-  0%,100%{box-shadow:0 0 0 2px var(--accent),0 0 14px rgba(232,93,4,.45);}
-  50%{box-shadow:0 0 0 5px rgba(232,93,4,.15),0 0 24px rgba(232,93,4,.55);}
+.dd-cnt{
+  font-size:.67rem;color:var(--muted);
+  padding-left:6px;border-left:1px solid var(--border2);margin-left:2px;
 }
-.ms-label{
-  font-size:.72rem;font-weight:700;letter-spacing:.07em;
+
+/* ═══════════════════════════════════
+   REPORTS LAYOUT (main + sidebar)
+═══════════════════════════════════ */
+.reports-layout{
+  display:flex;gap:24px;align-items:flex-start;
+}
+.reports-main{flex:1;min-width:0;}
+.date-group{margin-bottom:8px;}
+.reports-layout .rg{
+  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+}
+
+/* ═══════════════════════════════════
+   CALENDAR SIDEBAR
+═══════════════════════════════════ */
+.cal-sidebar{
+  width:216px;flex-shrink:0;
+  position:sticky;top:84px;
+  align-self:flex-start;
+}
+@media(max-width:960px){.cal-sidebar{display:none;}}
+
+.cal-widget{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;
+  box-shadow:0 2px 16px var(--shadow);
+}
+
+/* View toggle */
+.cal-view-toggle{
+  display:flex;border-bottom:1px solid var(--border);
+}
+.cvt{
+  flex:1;padding:9px 4px;
+  background:transparent;border:none;
+  font-size:.65rem;font-weight:700;letter-spacing:.1em;
   text-transform:uppercase;color:var(--muted);
-  white-space:nowrap;
-  transition:color .2s;
+  cursor:pointer;
+  transition:background .15s,color .15s;
+  border-right:1px solid var(--border);
 }
-.ms-node.active .ms-label{color:var(--accent2);}
-.ms-sub{
-  font-size:.65rem;color:var(--muted2);
-  margin-top:2px;white-space:nowrap;
+.cvt:last-child{border-right:none;}
+.cvt:hover{background:var(--surface2);}
+.cvt.active{background:rgba(232,93,4,.08);color:var(--accent2);}
+
+/* Cal header */
+.cal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 12px 4px;
 }
-.ms-node.active .ms-sub{color:var(--accent);font-weight:600;}
-.ms-connector{
-  flex:1;min-width:48px;height:2px;
-  background:var(--border2);
-  position:relative;z-index:0;
+.cal-month-label{
+  font-size:.72rem;font-weight:700;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--text2);
 }
-.ms-connector.lit{
-  background:linear-gradient(90deg,var(--accent2),var(--border2));
+.cal-nav{
+  font-size:.65rem;color:var(--muted);cursor:pointer;
+  padding:3px 7px;border-radius:5px;user-select:none;
+  transition:color .15s,background .15s;
+}
+.cal-nav:hover{color:var(--accent);background:var(--surface2);}
+
+/* Day labels */
+.cal-days-hd{
+  display:grid;grid-template-columns:repeat(7,1fr);
+  padding:2px 8px 4px;border-bottom:1px solid var(--border);
+}
+.cal-day-lbl{
+  text-align:center;font-size:.55rem;font-weight:700;
+  color:var(--muted2);letter-spacing:.04em;text-transform:uppercase;
+  padding:3px 0;
+}
+
+/* Calendar grid */
+.cal-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);
+  gap:1px;padding:6px 8px 10px;
+}
+.cal-day{
+  aspect-ratio:1;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border-radius:6px;
+  font-size:.68rem;color:var(--muted2);
+  cursor:default;position:relative;
+  transition:background .15s,color .15s;
+  line-height:1;
+}
+.cal-day.empty{pointer-events:none;}
+.cal-day.has-reports{
+  color:var(--text2);font-weight:700;cursor:pointer;
+  background:rgba(232,93,4,.06);
+}
+.cal-day.has-reports:hover{
+  background:rgba(232,93,4,.18);color:var(--accent2);
+}
+.cal-day.is-latest{color:var(--accent);}
+.cal-day-num{font-size:.7rem;line-height:1;}
+.cal-dot-row{
+  display:flex;gap:2px;margin-top:2px;
+  align-items:center;justify-content:center;
+}
+.cal-dot{
+  width:4px;height:4px;border-radius:50%;
+  background:var(--accent2);opacity:.8;
+}
+.cal-dot.latest{
+  background:var(--accent);opacity:1;
+  animation:dd-pulse 2.4s ease-in-out infinite;
 }
 
 /* ═══════════════════════════════════
@@ -732,176 +818,264 @@ nav.scrolled{
     <h2 class="sec-title" data-en="Detection Reports" data-tr="Tespit Raporları">Detection Reports</h2>
   </div>
 
-  <!-- Featured -->
-  <a class="featured reveal" href="r/axios-sc/">
-    <div class="featured-body">
-      <div>
-        <div class="featured-label"><span class="dot"></span><span data-en="Latest Report" data-tr="Son Rapor">Latest Report</span></div>
-        <div style="margin-top:14px">
-          <div class="featured-cve">THREAT — npm Supply Chain · 31 March 2026</div>
-          <div class="featured-title" data-en="Axios npm Supply Chain RAT Dropper" data-tr="Axios npm Tedarik Zinciri RAT Dropper">Axios npm Supply Chain RAT Dropper</div>
+  <div class="reports-layout">
+
+    <!-- ── MAIN CONTENT ── -->
+    <div class="reports-main">
+
+      <!-- ┄ 31 Mar 2026 — Latest ┄ -->
+      <div class="date-group" id="g-31">
+        <div class="date-divider">
+          <div class="dd-line"></div>
+          <div class="dd-pill">
+            <span class="dd-dot active"></span>
+            <span class="dd-text" data-en="31 Mar 2026" data-tr="31 Mar 2026">31 Mar 2026</span>
+            <span class="dd-cnt" data-en="1 report · Latest" data-tr="1 Rapor · Son">1 report · Latest</span>
+          </div>
+          <div class="dd-line"></div>
         </div>
-        <p class="featured-desc" style="margin-top:12px"
-          data-en="Malicious axios@1.14.1 and @0.30.4 deliver a cross-platform Remote Access Trojan via XOR-obfuscated postinstall hooks. The payload fingerprints the host OS and deploys platform-specific binaries across Windows, Linux, and macOS. C2 beacon to sfrclak.com:8000 using a fake IE8 User-Agent."
-          data-tr="Kötü amaçlı axios@1.14.1 ve @0.30.4, XOR ile gizlenmiş postinstall hook'lar aracılığıyla çapraz platform Uzaktan Erişim Trojanı iletir. Payload, host OS'u tespit ederek Windows, Linux ve macOS'a özel ikili dosyalar dağıtır. Sahte IE8 User-Agent kullanarak sfrclak.com:8000'e C2 beacon gönderir.">
-          Malicious axios@1.14.1 and @0.30.4 deliver a cross-platform Remote Access Trojan via XOR-obfuscated postinstall hooks. The payload fingerprints the host OS and deploys platform-specific binaries across Windows, Linux, and macOS. C2 beacon to sfrclak.com:8000 using a fake IE8 User-Agent.
-        </p>
+        <a class="featured reveal" href="r/axios-sc/">
+          <div class="featured-body">
+            <div>
+              <div class="featured-label"><span class="dot"></span><span data-en="Latest Report" data-tr="Son Rapor">Latest Report</span></div>
+              <div style="margin-top:14px">
+                <div class="featured-cve">THREAT — npm Supply Chain · 31 March 2026</div>
+                <div class="featured-title" data-en="Axios npm Supply Chain RAT Dropper" data-tr="Axios npm Tedarik Zinciri RAT Dropper">Axios npm Supply Chain RAT Dropper</div>
+              </div>
+              <p class="featured-desc" style="margin-top:12px"
+                data-en="Malicious axios@1.14.1 and @0.30.4 deliver a cross-platform Remote Access Trojan via XOR-obfuscated postinstall hooks. The payload fingerprints the host OS and deploys platform-specific binaries across Windows, Linux, and macOS. C2 beacon to sfrclak.com:8000 using a fake IE8 User-Agent."
+                data-tr="Kötü amaçlı axios@1.14.1 ve @0.30.4, XOR ile gizlenmiş postinstall hook'lar aracılığıyla çapraz platform Uzaktan Erişim Trojanı iletir. Payload, host OS'u tespit ederek Windows, Linux ve macOS'a özel ikili dosyalar dağıtır. Sahte IE8 User-Agent kullanarak sfrclak.com:8000'e C2 beacon gönderir.">
+                Malicious axios@1.14.1 and @0.30.4 deliver a cross-platform Remote Access Trojan via XOR-obfuscated postinstall hooks. The payload fingerprints the host OS and deploys platform-specific binaries across Windows, Linux, and macOS. C2 beacon to sfrclak.com:8000 using a fake IE8 User-Agent.
+              </p>
+            </div>
+            <div class="featured-meta">
+              <div class="featured-tags">
+                <span class="ftag">T1195.001</span>
+                <span class="ftag">T1140</span>
+                <span class="ftag">T1059</span>
+                <span class="ftag">npm</span>
+                <span class="ftag">10 Platforms</span>
+              </div>
+              <span class="featured-arrow" data-en="Read report →" data-tr="Raporu Oku →">Read report →</span>
+            </div>
+          </div>
+          <div class="featured-visual">
+            <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="100" cy="100" r="80" stroke="#e85d04" stroke-width=".8" opacity=".2"/>
+              <circle cx="100" cy="100" r="58" stroke="#e85d04" stroke-width=".8" opacity=".3"/>
+              <circle cx="100" cy="100" r="36" stroke="#e85d04" stroke-width=".8" opacity=".4"/>
+              <circle cx="100" cy="100" r="14" stroke="#e85d04" stroke-width=".8" opacity=".6"/>
+              <line x1="100" y1="20" x2="100" y2="180" stroke="#e85d04" stroke-width=".6" opacity=".25"/>
+              <line x1="20" y1="100" x2="180" y2="100" stroke="#e85d04" stroke-width=".6" opacity=".25"/>
+              <line x1="43" y1="43" x2="157" y2="157" stroke="#e85d04" stroke-width=".4" opacity=".15"/>
+              <line x1="157" y1="43" x2="43" y2="157" stroke="#e85d04" stroke-width=".4" opacity=".15"/>
+              <path d="M100 100 L100 20 A80 80 0 0 1 180 100 Z" fill="rgba(232,93,4,0.07)">
+                <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="5s" repeatCount="indefinite"/>
+              </path>
+              <circle cx="140" cy="55" r="4" fill="#ef233c" opacity=".8">
+                <animate attributeName="opacity" values="0.8;0.2;0.8" dur="1.5s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="68" cy="130" r="3" fill="#ef233c" opacity=".6">
+                <animate attributeName="opacity" values="0.6;0.1;0.6" dur="2s" begin=".7s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="115" cy="78" r="2.5" fill="#f48c06" opacity=".7">
+                <animate attributeName="opacity" values="0.7;0.15;0.7" dur="1.8s" begin=".3s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="100" cy="100" r="4" fill="#f48c06"/>
+            </svg>
+          </div>
+        </a>
       </div>
-      <div class="featured-meta">
-        <div class="featured-tags">
-          <span class="ftag">T1195.001</span>
-          <span class="ftag">T1140</span>
-          <span class="ftag">T1059</span>
-          <span class="ftag">npm</span>
-          <span class="ftag">10 Platforms</span>
+
+      <!-- ┄ 27 Mar 2026 ┄ -->
+      <div class="date-group" id="g-27">
+        <div class="date-divider">
+          <div class="dd-line"></div>
+          <div class="dd-pill">
+            <span class="dd-dot"></span>
+            <span class="dd-text" data-en="27 Mar 2026" data-tr="27 Mar 2026">27 Mar 2026</span>
+            <span class="dd-cnt" data-en="2 reports" data-tr="2 rapor">2 reports</span>
+          </div>
+          <div class="dd-line"></div>
         </div>
-        <span class="featured-arrow" data-en="Read report →" data-tr="Raporu Oku →">Read report →</span>
-      </div>
-    </div>
-    <div class="featured-visual">
-      <!-- Radar SVG decoration -->
-      <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="100" cy="100" r="80" stroke="#e85d04" stroke-width=".8" opacity=".2"/>
-        <circle cx="100" cy="100" r="58" stroke="#e85d04" stroke-width=".8" opacity=".3"/>
-        <circle cx="100" cy="100" r="36" stroke="#e85d04" stroke-width=".8" opacity=".4"/>
-        <circle cx="100" cy="100" r="14" stroke="#e85d04" stroke-width=".8" opacity=".6"/>
-        <line x1="100" y1="20" x2="100" y2="180" stroke="#e85d04" stroke-width=".6" opacity=".25"/>
-        <line x1="20" y1="100" x2="180" y2="100" stroke="#e85d04" stroke-width=".6" opacity=".25"/>
-        <line x1="43" y1="43" x2="157" y2="157" stroke="#e85d04" stroke-width=".4" opacity=".15"/>
-        <line x1="157" y1="43" x2="43" y2="157" stroke="#e85d04" stroke-width=".4" opacity=".15"/>
-        <!-- sweep -->
-        <path d="M100 100 L100 20 A80 80 0 0 1 180 100 Z" fill="rgba(232,93,4,0.07)">
-          <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="5s" repeatCount="indefinite"/>
-        </path>
-        <!-- threat dots -->
-        <circle cx="140" cy="55" r="4" fill="#ef233c" opacity=".8">
-          <animate attributeName="opacity" values="0.8;0.2;0.8" dur="1.5s" repeatCount="indefinite"/>
-        </circle>
-        <circle cx="68" cy="130" r="3" fill="#ef233c" opacity=".6">
-          <animate attributeName="opacity" values="0.6;0.1;0.6" dur="2s" begin=".7s" repeatCount="indefinite"/>
-        </circle>
-        <circle cx="115" cy="78" r="2.5" fill="#f48c06" opacity=".7">
-          <animate attributeName="opacity" values="0.7;0.15;0.7" dur="1.8s" begin=".3s" repeatCount="indefinite"/>
-        </circle>
-        <circle cx="100" cy="100" r="4" fill="#f48c06"/>
-      </svg>
-    </div>
-  </a>
-
-  <!-- Milestone track -->
-  <div class="milestone-track">
-    <div class="ms-node">
-      <div class="ms-dot past"></div>
-      <div class="ms-label">26 Mar 2026</div>
-      <div class="ms-sub" data-en="1 report" data-tr="1 rapor">1 report</div>
-    </div>
-    <div class="ms-connector lit"></div>
-    <div class="ms-node">
-      <div class="ms-dot past" style="background:var(--accent2);box-shadow:0 0 0 2px var(--accent2),0 0 10px rgba(244,140,6,.35)"></div>
-      <div class="ms-label" style="color:var(--text2)">27 Mar 2026</div>
-      <div class="ms-sub" data-en="2 reports" data-tr="2 rapor">2 reports</div>
-    </div>
-    <div class="ms-connector"></div>
-    <div class="ms-node active">
-      <div class="ms-dot latest"></div>
-      <div class="ms-label" data-en="31 Mar 2026" data-tr="31 Mar 2026">31 Mar 2026</div>
-      <div class="ms-sub" data-en="Latest" data-tr="Son Rapor">Latest</div>
-    </div>
-    <div class="ms-connector" style="opacity:.3"></div>
-    <div class="ms-node" style="opacity:.3">
-      <div class="ms-dot past"></div>
-      <div class="ms-label" data-en="Coming Soon" data-tr="Yakında">Coming Soon</div>
-      <div class="ms-sub">—</div>
-    </div>
-  </div>
-
-  <!-- Report grid -->
-  <div class="rg">
-
-    <a class="rcard reveal" href="r/fmc-rce/" data-sev="critical">
-      <div class="rcard-top">
-        <div class="rcard-badges">
-          <span class="badge b-crit">CVSS 10.0</span>
-          <span class="badge b-kev">CISA KEV</span>
-          <span class="badge b-actor" data-en="Ransomware" data-tr="Fidye Yazılımı">Ransomware</span>
+        <div class="rg">
+          <a class="rcard reveal" href="r/fmc-rce/" data-sev="critical">
+            <div class="rcard-top">
+              <div class="rcard-badges">
+                <span class="badge b-crit">CVSS 10.0</span>
+                <span class="badge b-kev">CISA KEV</span>
+                <span class="badge b-actor" data-en="Ransomware" data-tr="Fidye Yazılımı">Ransomware</span>
+              </div>
+              <span class="rcard-date">27 Mar 2026</span>
+            </div>
+            <div>
+              <div class="rcard-cve">CVE-2026-20131</div>
+              <div class="rcard-title" data-en="Cisco Secure FMC — Unauthenticated RCE (Interlock Ransomware)" data-tr="Cisco Secure FMC — Kimlik Doğrulamasız RCE (Interlock Fidye Yazılımı)">Cisco Secure FMC — Unauthenticated RCE (Interlock Ransomware)</div>
+            </div>
+            <div class="rcard-desc"
+              data-en="Java deserialization zero-day exploited 36 days before public disclosure. Root RCE with no authentication — complete firewall policy control enables lateral movement across all managed network segments."
+              data-tr="Kamuya açıklanmadan 36 gün önce sömürülen Java deserialization zero-day. Kimlik doğrulamasız root RCE — tam güvenlik duvarı politika kontrolü, tüm yönetilen ağ segmentlerinde yanal hareketi mümkün kılar.">
+              Java deserialization zero-day exploited 36 days before public disclosure. Root RCE with no authentication — complete firewall policy control enables lateral movement across all managed network segments.
+            </div>
+            <div class="rcard-tags">
+              <span class="tag">T1190</span><span class="tag">T1486</span><span class="tag">T1562.004</span>
+              <span class="tag">Cisco FMC</span><span class="tag">Zero-Day</span>
+            </div>
+            <div class="rcard-foot">
+              <span class="rcard-foot-l" data-en="YARA + 9 platform rules" data-tr="YARA + 9 platform kuralı">YARA + 9 platform rules</span>
+              <span class="rcard-arr">→</span>
+            </div>
+          </a>
+          <a class="rcard reveal" href="r/langflow-rce/" data-sev="critical">
+            <div class="rcard-top">
+              <div class="rcard-badges">
+                <span class="badge b-crit">CVSS 9.8</span>
+                <span class="badge b-kev">CISA KEV</span>
+              </div>
+              <span class="rcard-date">27 Mar 2026</span>
+            </div>
+            <div>
+              <div class="rcard-cve">CVE-2026-33017</div>
+              <div class="rcard-title" data-en="Langflow AI Pipeline — Unauthenticated RCE" data-tr="Langflow AI Pipeline — Kimlik Doğrulamasız RCE">Langflow AI Pipeline — Unauthenticated RCE</div>
+            </div>
+            <div class="rcard-desc"
+              data-en="Python exec() code injection via unauthenticated build endpoint. Exploited within 20 hours of advisory publication by automated Nuclei scanners targeting OpenAI, Anthropic &amp; AWS API keys."
+              data-tr="Kimlik doğrulamasız build endpoint üzerinden Python exec() kod enjeksiyonu. Güvenlik bülteni yayınlanmasından 20 saat sonra otomatik Nuclei tarayıcıları tarafından OpenAI, Anthropic ve AWS API anahtarlarını hedef alarak sömürüldü.">
+              Python exec() code injection via unauthenticated build endpoint. Exploited within 20 hours of advisory publication by automated Nuclei scanners targeting OpenAI, Anthropic &amp; AWS API keys.
+            </div>
+            <div class="rcard-tags">
+              <span class="tag">T1059.006</span><span class="tag">T1552.001</span><span class="tag">T1041</span>
+              <span class="tag">Langflow</span><span class="tag">AI Infrastructure</span>
+            </div>
+            <div class="rcard-foot">
+              <span class="rcard-foot-l" data-en="YARA + 9 platform rules" data-tr="YARA + 9 platform kuralı">YARA + 9 platform rules</span>
+              <span class="rcard-arr">→</span>
+            </div>
+          </a>
         </div>
-        <span class="rcard-date">27 Mar 2026</span>
       </div>
-      <div>
-        <div class="rcard-cve">CVE-2026-20131</div>
-        <div class="rcard-title" data-en="Cisco Secure FMC — Unauthenticated RCE (Interlock Ransomware)" data-tr="Cisco Secure FMC — Kimlik Doğrulamasız RCE (Interlock Fidye Yazılımı)">Cisco Secure FMC — Unauthenticated RCE (Interlock Ransomware)</div>
-      </div>
-      <div class="rcard-desc"
-        data-en="Java deserialization zero-day exploited 36 days before public disclosure. Root RCE with no authentication — complete firewall policy control enables lateral movement across all managed network segments."
-        data-tr="Kamuya açıklanmadan 36 gün önce sömürülen Java deserialization zero-day. Kimlik doğrulamasız root RCE — tam güvenlik duvarı politika kontrolü, tüm yönetilen ağ segmentlerinde yanal hareketi mümkün kılar.">
-        Java deserialization zero-day exploited 36 days before public disclosure. Root RCE with no authentication — complete firewall policy control enables lateral movement across all managed network segments.
-      </div>
-      <div class="rcard-tags">
-        <span class="tag">T1190</span><span class="tag">T1486</span><span class="tag">T1562.004</span>
-        <span class="tag">Cisco FMC</span><span class="tag">Zero-Day</span>
-      </div>
-      <div class="rcard-foot">
-        <span class="rcard-foot-l" data-en="YARA + 9 platform rules" data-tr="YARA + 9 platform kuralı">YARA + 9 platform rules</span>
-        <span class="rcard-arr">→</span>
-      </div>
-    </a>
 
-    <a class="rcard reveal" href="r/langflow-rce/" data-sev="critical">
-      <div class="rcard-top">
-        <div class="rcard-badges">
-          <span class="badge b-crit">CVSS 9.8</span>
-          <span class="badge b-kev">CISA KEV</span>
+      <!-- ┄ 26 Mar 2026 ┄ -->
+      <div class="date-group" id="g-26">
+        <div class="date-divider">
+          <div class="dd-line"></div>
+          <div class="dd-pill">
+            <span class="dd-dot"></span>
+            <span class="dd-text" data-en="26 Mar 2026" data-tr="26 Mar 2026">26 Mar 2026</span>
+            <span class="dd-cnt" data-en="1 report" data-tr="1 rapor">1 report</span>
+          </div>
+          <div class="dd-line"></div>
         </div>
-        <span class="rcard-date">27 Mar 2026</span>
-      </div>
-      <div>
-        <div class="rcard-cve">CVE-2026-33017</div>
-        <div class="rcard-title" data-en="Langflow AI Pipeline — Unauthenticated RCE" data-tr="Langflow AI Pipeline — Kimlik Doğrulamasız RCE">Langflow AI Pipeline — Unauthenticated RCE</div>
-      </div>
-      <div class="rcard-desc"
-        data-en="Python exec() code injection via unauthenticated build endpoint. Exploited within 20 hours of advisory publication by automated Nuclei scanners targeting OpenAI, Anthropic &amp; AWS API keys."
-        data-tr="Kimlik doğrulamasız build endpoint üzerinden Python exec() kod enjeksiyonu. Güvenlik bülteni yayınlanmasından 20 saat sonra otomatik Nuclei tarayıcıları tarafından OpenAI, Anthropic ve AWS API anahtarlarını hedef alarak sömürüldü.">
-        Python exec() code injection via unauthenticated build endpoint. Exploited within 20 hours of advisory publication by automated Nuclei scanners targeting OpenAI, Anthropic &amp; AWS API keys.
-      </div>
-      <div class="rcard-tags">
-        <span class="tag">T1059.006</span><span class="tag">T1552.001</span><span class="tag">T1041</span>
-        <span class="tag">Langflow</span><span class="tag">AI Infrastructure</span>
-      </div>
-      <div class="rcard-foot">
-        <span class="rcard-foot-l" data-en="YARA + 9 platform rules" data-tr="YARA + 9 platform kuralı">YARA + 9 platform rules</span>
-        <span class="rcard-arr">→</span>
-      </div>
-    </a>
-
-    <a class="rcard reveal" href="r/litellm-sc/" data-sev="critical">
-      <div class="rcard-top">
-        <div class="rcard-badges">
-          <span class="badge b-crit">CVSS 9.4</span>
-          <span class="badge b-supply" data-en="Supply Chain" data-tr="Tedarik Zinciri">Supply Chain</span>
-          <span class="badge b-actor">TeamPCP</span>
+        <div class="rg">
+          <a class="rcard reveal" href="r/litellm-sc/" data-sev="critical">
+            <div class="rcard-top">
+              <div class="rcard-badges">
+                <span class="badge b-crit">CVSS 9.4</span>
+                <span class="badge b-supply" data-en="Supply Chain" data-tr="Tedarik Zinciri">Supply Chain</span>
+                <span class="badge b-actor">TeamPCP</span>
+              </div>
+              <span class="rcard-date">26 Mar 2026</span>
+            </div>
+            <div>
+              <div class="rcard-cve">CVE-2026-33634</div>
+              <div class="rcard-title" data-en="LiteLLM PyPI Supply Chain — TeamPCP Persistent Backdoor" data-tr="LiteLLM PyPI Tedarik Zinciri — TeamPCP Kalıcı Arka Kapı">LiteLLM PyPI Supply Chain — TeamPCP Persistent Backdoor</div>
+            </div>
+            <div class="rcard-desc"
+              data-en="TeamPCP backdoor in LiteLLM 1.82.7/1.82.8 (95M monthly downloads). Python .pth hook auto-executes at every interpreter startup. Systemd masquerade persistence. IOC table with VirusTotal query links."
+              data-tr="LiteLLM 1.82.7/1.82.8 içindeki TeamPCP arka kapısı (aylık 95M indirme). Python .pth hook, her yorumlayıcı başlangıcında otomatik çalışır. Systemd maskeli kalıcılık. VirusTotal sorgu linkleriyle IOC tablosu.">
+              TeamPCP backdoor in LiteLLM 1.82.7/1.82.8 (95M monthly downloads). Python .pth hook auto-executes at every interpreter startup. Systemd masquerade persistence. IOC table with VirusTotal query links.
+            </div>
+            <div class="rcard-tags">
+              <span class="tag">T1195.001</span><span class="tag">T1546.018</span><span class="tag">T1543.002</span>
+              <span class="tag">PyPI</span><span class="tag">AI Infrastructure</span>
+            </div>
+            <div class="rcard-foot">
+              <span class="rcard-foot-l" data-en="IOC table + VT links + 10 platform rules" data-tr="IOC tablosu + VT linkleri + 10 platform kuralı">IOC table + VT links + 10 platform rules</span>
+              <span class="rcard-arr">→</span>
+            </div>
+          </a>
         </div>
-        <span class="rcard-date">26 Mar 2026</span>
       </div>
-      <div>
-        <div class="rcard-cve">CVE-2026-33634</div>
-        <div class="rcard-title" data-en="LiteLLM PyPI Supply Chain — TeamPCP Persistent Backdoor" data-tr="LiteLLM PyPI Tedarik Zinciri — TeamPCP Kalıcı Arka Kapı">LiteLLM PyPI Supply Chain — TeamPCP Persistent Backdoor</div>
-      </div>
-      <div class="rcard-desc"
-        data-en="TeamPCP backdoor in LiteLLM 1.82.7/1.82.8 (95M monthly downloads). Python .pth hook auto-executes at every interpreter startup. Systemd masquerade persistence. IOC table with VirusTotal query links."
-        data-tr="LiteLLM 1.82.7/1.82.8 içindeki TeamPCP arka kapısı (aylık 95M indirme). Python .pth hook, her yorumlayıcı başlangıcında otomatik çalışır. Systemd maskeli kalıcılık. VirusTotal sorgu linkleriyle IOC tablosu.">
-        TeamPCP backdoor in LiteLLM 1.82.7/1.82.8 (95M monthly downloads). Python .pth hook auto-executes at every interpreter startup. Systemd masquerade persistence. IOC table with VirusTotal query links.
-      </div>
-      <div class="rcard-tags">
-        <span class="tag">T1195.001</span><span class="tag">T1546.018</span><span class="tag">T1543.002</span>
-        <span class="tag">PyPI</span><span class="tag">AI Infrastructure</span>
-      </div>
-      <div class="rcard-foot">
-        <span class="rcard-foot-l" data-en="IOC table + VT links + 10 platform rules" data-tr="IOC tablosu + VT linkleri + 10 platform kuralı">IOC table + VT links + 10 platform rules</span>
-        <span class="rcard-arr">→</span>
-      </div>
-    </a>
 
-  </div>
+    </div><!-- /reports-main -->
+
+    <!-- ── CALENDAR SIDEBAR ── -->
+    <aside class="cal-sidebar">
+      <div class="cal-widget">
+        <!-- View toggle -->
+        <div class="cal-view-toggle">
+          <button class="cvt active" data-view="daily" onclick="setView('daily')" title="Daily">D</button>
+          <button class="cvt" data-view="weekly" onclick="setView('weekly')" title="Weekly">W</button>
+          <button class="cvt" data-view="monthly" onclick="setView('monthly')" title="Monthly">M</button>
+          <button class="cvt" data-view="yearly" onclick="setView('yearly')" title="Yearly">Y</button>
+        </div>
+        <!-- Month header -->
+        <div class="cal-header">
+          <span class="cal-nav">◀</span>
+          <span class="cal-month-label" data-en="March 2026" data-tr="Mart 2026">March 2026</span>
+          <span class="cal-nav">▶</span>
+        </div>
+        <!-- Day labels -->
+        <div class="cal-days-hd">
+          <div class="cal-day-lbl">Su</div>
+          <div class="cal-day-lbl">Mo</div>
+          <div class="cal-day-lbl">Tu</div>
+          <div class="cal-day-lbl">We</div>
+          <div class="cal-day-lbl">Th</div>
+          <div class="cal-day-lbl">Fr</div>
+          <div class="cal-day-lbl">Sa</div>
+        </div>
+        <!-- Grid: March 2026 starts on Sunday -->
+        <div class="cal-grid">
+          <div class="cal-day"><span class="cal-day-num">1</span></div>
+          <div class="cal-day"><span class="cal-day-num">2</span></div>
+          <div class="cal-day"><span class="cal-day-num">3</span></div>
+          <div class="cal-day"><span class="cal-day-num">4</span></div>
+          <div class="cal-day"><span class="cal-day-num">5</span></div>
+          <div class="cal-day"><span class="cal-day-num">6</span></div>
+          <div class="cal-day"><span class="cal-day-num">7</span></div>
+          <div class="cal-day"><span class="cal-day-num">8</span></div>
+          <div class="cal-day"><span class="cal-day-num">9</span></div>
+          <div class="cal-day"><span class="cal-day-num">10</span></div>
+          <div class="cal-day"><span class="cal-day-num">11</span></div>
+          <div class="cal-day"><span class="cal-day-num">12</span></div>
+          <div class="cal-day"><span class="cal-day-num">13</span></div>
+          <div class="cal-day"><span class="cal-day-num">14</span></div>
+          <div class="cal-day"><span class="cal-day-num">15</span></div>
+          <div class="cal-day"><span class="cal-day-num">16</span></div>
+          <div class="cal-day"><span class="cal-day-num">17</span></div>
+          <div class="cal-day"><span class="cal-day-num">18</span></div>
+          <div class="cal-day"><span class="cal-day-num">19</span></div>
+          <div class="cal-day"><span class="cal-day-num">20</span></div>
+          <div class="cal-day"><span class="cal-day-num">21</span></div>
+          <div class="cal-day"><span class="cal-day-num">22</span></div>
+          <div class="cal-day"><span class="cal-day-num">23</span></div>
+          <div class="cal-day"><span class="cal-day-num">24</span></div>
+          <div class="cal-day"><span class="cal-day-num">25</span></div>
+          <div class="cal-day has-reports" onclick="scrollToGroup('g-26')" title="1 report">
+            <span class="cal-day-num">26</span>
+            <div class="cal-dot-row"><span class="cal-dot"></span></div>
+          </div>
+          <div class="cal-day has-reports" onclick="scrollToGroup('g-27')" title="2 reports">
+            <span class="cal-day-num">27</span>
+            <div class="cal-dot-row"><span class="cal-dot"></span><span class="cal-dot"></span></div>
+          </div>
+          <div class="cal-day"><span class="cal-day-num">28</span></div>
+          <div class="cal-day"><span class="cal-day-num">29</span></div>
+          <div class="cal-day"><span class="cal-day-num">30</span></div>
+          <div class="cal-day has-reports is-latest" onclick="scrollToGroup('g-31')" title="1 report · Latest">
+            <span class="cal-day-num">31</span>
+            <div class="cal-dot-row"><span class="cal-dot latest"></span></div>
+          </div>
+          <div class="cal-day empty"></div>
+          <div class="cal-day empty"></div>
+          <div class="cal-day empty"></div>
+          <div class="cal-day empty"></div>
+        </div>
+      </div>
+    </aside>
+
+  </div><!-- /reports-layout -->
 </div>
 
 <hr class="divider">
