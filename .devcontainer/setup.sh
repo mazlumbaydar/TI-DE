@@ -5,7 +5,7 @@
 echo "🚀 TI-DE ortamı kuruluyor..."
 
 # Claude hafızasını private repodan çek
-MEMORY_DIR="$HOME/.claude/projects/workspaces-TI-DE/memory"
+MEMORY_DIR="$HOME/.claude/projects/-workspaces-TI-DE/memory"
 mkdir -p "$MEMORY_DIR"
 
 if [ -n "$CLAUDE_ENV_TOKEN" ]; then
