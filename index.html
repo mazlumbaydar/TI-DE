@@ -588,6 +588,9 @@ nav.scrolled{
 .f-links{display:flex;gap:20px;flex-wrap:wrap}
 .f-links a{color:var(--muted);transition:color .2s}
 .f-links a:hover{color:var(--text)}
+.f-visitors{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--muted)}
+.f-vis-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;animation:dd-pulse 2.4s ease-in-out infinite}
+.f-vis-count{font-weight:700;color:var(--text2);min-width:16px}
 </style>
 </head>
 <body>
@@ -1141,8 +1144,16 @@ nav.scrolled{
       <a href="#reports" data-en="Reports" data-tr="Raporlar">Reports</a>
       <a href="#about" data-en="About" data-tr="Hakkında">About</a>
     </div>
+    <div class="f-visitors" id="f-visitors" title="Today's unique visitors">
+      <span class="f-vis-dot"></span>
+      <span class="f-vis-label" data-en="Today" data-tr="Bugün">Today</span>
+      <span class="f-vis-count" id="f-vis-count">—</span>
+    </div>
   </div>
 </div>
+
+<!-- ══ GOATCOUNTER ══ -->
+<script data-goatcounter="https://ti-de.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 
 <!-- ══ SCRIPT ══ -->
 <script>
@@ -1215,6 +1226,19 @@ function applyTheme(theme) {
   syncThemeLabel();
 }
 function toggleTheme() { applyTheme(currentTheme==='dark'?'light':'dark'); }
+
+/* ─── GOATCOUNTER: today's unique visitors ─── */
+(function(){
+  const el = document.getElementById('f-vis-count');
+  if (!el) return;
+  const today = new Date().toISOString().slice(0,10);
+  fetch('https://ti-de.goatcounter.com/api/v0/stats/hits?start='+today+'&end='+today, {
+    headers: { 'Content-Type': 'application/json' }
+  })
+  .then(r => r.ok ? r.json() : null)
+  .then(d => { if(d && d.total_visitors != null) el.textContent = d.total_visitors; })
+  .catch(() => {});
+})();
 
 /* ─── CALENDAR: scroll to date group ─── */
 function scrollToGroup(id) {
