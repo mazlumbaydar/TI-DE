@@ -1146,7 +1146,7 @@ nav.scrolled{
     </div>
     <div class="f-visitors" id="f-visitors" title="Today's unique visitors">
       <span class="f-vis-dot"></span>
-      <span class="f-vis-label" data-en="Today" data-tr="Bugün">Today</span>
+      <span class="f-vis-label" data-en="Visitors" data-tr="Ziyaretçi">Visitors</span>
       <span class="f-vis-count" id="f-vis-count">—</span>
     </div>
   </div>
@@ -1227,16 +1227,13 @@ function applyTheme(theme) {
 }
 function toggleTheme() { applyTheme(currentTheme==='dark'?'light':'dark'); }
 
-/* ─── GOATCOUNTER: today's unique visitors ─── */
+/* ─── GOATCOUNTER: unique visitor count ─── */
 (function(){
   const el = document.getElementById('f-vis-count');
   if (!el) return;
-  const today = new Date().toISOString().slice(0,10);
-  fetch('https://ti-de.goatcounter.com/api/v0/stats/hits?start='+today+'&end='+today, {
-    headers: { 'Content-Type': 'application/json' }
-  })
+  fetch('https://ti-de.goatcounter.com/counter//.json')
   .then(r => r.ok ? r.json() : null)
-  .then(d => { if(d && d.total_visitors != null) el.textContent = d.total_visitors; })
+  .then(d => { if(d && d.count_unique != null) el.textContent = d.count_unique; })
   .catch(() => {});
 })();
 
