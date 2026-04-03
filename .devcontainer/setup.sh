@@ -23,4 +23,7 @@ else
   echo "⚠️  CLAUDE_ENV_TOKEN secret bulunamadı"
 fi
 
+echo "📦 Claude Code kuruluyor..."
+npm install -g @anthropic-ai/claude-code 2>/dev/null && echo "✅ Claude Code kuruldu" || echo "⚠️  Claude Code kurulumu başarısız"
+
 echo "✅ TI-DE hazır! Claude Code ile çalışmaya başlayabilirsiniz."
