@@ -19,7 +19,8 @@
       "settings": {
         "editor.formatOnSave": true,
         "liveServer.settings.donotShowInfoMsg": true,
-        "terminal.integrated.defaultProfile.linux": "bash"
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "workbench.colorTheme": "Default Dark+"
       }
     }
   },

@@ -630,26 +630,6 @@ nav.scrolled{
             <!-- Cam parlaması overlay -->
             <circle cx="78" cy="78" r="42" fill="url(#mg-shine)"/>
 
-            <!-- ── WINK — lens ekrana baktığında (zoom pikinde) iris kapanır ── -->
-            <!-- Üst kapak: cx=78, cy=49 (iris üstü), ry büyüyünce merkezden geçip iris kapanır -->
-            <ellipse cx="78" cy="49" rx="30" ry="0" fill="#030310" opacity=".97">
-              <!-- Zoom 10s: zirve 1 → 30-42%, zirve 2 → 76-86% -->
-              <animate attributeName="ry"
-                values="0;0;31;31;0;0;31;0;0"
-                keyTimes="0;0.29;0.35;0.39;0.45;0.76;0.81;0.87;1"
-                dur="10s" repeatCount="indefinite"
-                calcMode="spline"
-                keySplines="0.5 0 0.5 1;0.35 0 0.45 1;0.5 0 0.5 1;0.45 0 0.35 1;0.5 0 0.5 1;0.35 0 0.45 1;0.45 0 0.35 1;0.5 0 0.5 1"/>
-            </ellipse>
-            <!-- Alt kapak: iris altından hafif iner (daha az) -->
-            <ellipse cx="78" cy="107" rx="30" ry="0" fill="#030310" opacity=".85">
-              <animate attributeName="ry"
-                values="0;0;20;20;0;0;20;0;0"
-                keyTimes="0;0.29;0.35;0.39;0.45;0.76;0.81;0.87;1"
-                dur="10s" repeatCount="indefinite"
-                calcMode="spline"
-                keySplines="0.5 0 0.5 1;0.35 0 0.45 1;0.5 0 0.5 1;0.45 0 0.35 1;0.5 0 0.5 1;0.35 0 0.45 1;0.45 0 0.35 1;0.5 0 0.5 1"/>
-            </ellipse>
 
           </g><!-- /mg-zoom -->
         </g><!-- /mg-float -->
