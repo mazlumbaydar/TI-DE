@@ -70,6 +70,10 @@
       <div class="stat-num" data-t="13">0</div>
       <div class="stat-label" data-en="Platforms" data-tr="Platform">Platforms</div>
     </div>
+    <div class="stat-card">
+      <div class="stat-num" id="visitCount">—</div>
+      <div class="stat-label" data-en="Readers" data-tr="Okuyucu">Readers</div>
+    </div>
   </div>
 
   <!-- ── BACKGROUND ── -->
@@ -1433,27 +1437,23 @@ function simAuto() {
 }
 
 // ── LANGUAGE TOGGLE ───────────────────────────────────────────
-function applyLang() {
-  const lang = localStorage.getItem('ti-de-report-lang') || 'en';
-  document.documentElement.lang = lang;
-  const isTR = lang === 'tr';
+let _lang = localStorage.getItem('ti-de-report-lang') || 'en';
 
-  document.getElementById('langBtn').textContent = isTR ? '🌐 EN' : '🌐 TR';
-
+function applyLang(lang) {
+  _lang = lang;
+  localStorage.setItem('ti-de-report-lang', lang);
+  const en = document.getElementById('langOptEn'); const tr = document.getElementById('langOptTr'); if(en) en.classList.toggle('active', lang==='en'); if(tr) tr.classList.toggle('active', lang==='tr');
   // Update all data-en / data-tr elements
   document.querySelectorAll('[data-en]').forEach(el => {
-    const val = isTR ? (el.dataset.tr || el.dataset.en) : el.dataset.en;
+    const val = lang === 'en' ? el.dataset.en : (el.dataset.tr || el.dataset.en);
     if (val) el.innerHTML = val;
   });
-
   // Refresh simulation text if active
   simApplyStep(simCurrentStep);
 }
 
 function toggleLang() {
-  const current = localStorage.getItem('ti-de-report-lang') || 'en';
-  localStorage.setItem('ti-de-report-lang', current === 'en' ? 'tr' : 'en');
-  applyLang();
+  applyLang(_lang === 'en' ? 'tr' : 'en');
 }
 
 // ── THEME TOGGLE ──────────────────────────────────────────────
@@ -1529,8 +1529,14 @@ function animateStats() {
 // ── INIT ──────────────────────────────────────────────────────
 (function init() {
   applyTheme();
-  applyLang();
+  applyLang(_lang);
   simApplyStep(0);
+
+  // Visit counter
+  fetch('https://api.countapi.xyz/hit/mazlumbaydar-tide/langflow-rce')
+    .then(r => r.json())
+    .then(d => { const el = document.getElementById('visitCount'); if (el && d.value) el.textContent = d.value.toLocaleString(); })
+    .catch(() => {});
 
   window.addEventListener('scroll', handleScroll, { passive: true });
   handleScroll();

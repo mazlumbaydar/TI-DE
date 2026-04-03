@@ -71,6 +71,10 @@
       <div class="stat-num" data-t="13">0</div>
       <div class="stat-label" data-en="Detection Platforms" data-tr="Tespit Platformu">Detection Platforms</div>
     </div>
+    <div class="stat-card">
+      <div class="stat-num" id="visitCount">—</div>
+      <div class="stat-label" data-en="Readers" data-tr="Okuyucu">Readers</div>
+    </div>
   </div>
 
   <!-- ══ BACKGROUND ══ -->
@@ -1481,6 +1485,12 @@ function atvRun() {
 ═══════════════════════════════════════════════════════════════ */
 applyTheme(_theme);
 applyLang(_lang);
+
+// Visit counter
+fetch('https://api.countapi.xyz/hit/mazlumbaydar-tide/fmc-rce')
+  .then(r => r.json())
+  .then(d => { const el = document.getElementById('visitCount'); if (el && d.value) el.textContent = d.value.toLocaleString(); })
+  .catch(() => {});
 
 // Scroll-to-top button
 (function() {

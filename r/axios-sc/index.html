@@ -24,16 +24,16 @@
 <nav id="nav">
   <a class="nav-brand" href="https://mazlumbaydar.github.io/TI-DE/">TI-DE</a>
   <ul class="nav-links">
-    <li><a href="#overview">Overview</a></li>
-    <li><a href="#attack-chain">Attack</a></li>
-    <li><a href="#simulation">Simulation</a></li>
-    <li><a href="#timeline">Timeline</a></li>
-    <li><a href="#iocs">IOCs</a></li>
-    <li><a href="#detection">Detection</a></li>
-    <li><a href="#recommendations">Response</a></li>
+    <li><a href="#overview"    data-en="Overview"   data-tr="Genel Bakış">Overview</a></li>
+    <li><a href="#attack-chain" data-en="Attack"    data-tr="Saldırı">Attack</a></li>
+    <li><a href="#simulation"  data-en="Simulation" data-tr="Simülasyon">Simulation</a></li>
+    <li><a href="#timeline"    data-en="Timeline"   data-tr="Zaman Çizelgesi">Timeline</a></li>
+    <li><a href="#iocs"        data-en="IOCs"       data-tr="IOC'ler">IOCs</a></li>
+    <li><a href="#detection"   data-en="Detection"  data-tr="Tespit">Detection</a></li>
+    <li><a href="#recommendations" data-en="Response" data-tr="Yanıt">Response</a></li>
   </ul>
   <div class="nav-controls">
-    <button class="nav-ctrl" id="langBtn" onclick="toggleLang()" title="Toggle language">🌐 EN</button>
+    <div class="lang-switcher"><button class="lang-opt" id="langOptEn" onclick="applyLang('en')"><img src="https://flagcdn.com/gb.svg" alt="EN" class="flag-img">EN</button><button class="lang-opt" id="langOptTr" onclick="applyLang('tr')"><img src="https://flagcdn.com/tr.svg" alt="TR" class="flag-img">TR</button></div>
     <button class="nav-ctrl" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">☀ Light</button>
   </div>
 </nav>
@@ -74,6 +74,10 @@
     <div class="stat-card">
       <div class="stat-num" data-t="13">0</div>
       <div class="stat-label" id="sl3">Detection Platforms</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="visitCount">—</div>
+      <div class="stat-label" id="sl4">Readers</div>
     </div>
   </div>
 
@@ -1571,14 +1575,16 @@ const TR = {
   sl1: 'Hedef İşletim Sistemi',
   sl2: 'MITRE TTP',
   sl3: 'Tespit Platformu',
+  sl4: 'Okuyucu',
 };
 
 function applyLang(lang) {
   _lang = lang;
   localStorage.setItem(LANG_KEY, lang);
-  
+
+  const enBtn = document.getElementById('langOptEn'); const trBtn = document.getElementById('langOptTr'); if(enBtn) enBtn.classList.toggle('active', lang==='en'); if(trBtn) trBtn.classList.toggle('active', lang==='tr');
+
   if (lang === 'tr') {
-    btn.innerHTML = '&#127988; TR';
     // ID-based translations
     Object.keys(TR).forEach(id => {
       const el = document.getElementById(id);
@@ -1589,7 +1595,6 @@ function applyLang(lang) {
       if (el.dataset.tr) el.innerHTML = el.dataset.tr;
     });
   } else {
-    btn.innerHTML = '&#127760; EN';
     Object.keys(_enCache).forEach(id => {
       const el = document.getElementById(id);
       if (el) el.innerHTML = _enCache[id];
@@ -1611,13 +1616,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el) _enCache[id] = el.innerHTML;
   });
   if (_lang === 'tr') applyLang('tr');
-  updateLangBtn();
+  else applyLang('en');
 });
-
-function updateLangBtn() {
-  
-  if (btn) btn.innerHTML = _lang === 'tr' ? '&#127988; TR' : '&#127760; EN';
-}
 
 
 function toggleLang() {
@@ -1646,6 +1646,12 @@ function toggleTheme() {
   const saved = localStorage.getItem(THEME_KEY) || 'dark';
   applyTheme(saved);
 })();
+
+// Visit counter
+fetch('https://api.countapi.xyz/hit/mazlumbaydar-tide/axios-sc')
+  .then(r => r.json())
+  .then(d => { const el = document.getElementById('visitCount'); if (el && d.value) el.textContent = d.value.toLocaleString(); })
+  .catch(() => {});
 
 /* ═══════════════════════════════════════════════════════════════
    SCROLL PROGRESS BAR
