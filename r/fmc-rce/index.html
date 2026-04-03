@@ -32,7 +32,7 @@
     <li><a href="#recommendations" data-en="Response" data-tr="Yanıt">Response</a></li>
   </ul>
   <div class="nav-controls">
-    <button id="langBtn"  class="nav-ctrl" onclick="toggleLang()"  title="Toggle language">&#127760; TR</button>
+    <div class="lang-switcher"><button class="lang-opt" id="langOptEn" onclick="applyLang('en')"><img src="https://flagcdn.com/gb.svg" alt="EN" class="flag-img">EN</button><button class="lang-opt" id="langOptTr" onclick="applyLang('tr')"><img src="https://flagcdn.com/tr.svg" alt="TR" class="flag-img">TR</button></div>
     <button id="themeBtn" class="nav-ctrl" onclick="toggleTheme()" title="Toggle theme">&#9728; Light</button>
   </div>
 </nav>
@@ -1186,8 +1186,8 @@ let _theme = localStorage.getItem(THEME_KEY) || 'dark';
 function applyLang(lang) {
   _lang = lang;
   localStorage.setItem(LANG_KEY, lang);
-  const btn = document.getElementById('langBtn');
-  if (btn) btn.innerHTML = '&#127760; ' + (lang === 'en' ? 'TR' : 'EN');
+  
+  const en = document.getElementById('langOptEn'); const tr = document.getElementById('langOptTr'); if(en) en.classList.toggle('active', lang==='en'); if(tr) tr.classList.toggle('active', lang==='tr');
   document.querySelectorAll('[data-en]').forEach(el => {
     const val = lang === 'en' ? el.dataset.en : (el.dataset.tr || el.dataset.en);
     el.innerHTML = val;

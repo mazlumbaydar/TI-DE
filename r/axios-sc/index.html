@@ -1576,7 +1576,7 @@ const TR = {
 function applyLang(lang) {
   _lang = lang;
   localStorage.setItem(LANG_KEY, lang);
-  const btn = document.getElementById('langBtn');
+  
   if (lang === 'tr') {
     btn.innerHTML = '&#127988; TR';
     // ID-based translations
@@ -1615,7 +1615,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function updateLangBtn() {
-  const btn = document.getElementById('langBtn');
+  
   if (btn) btn.innerHTML = _lang === 'tr' ? '&#127988; TR' : '&#127760; EN';
 }
 
