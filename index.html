@@ -157,6 +157,7 @@ nav.scrolled{
 .lang-opt:first-child{border-right:1px solid var(--border);}
 .lang-opt:hover{color:var(--text);background:var(--surface2);}
 .lang-opt.active{color:var(--accent2);background:rgba(232,93,4,.09);}
+.flag-img{width:18px;height:13px;object-fit:cover;border-radius:2px;flex-shrink:0;}
 
 /* ═══════════════════════════════════
    HERO — EDITORIAL STYLE
@@ -656,8 +657,8 @@ nav.scrolled{
     </div>
     <div class="nav-controls">
       <div class="lang-switcher">
-        <button class="lang-opt" id="langOptEn" onclick="applyLang('en')">🇬🇧 EN</button>
-        <button class="lang-opt" id="langOptTr" onclick="applyLang('tr')">🇹🇷 TR</button>
+        <button class="lang-opt" id="langOptEn" onclick="applyLang('en')"><img src="https://flagcdn.com/gb.svg" alt="EN" class="flag-img">EN</button>
+        <button class="lang-opt" id="langOptTr" onclick="applyLang('tr')"><img src="https://flagcdn.com/tr.svg" alt="TR" class="flag-img">TR</button>
       </div>
       <button class="ctrl" id="themeBtn" onclick="toggleTheme()">
         <span id="themeIcon">🌙</span><span id="themeLabel">Dark</span>
