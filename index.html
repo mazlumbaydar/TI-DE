@@ -387,56 +387,74 @@ nav.scrolled{
 .rcard-arr{color:var(--accent2);font-weight:800;font-size:.82rem}
 
 /* ═══════════════════════════════════
-   DATE TAB STRIP (Option B)
+   MILESTONE TRACK (Option C)
 ═══════════════════════════════════ */
-.date-strip{
-  display:flex;align-items:stretch;gap:0;
-  margin-bottom:20px;
-  border:1px solid var(--border);border-radius:12px;
-  overflow:hidden;background:var(--surface);
-}
-.date-tab{
-  flex:1;padding:13px 18px;cursor:pointer;
-  border-right:1px solid var(--border);
-  transition:background .2s;
-  background:transparent;border-top:none;border-bottom:none;border-left:none;
-  text-align:left;color:inherit;
+.milestone-track{
   position:relative;
+  display:flex;align-items:center;
+  padding:28px 0 20px;
+  margin-bottom:32px;
+  overflow-x:auto;
+  scrollbar-width:none;
 }
-.date-tab:last-child{border-right:none;}
-.date-tab:hover{background:var(--surface2);}
-.date-tab.active{background:rgba(232,93,4,.08);}
-.date-tab.active::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
+.milestone-track::-webkit-scrollbar{display:none;}
+.milestone-track::before{
+  content:'';
+  position:absolute;top:50%;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,
+    var(--accent) 0%,
+    var(--accent2) 35%,
+    var(--border2) 80%,
+    transparent 100%
+  );
+  transform:translateY(-12px);
+  pointer-events:none;
 }
-.dtab-top{display:flex;align-items:center;gap:7px;margin-bottom:3px;}
-.dtab-dot{
-  width:7px;height:7px;border-radius:50%;
-  background:var(--muted2);flex-shrink:0;
-  transition:background .2s,box-shadow .2s;
+.ms-node{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;align-items:center;
+  flex-shrink:0;padding:0 40px;
+  cursor:default;
 }
-.date-tab.active .dtab-dot{
+.ms-dot{
+  width:18px;height:18px;border-radius:50%;
   background:var(--accent);
-  box-shadow:0 0 0 2px rgba(232,93,4,.25),0 0 8px rgba(232,93,4,.4);
+  border:3px solid var(--bg);
+  box-shadow:0 0 0 2px var(--accent),0 0 14px rgba(232,93,4,.45);
+  margin-bottom:10px;
+  transition:transform .2s;
 }
-.dtab-date{
-  font-size:.75rem;font-weight:700;letter-spacing:.06em;
-  text-transform:uppercase;color:var(--text2);
+.ms-dot.past{
+  background:var(--border2);
+  box-shadow:0 0 0 2px var(--border2);
+}
+.ms-dot.latest{
+  background:var(--accent);
+  animation:ms-pulse 2.4s ease-in-out infinite;
+}
+@keyframes ms-pulse{
+  0%,100%{box-shadow:0 0 0 2px var(--accent),0 0 14px rgba(232,93,4,.45);}
+  50%{box-shadow:0 0 0 5px rgba(232,93,4,.15),0 0 24px rgba(232,93,4,.55);}
+}
+.ms-label{
+  font-size:.72rem;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--muted);
+  white-space:nowrap;
   transition:color .2s;
 }
-.date-tab.active .dtab-date{color:var(--accent2);}
-.dtab-count{font-size:.68rem;color:var(--muted);padding-left:14px;}
-
-/* fade-out for filtered cards */
-.rcard.tl-hidden{
-  opacity:.22;pointer-events:none;
-  transform:translateY(0) !important;
-  transition:opacity .3s;
+.ms-node.active .ms-label{color:var(--accent2);}
+.ms-sub{
+  font-size:.65rem;color:var(--muted2);
+  margin-top:2px;white-space:nowrap;
 }
-.rcard.tl-visible{
-  opacity:1;pointer-events:auto;
-  transition:opacity .3s;
+.ms-node.active .ms-sub{color:var(--accent);font-weight:600;}
+.ms-connector{
+  flex:1;min-width:48px;height:2px;
+  background:var(--border2);
+  position:relative;z-index:0;
+}
+.ms-connector.lit{
+  background:linear-gradient(90deg,var(--accent2),var(--border2));
 }
 
 /* ═══════════════════════════════════
@@ -770,26 +788,37 @@ nav.scrolled{
     </div>
   </a>
 
-  <!-- Date tab strip -->
-  <div class="date-strip" id="dateStrip">
-    <button class="date-tab active" data-filter="all" onclick="filterByDate(this,'all')">
-      <div class="dtab-top"><span class="dtab-dot"></span><span class="dtab-date" data-en="All Reports" data-tr="Tüm Raporlar">All Reports</span></div>
-      <div class="dtab-count" data-en="3 reports" data-tr="3 rapor">3 reports</div>
-    </button>
-    <button class="date-tab" data-filter="27-mar" onclick="filterByDate(this,'27-mar')">
-      <div class="dtab-top"><span class="dtab-dot"></span><span class="dtab-date">27 Mar 2026</span></div>
-      <div class="dtab-count" data-en="2 reports" data-tr="2 rapor">2 reports</div>
-    </button>
-    <button class="date-tab" data-filter="26-mar" onclick="filterByDate(this,'26-mar')">
-      <div class="dtab-top"><span class="dtab-dot"></span><span class="dtab-date">26 Mar 2026</span></div>
-      <div class="dtab-count" data-en="1 report" data-tr="1 rapor">1 report</div>
-    </button>
+  <!-- Milestone track -->
+  <div class="milestone-track">
+    <div class="ms-node">
+      <div class="ms-dot past"></div>
+      <div class="ms-label">26 Mar 2026</div>
+      <div class="ms-sub" data-en="1 report" data-tr="1 rapor">1 report</div>
+    </div>
+    <div class="ms-connector lit"></div>
+    <div class="ms-node">
+      <div class="ms-dot past" style="background:var(--accent2);box-shadow:0 0 0 2px var(--accent2),0 0 10px rgba(244,140,6,.35)"></div>
+      <div class="ms-label" style="color:var(--text2)">27 Mar 2026</div>
+      <div class="ms-sub" data-en="2 reports" data-tr="2 rapor">2 reports</div>
+    </div>
+    <div class="ms-connector"></div>
+    <div class="ms-node active">
+      <div class="ms-dot latest"></div>
+      <div class="ms-label" data-en="31 Mar 2026" data-tr="31 Mar 2026">31 Mar 2026</div>
+      <div class="ms-sub" data-en="Latest" data-tr="Son Rapor">Latest</div>
+    </div>
+    <div class="ms-connector" style="opacity:.3"></div>
+    <div class="ms-node" style="opacity:.3">
+      <div class="ms-dot past"></div>
+      <div class="ms-label" data-en="Coming Soon" data-tr="Yakında">Coming Soon</div>
+      <div class="ms-sub">—</div>
+    </div>
   </div>
 
   <!-- Report grid -->
   <div class="rg">
 
-    <a class="rcard reveal tl-visible" href="r/fmc-rce/" data-sev="critical" data-date="27-mar">
+    <a class="rcard reveal" href="r/fmc-rce/" data-sev="critical">
       <div class="rcard-top">
         <div class="rcard-badges">
           <span class="badge b-crit">CVSS 10.0</span>
@@ -817,7 +846,7 @@ nav.scrolled{
       </div>
     </a>
 
-    <a class="rcard reveal tl-visible" href="r/langflow-rce/" data-sev="critical" data-date="27-mar">
+    <a class="rcard reveal" href="r/langflow-rce/" data-sev="critical">
       <div class="rcard-top">
         <div class="rcard-badges">
           <span class="badge b-crit">CVSS 9.8</span>
@@ -844,7 +873,7 @@ nav.scrolled{
       </div>
     </a>
 
-    <a class="rcard reveal tl-visible" href="r/litellm-sc/" data-sev="critical" data-date="26-mar">
+    <a class="rcard reveal" href="r/litellm-sc/" data-sev="critical">
       <div class="rcard-top">
         <div class="rcard-badges">
           <span class="badge b-crit">CVSS 9.4</span>
@@ -947,20 +976,6 @@ nav.scrolled{
 let currentLang  = localStorage.getItem('ti-de-lang')  || 'en';
 let currentTheme = localStorage.getItem('ti-de-theme') || 'dark';
 
-/* ─── DATE FILTER ─── */
-function filterByDate(btn, filter) {
-  document.querySelectorAll('.date-tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('.rg .rcard').forEach(card => {
-    if (filter === 'all' || card.dataset.date === filter) {
-      card.classList.remove('tl-hidden');
-      card.classList.add('tl-visible');
-    } else {
-      card.classList.add('tl-hidden');
-      card.classList.remove('tl-visible');
-    }
-  });
-}
 
 /* ─── PROGRESS ─── */
 window.addEventListener('scroll', () => {
