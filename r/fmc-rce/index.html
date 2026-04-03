@@ -249,7 +249,7 @@
       </div>
 
       <div class="atk-detail" id="atkDetail">
-        <div class="atk-detail-step" id="atkDetailStep">&#9654; SIMULATION READY</div>
+        <div class="atk-detail-step" id="atkDetailStep" data-en="&#9654; SIMULATION READY" data-tr="&#9654; SİMÜLASYON HAZIR">&#9654; SIMULATION READY</div>
         <div class="atk-detail-text" id="atkDetailText" data-en="Press AUTO to run the full attack chain automatically, or use STEP to advance manually. Click any node or dot to jump to that step." data-tr="Tam saldırı zincirini otomatik olarak çalıştırmak için AUTO'ya basın veya manuel olarak ilerlemek için STEP kullanın.">Press AUTO to run the full attack chain automatically, or use STEP to advance manually. Click any node or dot to jump to that step.</div>
         <div class="atk-explain" id="atkExplain" style="display:none">
           <div class="atk-explain-label" data-en="&#128064; Why this evades detection" data-tr="&#128064; Bu neden tespiti atlatıyor">&#128064; Why this evades detection</div>
@@ -1377,8 +1377,8 @@ function atvReset() {
   document.querySelectorAll('.atk-dot').forEach(d => d.className = 'atk-dot');
   const detStep = document.getElementById('atkDetailStep');
   const detText = document.getElementById('atkDetailText');
-  if (detStep) detStep.textContent = '\u25ba SIMULATION READY';
-  if (detText) detText.textContent = 'Press AUTO to run the full attack chain automatically, or use STEP to advance manually. Click any node or dot to jump to that step.';
+  if (detStep) detStep.textContent = (_lang === 'tr') ? '\u25ba S\u0130M\u00dcLASYON HAZIR' : '\u25ba SIMULATION READY';
+  if (detText) detText.textContent = (_lang === 'tr') ? 'Tam sald\u0131r\u0131 zincirini otomatik olarak \u00e7al\u0131\u015ft\u0131rmak i\u00e7in AUTO\u2019ya bas\u0131n veya manuel olarak ilerlemek i\u00e7in STEP kullan\u0131n.' : 'Press AUTO to run the full attack chain automatically, or use STEP to advance manually. Click any node or dot to jump to that step.';
   const expl = document.getElementById('atkExplain');
   if (expl) expl.style.display = 'none';
   const cmdEl = document.querySelector('.atk-detail-cmd');

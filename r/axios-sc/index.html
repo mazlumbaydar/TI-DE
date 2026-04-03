@@ -251,7 +251,7 @@
       </div>
 
       <div class="atk-detail" id="atkDetail">
-        <div class="atk-detail-step" id="atkDetailStep">&#9654; SIMULATION READY</div>
+        <div class="atk-detail-step" id="atkDetailStep" data-en="&#9654; SIMULATION READY" data-tr="&#9654; SİMÜLASYON HAZIR">&#9654; SIMULATION READY</div>
         <div class="atk-detail-text" id="atkDetailText">Press AUTO to run the full attack chain automatically, or use STEP to advance manually. Click any node or dot to jump to that step.</div>
       </div>
 
@@ -1807,8 +1807,8 @@ function atvReset() {
     if (pkt) pkt.classList.remove('run');
   });
   document.querySelectorAll('.atk-dot').forEach(d => d.className = 'atk-dot');
-  document.getElementById('atkDetailStep').textContent = '\u25ba SIMULATION READY';
-  document.getElementById('atkDetailText').textContent = 'Press AUTO to run the full attack chain automatically, or use STEP to advance manually. Click any node or dot to jump to that step.';
+  document.getElementById('atkDetailStep').textContent = (_lang === 'tr') ? '\u25ba S\u0130M\u00dcLASYON HAZIR' : '\u25ba SIMULATION READY';
+  document.getElementById('atkDetailText').textContent = (_lang === 'tr') ? 'Tam sald\u0131r\u0131 zincirini otomatik olarak \u00e7al\u0131\u015ft\u0131rmak i\u00e7in AUTO\u2019ya bas\u0131n veya manuel olarak ilerlemek i\u00e7in STEP kullan\u0131n.' : 'Press AUTO to run the full attack chain automatically, or use STEP to advance manually. Click any node or dot to jump to that step.';
   const expl = document.getElementById('atkExplain');
   if (expl) expl.style.display = 'none';
   document.getElementById('atkProgLabel').textContent = '0 / ' + ATV_STEPS.length;
