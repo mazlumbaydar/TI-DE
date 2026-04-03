@@ -387,6 +387,59 @@ nav.scrolled{
 .rcard-arr{color:var(--accent2);font-weight:800;font-size:.82rem}
 
 /* ═══════════════════════════════════
+   DATE TAB STRIP (Option B)
+═══════════════════════════════════ */
+.date-strip{
+  display:flex;align-items:stretch;gap:0;
+  margin-bottom:20px;
+  border:1px solid var(--border);border-radius:12px;
+  overflow:hidden;background:var(--surface);
+}
+.date-tab{
+  flex:1;padding:13px 18px;cursor:pointer;
+  border-right:1px solid var(--border);
+  transition:background .2s;
+  background:transparent;border-top:none;border-bottom:none;border-left:none;
+  text-align:left;color:inherit;
+  position:relative;
+}
+.date-tab:last-child{border-right:none;}
+.date-tab:hover{background:var(--surface2);}
+.date-tab.active{background:rgba(232,93,4,.08);}
+.date-tab.active::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+}
+.dtab-top{display:flex;align-items:center;gap:7px;margin-bottom:3px;}
+.dtab-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--muted2);flex-shrink:0;
+  transition:background .2s,box-shadow .2s;
+}
+.date-tab.active .dtab-dot{
+  background:var(--accent);
+  box-shadow:0 0 0 2px rgba(232,93,4,.25),0 0 8px rgba(232,93,4,.4);
+}
+.dtab-date{
+  font-size:.75rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--text2);
+  transition:color .2s;
+}
+.date-tab.active .dtab-date{color:var(--accent2);}
+.dtab-count{font-size:.68rem;color:var(--muted);padding-left:14px;}
+
+/* fade-out for filtered cards */
+.rcard.tl-hidden{
+  opacity:.22;pointer-events:none;
+  transform:translateY(0) !important;
+  transition:opacity .3s;
+}
+.rcard.tl-visible{
+  opacity:1;pointer-events:auto;
+  transition:opacity .3s;
+}
+
+/* ═══════════════════════════════════
    METHODOLOGY PILLARS
 ═══════════════════════════════════ */
 .pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
@@ -717,10 +770,26 @@ nav.scrolled{
     </div>
   </a>
 
+  <!-- Date tab strip -->
+  <div class="date-strip" id="dateStrip">
+    <button class="date-tab active" data-filter="all" onclick="filterByDate(this,'all')">
+      <div class="dtab-top"><span class="dtab-dot"></span><span class="dtab-date" data-en="All Reports" data-tr="Tüm Raporlar">All Reports</span></div>
+      <div class="dtab-count" data-en="3 reports" data-tr="3 rapor">3 reports</div>
+    </button>
+    <button class="date-tab" data-filter="27-mar" onclick="filterByDate(this,'27-mar')">
+      <div class="dtab-top"><span class="dtab-dot"></span><span class="dtab-date">27 Mar 2026</span></div>
+      <div class="dtab-count" data-en="2 reports" data-tr="2 rapor">2 reports</div>
+    </button>
+    <button class="date-tab" data-filter="26-mar" onclick="filterByDate(this,'26-mar')">
+      <div class="dtab-top"><span class="dtab-dot"></span><span class="dtab-date">26 Mar 2026</span></div>
+      <div class="dtab-count" data-en="1 report" data-tr="1 rapor">1 report</div>
+    </button>
+  </div>
+
   <!-- Report grid -->
   <div class="rg">
 
-    <a class="rcard reveal" href="r/fmc-rce/" data-sev="critical">
+    <a class="rcard reveal tl-visible" href="r/fmc-rce/" data-sev="critical" data-date="27-mar">
       <div class="rcard-top">
         <div class="rcard-badges">
           <span class="badge b-crit">CVSS 10.0</span>
@@ -748,7 +817,7 @@ nav.scrolled{
       </div>
     </a>
 
-    <a class="rcard reveal" href="r/langflow-rce/" data-sev="critical">
+    <a class="rcard reveal tl-visible" href="r/langflow-rce/" data-sev="critical" data-date="27-mar">
       <div class="rcard-top">
         <div class="rcard-badges">
           <span class="badge b-crit">CVSS 9.8</span>
@@ -775,7 +844,7 @@ nav.scrolled{
       </div>
     </a>
 
-    <a class="rcard reveal" href="r/litellm-sc/" data-sev="critical">
+    <a class="rcard reveal tl-visible" href="r/litellm-sc/" data-sev="critical" data-date="26-mar">
       <div class="rcard-top">
         <div class="rcard-badges">
           <span class="badge b-crit">CVSS 9.4</span>
@@ -877,6 +946,21 @@ nav.scrolled{
 /* ─── STATE ─── */
 let currentLang  = localStorage.getItem('ti-de-lang')  || 'en';
 let currentTheme = localStorage.getItem('ti-de-theme') || 'dark';
+
+/* ─── DATE FILTER ─── */
+function filterByDate(btn, filter) {
+  document.querySelectorAll('.date-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.rg .rcard').forEach(card => {
+    if (filter === 'all' || card.dataset.date === filter) {
+      card.classList.remove('tl-hidden');
+      card.classList.add('tl-visible');
+    } else {
+      card.classList.add('tl-hidden');
+      card.classList.remove('tl-visible');
+    }
+  });
+}
 
 /* ─── PROGRESS ─── */
 window.addEventListener('scroll', () => {

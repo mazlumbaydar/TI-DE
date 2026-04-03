@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Timeline Design Options — TI-DE Preview</title>
+<style>
+:root {
+  --accent:  #e85d04;
+  --accent2: #f48c06;
+  --red:     #dc2626;
+  --blue:    #3b82f6;
+  --green:   #10b981;
+  --bg:      #080a0d;
+  --bg2:     #0d1018;
+  --surface: #111520;
+  --surface2:#161b28;
+  --border:  #1e2535;
+  --border2: #2a3347;
+  --text:    #eef2f8;
+  --text2:   #c8d0de;
+  --muted:   #7a8899;
+  --muted2:  #4a5568;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Segoe UI',system-ui,sans-serif;
+  background:var(--bg);color:var(--text);
+  padding:40px 20px;
+}
+h1{
+  text-align:center;font-size:1.4rem;font-weight:800;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:8px;
+}
+.subtitle{text-align:center;color:var(--muted);font-size:.85rem;margin-bottom:60px}
+
+/* ── OPTION LABEL ── */
+.opt-label{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:6px;padding:6px 16px;
+  font-size:.75rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--accent);
+  margin-bottom:28px;
+}
+.opt-label span{color:var(--muted);font-weight:400;letter-spacing:.04em}
+
+/* ═══════════════════════════════════════════
+   OPTION A — Klasik Dikey (Sol Çizgi + Nokta)
+═══════════════════════════════════════════ */
+.option{max-width:900px;margin:0 auto 80px}
+
+/* A: Timeline wrapper */
+.tl-a{
+  position:relative;
+  padding-left:36px;
+}
+.tl-a::before{
+  content:'';
+  position:absolute;left:7px;top:12px;bottom:12px;width:2px;
+  background:linear-gradient(
+    to bottom,
+    var(--accent) 0%,
+    var(--accent2) 40%,
+    var(--border2) 100%
+  );
+  border-radius:2px;
+}
+
+/* Date group */
+.tl-group{margin-bottom:40px;}
+
+/* Date node */
+.tl-node{
+  position:relative;
+  display:flex;align-items:center;
+  gap:14px;
+  margin-bottom:16px;
+}
+.tl-node::before{
+  content:'';
+  position:absolute;left:-29px;
+  width:14px;height:14px;border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 0 3px rgba(232,93,4,0.2), 0 0 12px rgba(232,93,4,0.4);
+  flex-shrink:0;
+}
+.tl-date{
+  font-size:.8rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--accent2);
+  background:var(--surface2);
+  border:1px solid var(--border2);
+  padding:4px 12px;border-radius:20px;
+}
+.tl-count{
+  font-size:.72rem;color:var(--muted);
+  font-weight:500;
+}
+
+/* Cards row */
+.tl-cards{display:flex;flex-wrap:wrap;gap:12px;}
+
+.tl-card{
+  flex:1;min-width:240px;max-width:380px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;padding:16px;
+  cursor:pointer;
+  transition:border-color .2s, transform .15s;
+  text-decoration:none;color:inherit;
+}
+.tl-card:hover{
+  border-color:var(--accent);
+  transform:translateY(-2px);
+}
+.tl-card-top{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:8px;
+}
+.badge{
+  font-size:.65rem;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;padding:2px 7px;border-radius:4px;
+}
+.b-crit{background:rgba(220,38,38,.15);color:#f87171;border:1px solid rgba(220,38,38,.3)}
+.b-threat{background:rgba(232,93,4,.15);color:#fb923c;border:1px solid rgba(232,93,4,.3)}
+.b-kev{background:rgba(59,130,246,.12);color:#93c5fd;border:1px solid rgba(59,130,246,.3)}
+.tl-cve{font-size:.72rem;color:var(--accent);font-weight:700;letter-spacing:.06em;margin-bottom:4px;}
+.tl-title{font-size:.88rem;font-weight:600;color:var(--text);line-height:1.35;}
+.tl-plat{font-size:.7rem;color:var(--muted);margin-top:8px;}
+
+/* Featured variant */
+.tl-card.featured{
+  border-color:rgba(232,93,4,0.35);
+  background:linear-gradient(135deg, rgba(232,93,4,0.05) 0%, var(--surface) 60%);
+  flex-basis:100%;max-width:100%;
+}
+.tl-card.featured .tl-title{font-size:1rem;}
+.feat-bar{
+  width:3px;height:100%;
+  background:linear-gradient(to bottom,var(--accent),var(--accent2));
+  border-radius:2px;
+  position:absolute;left:0;top:0;
+}
+
+
+/* ═══════════════════════════════════════════
+   OPTION B — Pill Şerit (Yatay tarih sekmeleri)
+═══════════════════════════════════════════ */
+.tl-b-strip{
+  display:flex;align-items:stretch;
+  gap:0;
+  margin-bottom:32px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+  background:var(--surface);
+}
+.tl-b-item{
+  flex:1;padding:14px 16px;
+  cursor:pointer;
+  border-right:1px solid var(--border);
+  transition:background .2s;
+  position:relative;
+}
+.tl-b-item:last-child{border-right:none;}
+.tl-b-item.active{
+  background:rgba(232,93,4,0.1);
+}
+.tl-b-item.active::after{
+  content:'';
+  position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+}
+.tl-b-date{
+  font-size:.75rem;font-weight:700;color:var(--accent2);
+  letter-spacing:.06em;text-transform:uppercase;
+}
+.tl-b-count{
+  font-size:.7rem;color:var(--muted);margin-top:2px;
+}
+.tl-b-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--accent);
+  display:inline-block;margin-right:6px;
+  box-shadow:0 0 6px rgba(232,93,4,0.5);
+}
+.tl-b-dot.dim{background:var(--muted2);box-shadow:none;}
+
+.b-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;}
+
+/* ═══════════════════════════════════════════
+   OPTION C — Milestone Şerit (Yatay scroll)
+═══════════════════════════════════════════ */
+.tl-c-track{
+  display:flex;
+  align-items:center;
+  gap:0;
+  padding:20px 0;
+  margin-bottom:32px;
+  position:relative;
+  overflow-x:auto;
+}
+.tl-c-track::before{
+  content:'';
+  position:absolute;top:50%;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,
+    var(--accent) 0%,
+    var(--accent2) 33%,
+    var(--border2) 100%
+  );
+  transform:translateY(-50%);
+  z-index:0;
+}
+.tl-c-node{
+  position:relative;
+  display:flex;flex-direction:column;align-items:center;
+  flex-shrink:0;
+  z-index:1;
+  padding:0 32px;
+}
+.tl-c-dot{
+  width:20px;height:20px;border-radius:50%;
+  background:var(--accent);
+  border:3px solid var(--bg);
+  box-shadow:0 0 0 2px var(--accent), 0 0 16px rgba(232,93,4,0.5);
+  margin-bottom:10px;
+}
+.tl-c-dot.old{
+  background:var(--border2);
+  box-shadow:0 0 0 2px var(--border2);
+}
+.tl-c-label{
+  font-size:.72rem;font-weight:700;color:var(--accent2);
+  letter-spacing:.06em;text-transform:uppercase;
+  white-space:nowrap;
+}
+.tl-c-sub{font-size:.65rem;color:var(--muted);margin-top:2px;white-space:nowrap;}
+
+/* connector line between nodes */
+.tl-c-line{
+  flex:1;min-width:60px;height:2px;
+  background:var(--border2);
+  z-index:0;
+}
+
+.c-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;}
+
+/* ─── common card (B & C) ─── */
+.rcard-s{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:16px;
+  transition:border-color .2s, transform .15s;
+}
+.rcard-s:hover{border-color:var(--accent);transform:translateY(-2px);}
+.rc-badge{display:flex;gap:6px;margin-bottom:8px;}
+.rc-cve{font-size:.72rem;color:var(--accent);font-weight:700;letter-spacing:.06em;margin-bottom:4px;}
+.rc-title{font-size:.88rem;font-weight:600;line-height:1.35;}
+.rc-plat{font-size:.7rem;color:var(--muted);margin-top:8px;}
+
+/* dividers */
+.divider{
+  border:none;border-top:1px solid var(--border);
+  margin:80px 0;
+}
+</style>
+</head>
+<body>
+
+<h1>Timeline Tasarım Seçenekleri</h1>
+<p class="subtitle">TI-DE Report Section — 3 farklı tasarım konsepti · Sitenin renk sistemi kullanılmıştır</p>
+
+<!-- ═══════════════════════════════
+     OPTION A
+═══════════════════════════════ -->
+<div class="option">
+  <div class="opt-label">Seçenek A <span>— Klasik Dikey Timeline (Sol çizgi + nokta grupları)</span></div>
+
+  <div class="tl-a">
+
+    <!-- 31 Mar -->
+    <div class="tl-group">
+      <div class="tl-node">
+        <div class="tl-date">31 Mart 2026</div>
+        <span class="tl-count">1 rapor</span>
+      </div>
+      <div class="tl-cards">
+        <div class="tl-card featured" style="position:relative;padding-left:20px">
+          <div class="feat-bar"></div>
+          <div class="tl-card-top">
+            <div style="display:flex;gap:6px">
+              <span class="badge b-threat">THREAT</span>
+              <span class="badge b-kev">Supply Chain</span>
+            </div>
+          </div>
+          <div class="tl-cve">THREAT — npm Supply Chain</div>
+          <div class="tl-title">Axios npm Supply Chain RAT Dropper</div>
+          <div class="tl-plat">10 platform · YARA + Sigma + 8 kural</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 27 Mar -->
+    <div class="tl-group">
+      <div class="tl-node">
+        <div class="tl-date">27 Mart 2026</div>
+        <span class="tl-count">2 rapor</span>
+      </div>
+      <div class="tl-cards">
+        <div class="tl-card">
+          <div class="tl-card-top">
+            <div style="display:flex;gap:6px">
+              <span class="badge b-crit">CVSS 10.0</span>
+              <span class="badge b-kev">CISA KEV</span>
+            </div>
+          </div>
+          <div class="tl-cve">CVE-2026-20131</div>
+          <div class="tl-title">Cisco Secure FMC — Unauthenticated RCE</div>
+          <div class="tl-plat">YARA + 9 platform kuralı</div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-card-top">
+            <div style="display:flex;gap:6px">
+              <span class="badge b-crit">CVSS 9.8</span>
+              <span class="badge b-kev">CISA KEV</span>
+            </div>
+          </div>
+          <div class="tl-cve">CVE-2026-33017</div>
+          <div class="tl-title">Langflow AI Pipeline — Unauthenticated RCE</div>
+          <div class="tl-plat">YARA + 9 platform kuralı</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 26 Mar -->
+    <div class="tl-group">
+      <div class="tl-node">
+        <div class="tl-date">26 Mart 2026</div>
+        <span class="tl-count">1 rapor</span>
+      </div>
+      <div class="tl-cards">
+        <div class="tl-card">
+          <div class="tl-card-top">
+            <div style="display:flex;gap:6px">
+              <span class="badge b-threat">THREAT</span>
+            </div>
+          </div>
+          <div class="tl-cve">CVE-2026-33634</div>
+          <div class="tl-title">LiteLLM PyPI Supply Chain — TeamTNT</div>
+          <div class="tl-plat">10 platform kuralı</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════
+     OPTION B
+═══════════════════════════════ -->
+<div class="option">
+  <div class="opt-label">Seçenek B <span>— Yatay Tarih Sekmeleri (Filtre gibi çalışır)</span></div>
+
+  <!-- Date strip -->
+  <div class="tl-b-strip">
+    <div class="tl-b-item active">
+      <div class="tl-b-date"><span class="tl-b-dot"></span>31 Mar 2026</div>
+      <div class="tl-b-count">1 rapor</div>
+    </div>
+    <div class="tl-b-item">
+      <div class="tl-b-date"><span class="tl-b-dot"></span>27 Mar 2026</div>
+      <div class="tl-b-count">2 rapor</div>
+    </div>
+    <div class="tl-b-item">
+      <div class="tl-b-date"><span class="tl-b-dot dim"></span>26 Mar 2026</div>
+      <div class="tl-b-count">1 rapor</div>
+    </div>
+  </div>
+
+  <!-- Cards for active date -->
+  <div class="b-grid">
+    <div class="rcard-s">
+      <div class="rc-badge">
+        <span class="badge b-threat">THREAT</span>
+        <span class="badge b-kev">Supply Chain</span>
+      </div>
+      <div class="rc-cve">THREAT — npm Supply Chain</div>
+      <div class="rc-title">Axios npm Supply Chain RAT Dropper</div>
+      <div class="rc-plat">10 platform · 31 March 2026</div>
+    </div>
+    <div class="rcard-s" style="opacity:.35;pointer-events:none">
+      <div class="rc-badge"><span class="badge b-crit">CVSS 10.0</span></div>
+      <div class="rc-cve">CVE-2026-20131</div>
+      <div class="rc-title">Cisco FMC RCE</div>
+      <div class="rc-plat">27 March 2026</div>
+    </div>
+    <div class="rcard-s" style="opacity:.35;pointer-events:none">
+      <div class="rc-badge"><span class="badge b-crit">CVSS 9.8</span></div>
+      <div class="rc-cve">CVE-2026-33017</div>
+      <div class="rc-title">Langflow AI RCE</div>
+      <div class="rc-plat">27 March 2026</div>
+    </div>
+  </div>
+  <p style="font-size:.75rem;color:var(--muted);margin-top:12px;font-style:italic">
+    * Sekmeye tıklanınca o tarihe ait kartlar aktif olur, diğerleri solar
+  </p>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════
+     OPTION C
+═══════════════════════════════ -->
+<div class="option">
+  <div class="opt-label">Seçenek C <span>— Yatay Milestone Şeriti (Scroll) + Alt Grid</span></div>
+
+  <!-- Horizontal track -->
+  <div class="tl-c-track">
+    <div class="tl-c-node">
+      <div class="tl-c-dot old"></div>
+      <div class="tl-c-label">26 Mar</div>
+      <div class="tl-c-sub">1 rapor</div>
+    </div>
+    <div class="tl-c-line"></div>
+    <div class="tl-c-node">
+      <div class="tl-c-dot old" style="background:var(--accent2);box-shadow:0 0 0 2px var(--accent2), 0 0 12px rgba(244,140,6,0.4)"></div>
+      <div class="tl-c-label">27 Mar</div>
+      <div class="tl-c-sub">2 rapor</div>
+    </div>
+    <div class="tl-c-line"></div>
+    <div class="tl-c-node">
+      <div class="tl-c-dot"></div>
+      <div class="tl-c-label" style="color:var(--accent)">31 Mar</div>
+      <div class="tl-c-sub" style="color:var(--accent2)">SON RAPOR</div>
+    </div>
+    <div class="tl-c-line" style="opacity:.3"></div>
+    <div class="tl-c-node" style="opacity:.3">
+      <div class="tl-c-dot old"></div>
+      <div class="tl-c-label">Yakında</div>
+      <div class="tl-c-sub">—</div>
+    </div>
+  </div>
+
+  <!-- Cards below -->
+  <div class="c-grid">
+    <div class="rcard-s" style="border-color:rgba(232,93,4,0.35)">
+      <div class="rc-badge">
+        <span class="badge b-threat">THREAT</span>
+        <span class="badge b-kev">Supply Chain</span>
+      </div>
+      <div class="rc-cve">THREAT — npm · 31 Mar 2026</div>
+      <div class="rc-title">Axios npm Supply Chain RAT Dropper</div>
+      <div class="rc-plat">10 platform kuralı</div>
+    </div>
+    <div class="rcard-s">
+      <div class="rc-badge"><span class="badge b-crit">CVSS 10.0</span><span class="badge b-kev">KEV</span></div>
+      <div class="rc-cve">CVE-2026-20131 · 27 Mar 2026</div>
+      <div class="rc-title">Cisco Secure FMC — Unauthenticated RCE</div>
+      <div class="rc-plat">YARA + 9 platform kuralı</div>
+    </div>
+    <div class="rcard-s">
+      <div class="rc-badge"><span class="badge b-crit">CVSS 9.8</span><span class="badge b-kev">KEV</span></div>
+      <div class="rc-cve">CVE-2026-33017 · 27 Mar 2026</div>
+      <div class="rc-title">Langflow AI Pipeline — Unauthenticated RCE</div>
+      <div class="rc-plat">YARA + 9 platform kuralı</div>
+    </div>
+    <div class="rcard-s">
+      <div class="rc-badge"><span class="badge b-threat">THREAT</span></div>
+      <div class="rc-cve">CVE-2026-33634 · 26 Mar 2026</div>
+      <div class="rc-title">LiteLLM PyPI Supply Chain — TeamTNT</div>
+      <div class="rc-plat">10 platform kuralı</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
