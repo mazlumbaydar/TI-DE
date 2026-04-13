@@ -28,6 +28,7 @@
     <li><a href="#attack-chain" data-en="Attack"     data-tr="Saldırı">Attack</a></li>
     <li><a href="#simulation"   data-en="Simulation" data-tr="Simülasyon">Simulation</a></li>
     <li><a href="#timeline"     data-en="Timeline"   data-tr="Zaman Çizelgesi">Timeline</a></li>
+    <li><a href="#iocs"         data-en="IOCs"       data-tr="IOC'ler">IOCs</a></li>
     <li><a href="#detection"    data-en="Detection"  data-tr="Tespit">Detection</a></li>
     <li><a href="#recommendations" data-en="Response" data-tr="Yanıt">Response</a></li>
   </ul>
@@ -67,7 +68,7 @@
       <div class="stat-label" id="sl1">MITRE TTPs</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num" data-t="11">0</div>
+      <div class="stat-num" data-t="20">0</div>
       <div class="stat-label" id="sl2">Detection Rules</div>
     </div>
     <div class="stat-card">
@@ -372,6 +373,81 @@ Child process of services.exe with SYSTEM token and GUID parent service name</di
     </div>
   </div>
 
+  <!-- ══ IOCs ══ -->
+  <div class="reveal" id="iocs">
+    <div class="section-label" id="iocLabel">Threat Intelligence</div>
+    <h2 id="iocTitle">Indicators of Compromise</h2>
+    <p id="iocDesc">BlueHammer is a <strong>local privilege escalation exploit with no C2 infrastructure</strong> — there are no network IOCs (no domains, no IPs). Indicators are file-system and behavioral artifacts. TTP-based detection rules in the Detection section do NOT rely on these hashes — they remain effective against recompiled variants that bypass static signatures.</p>
+
+    <div class="ioc-scroll">
+      <table class="ioc-table">
+        <thead>
+          <tr><th>IOC / Artifact</th><th>Type</th><th>Confidence</th><th>Reference</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code class="ioc-val">c6baa5ec9ea2c2802a90acad5a53453d176a02e04a31ac8e9b7b34b5e3329b84</code></td>
+            <td><span class="ioc-type">SHA256 — PoC Binary</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td><a class="vt-btn" href="https://www.virustotal.com/gui/file/c6baa5ec9ea2c2802a90acad5a53453d176a02e04a31ac8e9b7b34b5e3329b84" target="_blank" rel="noopener">VT &nearr;</a></td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">c885f1e77f08428cc628d9cb86cf4a10c09dd3b1</code></td>
+            <td><span class="ioc-type">SHA1 — PoC Binary</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td><span style="color:var(--muted);font-size:.75rem">RH-ISAC</span></td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">5f9ee4e52da38191c3fdf2da567cc903</code></td>
+            <td><span class="ioc-type">MD5 — PoC Binary</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td><span style="color:var(--muted);font-size:.75rem">RH-ISAC</span></td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">SNEK_BlueWarHammer.exe</code></td>
+            <td><span class="ioc-type">Filename — PoC Binary</span></td>
+            <td><span class="ioc-conf med">MED</span></td>
+            <td><span style="color:var(--muted);font-size:.75rem">GitHub v1.0.0</span></td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">Exploit:Win32/DfndrPEBluHmr.BB</code></td>
+            <td><span class="ioc-type">Defender Signature</span></td>
+            <td><span class="ioc-conf med">MED</span></td>
+            <td><span style="color:var(--muted);font-size:.75rem">Microsoft</span></td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SyncRootManager\&lt;random&gt;</code></td>
+            <td><span class="ioc-type">Registry — Sync Root</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td><span style="color:var(--muted);font-size:.75rem">Behavioral</span></td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">\\Device\HarddiskVolumeShadowCopy*\Windows\System32\config\SAM</code></td>
+            <td><span class="ioc-type">File Path — VSS SAM Access</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td><span style="color:var(--muted);font-size:.75rem">Behavioral</span></td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">%TEMP%\*.dat</code> (SAM hive copy, random name)</td>
+            <td><span class="ioc-type">File Artifact</span></td>
+            <td><span class="ioc-conf med">MED</span></td>
+            <td><span style="color:var(--muted);font-size:.75rem">Behavioral</span></td>
+          </tr>
+          <tr>
+            <td><code class="ioc-val">{GUID-format service name}</code> — Event ID 7045</td>
+            <td><span class="ioc-type">Service — SYSTEM Escalation</span></td>
+            <td><span class="ioc-conf high">HIGH</span></td>
+            <td><span style="color:var(--muted);font-size:.75rem">Windows Event Log</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="warn-box" style="margin-top:16px">
+      <strong>&#9888; Hash-based detection is insufficient.</strong> <code>Exploit:Win32/DfndrPEBluHmr.BB</code> and the SHA256 above target only the <em>original compiled PoC</em>. Any recompile bypasses all static signatures. Behavioral rules (samlib.dll load, GUID services, VSS enumeration) are the only reliable detection path.
+    </div>
+  </div>
+
   <!-- ══ DETECTION ══ -->
   <div class="reveal" id="detection">
     <div class="team-label team-blue">&#128309; Blue Team</div>
@@ -665,6 +741,268 @@ SecurityEvent
 
     </div><!-- /KQL group -->
 
+    <!-- SPL GROUP -->
+    <div class="rule-group" style="margin-top:24px">
+      <div class="rule-group-hd">
+        <span class="rgb-siem">SPL</span>
+        <span class="rule-group-label">Rules 7&ndash;8: Splunk (SPL) — SIEM</span>
+      </div>
+
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title"><span class="platform-badge">Splunk (SPL)</span>samlib.dll Load by Non-LSASS — Splunk</div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              bluehammer_samlib.spl — T1003.002
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt">| Source: TI-DE — Splunk SPL for BlueHammer samlib.dll SAM dump detection</span>
+index=sysmon EventCode=7
+  ImageLoaded="*\\samlib.dll"
+  NOT Image="*\\lsass.exe"
+  NOT Image="*\\svchost.exe"
+| table _time, host, Image, ImageLoaded, User, CommandLine
+| eval Rule="BH-001: samlib.dll by non-LSASS — BlueHammer SAM dump"
+| sort -_time</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title"><span class="platform-badge">Splunk (SPL)</span>GUID-Named Service Creation — Splunk</div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              bluehammer_guid_service.spl — T1068
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt">| Source: TI-DE — Splunk SPL for BlueHammer GUID-named service (Event 7045)</span>
+index=wineventlog source="WinEventLog:System" EventCode=7045
+| rex field=ServiceName "^[{]?(?&lt;is_guid&gt;[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})[}]?"
+| where isnotnull(is_guid)
+| table _time, host, ServiceName, ServiceFileName, AccountName
+| eval Severity="Critical", Rule="BH-002: GUID-named service — BlueHammer SYSTEM escalation"
+| sort -_time</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /SPL group -->
+
+    <!-- QRADAR GROUP -->
+    <div class="rule-group" style="margin-top:24px">
+      <div class="rule-group-hd">
+        <span class="rgb-siem">AQL</span>
+        <span class="rule-group-label">Rule 9: IBM QRadar (AQL)</span>
+      </div>
+
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title"><span class="platform-badge">QRadar (AQL)</span>BlueHammer Behavioral — QRadar AQL</div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              bluehammer_behavioral.aql — T1003.002 / T1068
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt">-- Source: TI-DE — QRadar AQL for BlueHammer samlib.dll + GUID service detection</span>
+SELECT
+  DATEFORMAT(starttime, 'YYYY-MM-dd HH:mm:ss') AS "Time",
+  sourceip AS "Host IP",
+  username AS "User",
+  "Process Path" AS "Process",
+  "Image Loaded" AS "Loaded DLL",
+  QIDNAME(qid) AS "Event Name"
+FROM events
+WHERE LOGSOURCETYPENAME(devicetype) = 'Microsoft Windows Security Event Log'
+  AND (
+    ("Image Loaded" ILIKE '%samlib.dll'
+      AND "Process Path" NOT ILIKE '%lsass.exe')
+    OR
+    ("Event ID" = '7045'
+      AND "Service Name" MATCHES '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}')
+  )
+  AND LAST 24 HOURS
+ORDER BY starttime DESC</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /QRadar group -->
+
+    <!-- EDR/XDR GROUP -->
+    <div class="rule-group" style="margin-top:24px">
+      <div class="rule-group-hd">
+        <span class="rgb-edr">EDR / XDR</span>
+        <span class="rule-group-label">Rules 10&ndash;14: Cortex XQL / CrowdStrike SPL / IOA / SentinelOne / Carbon Black</span>
+      </div>
+
+      <!-- Cortex XQL -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title"><span class="platform-badge">Cortex XDR (XQL)</span>BlueHammer SAM Dump + GUID Service — Cortex XDR</div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              bluehammer_behavioral.xql — T1003.002 / T1068
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt">// Source: TI-DE — Cortex XDR XQL for BlueHammer detection</span>
+dataset = xdr_data
+| filter (
+    (event_type = ENUM.IMAGE_LOAD
+      and module_path ~= ".*\\\\samlib\\.dll$"
+      and actor_process_image_name != "lsass.exe")
+    or
+    (event_type = ENUM.PROCESS_START
+      and action_process_image_name ~= "services\.exe"
+      and action_process_cmdline ~= "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+  )
+| fields _time, agent_hostname, actor_process_image_name,
+         actor_process_cmdline, actor_effective_username,
+         module_path, action_process_cmdline
+| sort asc _time</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CrowdStrike SPL -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title"><span class="platform-badge">CrowdStrike (SPL)</span>BlueHammer VSS + samlib Hunt — CrowdStrike Falcon</div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              bluehammer_vss_samlib.cs — T1003.002 / T1068
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt">// Source: TI-DE — CrowdStrike Falcon SPL for BlueHammer</span>
+event_simpleName=ClassifiedModuleLoad
+  ImageFileName="*samlib.dll"
+  NOT TargetProcessName IN ("lsass.exe", "svchost.exe")
+| eval Rule="BH-001: samlib.dll non-LSASS load"
+| table timestamp, ComputerName, UserName, TargetProcessName, ImageFileName, Rule
+
+// --- OR for GUID service ---
+event_simpleName=ServiceInstalled
+| rex field=ServiceName "^[{]?(?&lt;is_guid&gt;[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})[}]?"
+| where isnotnull(is_guid)
+| eval Rule="BH-002: GUID-named service — BlueHammer final stage"
+| table timestamp, ComputerName, ServiceName, ServiceImagePath, UserName, Rule</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CrowdStrike Custom IOA -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title"><span class="platform-badge">CrowdStrike (IOA)</span>Custom IOA — GUID Service Name Pattern</div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="th-note" style="margin:12px 0 4px">CrowdStrike Custom IOA — deploy via <strong>Falcon Console → Detection &amp; Prevention → Custom IOA</strong>. Platform: Windows. Rule type: Process Creation.</div>
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              bluehammer_guid_service.ioa — T1068
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt">// Source: TI-DE — CrowdStrike Custom IOA for BlueHammer GUID-named service escalation
+// Rule Type: Service Creation
+// Action: Detect (escalate to Prevent after validation)</span>
+Rule Name:    BlueHammer - GUID Named Service Creation
+Description:  Detects creation of Windows services with GUID-format names.
+              BlueHammer LPE creates short-lived GUID services for SYSTEM execution.
+              No legitimate Windows component creates GUID-named services at runtime.
+Platform:     Windows
+Rule Type:    Service Creation (ServiceInstalled)
+
+ServiceName Pattern (regex):
+  ^[{]?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}[}]?
+
+Severity:     Critical
+Action:       Detect → alert SOC immediately
+MITRE:        T1068 - Exploitation for Privilege Escalation</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SentinelOne -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title"><span class="platform-badge">SentinelOne (PowerQuery)</span>samlib.dll Load by Non-LSASS — SentinelOne</div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              bluehammer_samlib.s1 — T1003.002
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt">// Source: TI-DE — SentinelOne Deep Visibility PowerQuery for BlueHammer</span>
+EventType = "ModuleLoad"
+  AND ModulePath EndsWith "samlib.dll"
+  AND SrcProcName != "lsass.exe"
+  AND SrcProcName != "svchost.exe"
+| columns
+    EventTime,
+    AgentName,
+    SrcProcName,
+    SrcProcUser,
+    ModulePath,
+    SrcProcCmdLine
+| sort by EventTime desc</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carbon Black -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title"><span class="platform-badge">Carbon Black (CBQL)</span>BlueHammer GUID Service + samlib — VMware Carbon Black</div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              bluehammer_behavioral.cbql — T1003.002 / T1068
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt">// Source: TI-DE — VMware Carbon Black Cloud for BlueHammer</span>
+// Hunt 1: samlib.dll load by non-LSASS
+(modload_name:samlib.dll)
+  AND NOT process_name:lsass.exe
+  AND NOT process_name:svchost.exe
+
+// Hunt 2: GUID-named service binary in %TEMP%
+process_name:services.exe
+  AND childproc_cmdline:*.exe
+  AND filemod_name:*\\AppData\\Local\\Temp\\*</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /EDR group -->
+
     <!-- YARA GROUP -->
     <div class="rule-group" style="margin-top:24px">
       <div class="rule-group-hd">
@@ -849,6 +1187,166 @@ DeviceRegistryEvents
         </div>
       </div>
 
+    </div><!-- /Endpoint Hunt group -->
+
+    <!-- SIEM Hunt Group -->
+    <div class="rule-group" style="margin-top:24px">
+      <div class="rule-group-hd">
+        <span class="rgb-siem">SIEM</span>
+        <span class="rule-group-label">Hunt 4&ndash;5: Splunk SPL / QRadar AQL — 30-Day Retrospective</span>
+      </div>
+
+      <div class="th-card">
+        <div class="th-card-title">Hunt 4 — Splunk: samlib.dll + GUID Service Retrospective</div>
+        <div class="th-card-body">30-day retrospective hunt across Sysmon and Windows event logs for both samlib.dll image loads and GUID-named service creations. Correlate overlapping timestamps to identify full exploitation chains.</div>
+        <div class="code-block" style="margin-top:10px">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+            Splunk SPL — BlueHammer retrospective hunt
+            <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+          </div>
+          <div class="code-body"><span class="cmt">| Source: TI-DE — Splunk 30-day BlueHammer retrospective hunt</span>
+(index=sysmon EventCode=7 ImageLoaded="*\\samlib.dll" NOT Image="*\\lsass.exe")
+  OR
+(index=wineventlog source="WinEventLog:System" EventCode=7045
+  [search index=wineventlog source="WinEventLog:System" EventCode=7045
+   | rex field=ServiceName "(?&lt;is_guid&gt;[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})"
+   | where isnotnull(is_guid) | return ServiceName])
+| eval Hunt="BlueHammer - samlib/GUID service indicator"
+| table _time, host, source, Image, ImageLoaded, ServiceName, ServiceFileName
+| sort -_time</div>
+        </div>
+      </div>
+
+      <div class="th-card">
+        <div class="th-card-title">Hunt 5 — QRadar AQL: VSS + SyncRootManager Correlation</div>
+        <div class="th-card-body">Correlate VSS shadow copy access events with SyncRootManager registry writes in the same time window on the same host. Simultaneous occurrence of both is a high-confidence BlueHammer indicator.</div>
+        <div class="code-block" style="margin-top:10px">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+            QRadar AQL — VSS + SyncRoot correlation
+            <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+          </div>
+          <div class="code-body"><span class="cmt">-- Source: TI-DE — QRadar AQL BlueHammer correlation query</span>
+SELECT
+  DATEFORMAT(starttime, 'YYYY-MM-dd HH:mm:ss') AS "Time",
+  sourceip AS "Host",
+  username AS "User",
+  "Target Object" AS "Registry/Path",
+  QIDNAME(qid) AS "Event"
+FROM events
+WHERE LOGSOURCETYPENAME(devicetype) = 'Microsoft Windows Security Event Log'
+  AND (
+    "Target Object" ILIKE '%HarddiskVolumeShadowCopy%'
+    OR "Target Object" ILIKE '%SyncRootManager%'
+  )
+  AND username NOT IN ('SYSTEM', 'MsMpEng', 'vssvc')
+  AND LAST 30 DAYS
+ORDER BY starttime DESC</div>
+        </div>
+      </div>
+
+    </div><!-- /SIEM Hunt group -->
+
+    <!-- EDR Hunt Group -->
+    <div class="rule-group" style="margin-top:24px">
+      <div class="rule-group-hd">
+        <span class="rgb-edr">EDR / XDR</span>
+        <span class="rule-group-label">Hunt 6&ndash;9: Cortex XQL / CrowdStrike / SentinelOne / Carbon Black</span>
+      </div>
+
+      <div class="th-card">
+        <div class="th-card-title">Hunt 6 — Cortex XDR: samlib + GUID Service Chain</div>
+        <div class="code-block" style="margin-top:10px">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+            Cortex XQL — 30-day BlueHammer hunt
+            <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+          </div>
+          <div class="code-body"><span class="cmt">// Source: TI-DE — Cortex XDR XQL BlueHammer hunt</span>
+dataset = xdr_data
+| filter _time > to_epoch(subtract(now(), 2592000000))
+| filter (
+    (event_type = ENUM.IMAGE_LOAD
+      and module_path ~= ".*\\\\samlib\\.dll$"
+      and actor_process_image_name != "lsass.exe")
+    or
+    (event_type = ENUM.REGISTRY_SET_VALUE
+      and action_registry_key_name ~= "SyncRootManager")
+  )
+| fields _time, agent_hostname, actor_process_image_name,
+         actor_effective_username, module_path, action_registry_key_name
+| comp count() as hits by agent_hostname
+| sort desc hits</div>
+        </div>
+      </div>
+
+      <div class="th-card">
+        <div class="th-card-title">Hunt 7 — CrowdStrike: samlib + VSS Enumeration</div>
+        <div class="code-block" style="margin-top:10px">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+            CrowdStrike Falcon SPL — BlueHammer hunt
+            <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+          </div>
+          <div class="code-body"><span class="cmt">// Source: TI-DE — CrowdStrike Falcon BlueHammer hunt</span>
+(event_simpleName=ClassifiedModuleLoad ImageFileName="*samlib.dll"
+  NOT TargetProcessName IN ("lsass.exe","svchost.exe"))
+OR
+(event_simpleName=RegGenericValueSet
+  RegObjectName="*SyncRootManager*"
+  NOT RegObjectName IN ("*OneDrive*","*Teams*"))
+| stats count by ComputerName, TargetProcessName, UserName
+| where count > 0
+| sort - count</div>
+        </div>
+      </div>
+
+      <div class="th-card">
+        <div class="th-card-title">Hunt 8 — SentinelOne: samlib + GUID Service Correlation</div>
+        <div class="code-block" style="margin-top:10px">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+            SentinelOne Deep Visibility — BlueHammer hunt
+            <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+          </div>
+          <div class="code-body"><span class="cmt">// Source: TI-DE — SentinelOne Deep Visibility BlueHammer hunt</span>
+(EventType = "ModuleLoad" AND ModulePath EndsWith "samlib.dll"
+  AND SrcProcName != "lsass.exe")
+OR
+(EventType = "RegistryKeyCreate"
+  AND RegistryKeyPath Contains "SyncRootManager"
+  AND SrcProcName Not In ("OneDrive.exe","Teams.exe","explorer.exe"))
+| columns EventTime, AgentName, SrcProcName, SrcProcUser,
+          ModulePath, RegistryKeyPath
+| sort by EventTime desc
+| limit 500</div>
+        </div>
+      </div>
+
+      <div class="th-card">
+        <div class="th-card-title">Hunt 9 — Carbon Black: samlib.dll Image Load</div>
+        <div class="code-block" style="margin-top:10px">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+            Carbon Black Cloud — BlueHammer hunt
+            <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+          </div>
+          <div class="code-body"><span class="cmt">// Source: TI-DE — VMware Carbon Black Cloud BlueHammer hunt</span>
+modload_name:samlib.dll
+  AND NOT process_name:lsass.exe
+  AND NOT process_name:svchost.exe
+  AND device_timestamp:[now-30d TO *]
+
+// Supplement: detect temp SAM artifact
+filemod_name:*\\AppData\\Local\\Temp\\*.dat
+  AND process_name:NOT svchost.exe
+  AND filemod_type:CREATE</div>
+        </div>
+      </div>
+
+    </div><!-- /EDR Hunt group -->
+
       <div class="th-guide">
         <strong>&#128268; Log öncelik sırası (henüz almıyorsan)</strong><br>
         &bull; <strong>Sysmon Event 7</strong> (Image Load) — samlib.dll tespiti için kritik.<br>
@@ -915,6 +1413,19 @@ DeviceRegistryEvents
     <div class="section-label" id="wuLabel">Research &amp; References</div>
     <h2 id="wuTitle">Technical Write-ups</h2>
     <p id="wuDesc">Published research, detection engineering resources, and technical analysis on the BlueHammer Windows Defender LPE zero-day.</p>
+
+    <div class="poc-card" style="margin-bottom:16px">
+      <span class="poc-tag video">&#9654; Video</span>
+      <div class="poc-card-title">BlueHammer Exploitation Verified — Cyderes Howler Cell Team</div>
+      <div class="poc-card-src">Cyderes Howler Cell &bull; Lab Verification</div>
+      <div class="poc-card-desc" data-en="Cyderes' Howler Cell team independently verified and fixed bugs in the original PoC, demonstrating a low-privileged user shell escalating to NT AUTHORITY\SYSTEM in under 64 seconds. No kernel exploit. No administrative rights required." data-tr="Cyderes Howler Cell ekibi, orijinal PoC'taki hataları bağımsız olarak doğrulayıp düzelterek düşük yetkili kullanıcı kabuğunun 64 saniyeden kısa sürede NT AUTHORITY\\SYSTEM'e yükseltilmesini gösterdi.">Cyderes' Howler Cell team independently verified and fixed bugs in the original PoC, demonstrating a low-privileged user shell escalating to NT AUTHORITY\SYSTEM in under 64 seconds. No kernel exploit. No administrative rights required.</div>
+      <div class="video-wrap">
+        <video controls preload="metadata" style="width:100%;border-radius:8px;background:#000">
+          <source src="https://3447277.fs1.hubspotusercontent-na1.net/hubfs/3447277/Folders%20%5BCLEANING%20UP%5D/2024/zeroday_exploit.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </div>
 
     <div class="poc-card" style="margin-bottom:16px">
       <span class="poc-tag">&#128279; GitHub</span>
@@ -1015,6 +1526,9 @@ const TR = {
   rc5d:         'Tespit bölümündeki sorguları kullanarak 30–90 günlük uç nokta telemetrisi üzerinde geriye dönük avlar yapın. Odaklanılacak noktalar: (1) samlib.dll image load\'ları, (2) GUID adlı servis 7045 olayları, (3) SyncRootManager kayıt yazmaları, (4) SAM kovansı artefaktlarıyla eşleşen %TEMP% dosyaları.',
   rc6t:         'Yalnızca Defender İmza Tespitine Güvenmeyin',
   rc6d:         'Microsoft\'un Defender imzası <code>Exploit:Win32/DfndrPEBluHmr.BB</code>, yalnızca <em>orijinal</em> derlenmiş PoC binary\'yi tespit eder. BlueHammer meşru Windows bileşeni davranışını istismar ettiğinden, kaynaktan yeniden derleme imzayı tamamen atlatır. Davranışsal tespit (samlib.dll yüklemesi, GUID servisleri, VSS numaralandırması) tek güvenilir kapsamdır.',
+  iocLabel:     'Tehdit İstihbaratı',
+  iocTitle:     'Uzlaşma Göstergeleri',
+  iocDesc:      'BlueHammer, <strong>C2 altyapısı olmayan yerel bir ayrıcalık yükseltme exploitidir</strong> — ağ IOC\'u yoktur (domain yok, IP yok). Göstergeler dosya sistemi ve davranışsal artefaktlardır. Tespit bölümündeki TTP tabanlı kurallar bu hash\'lere dayanmaz — yeniden derlenen varyantlara karşı da etkin kalır.',
   wuLabel:      'Araştırma &amp; Kaynaklar',
   wuTitle:      'Teknik Analizler',
   wuDesc:       'BlueHammer Windows Defender LPE sıfır-günü hakkında yayımlanmış araştırmalar, tespit mühendisliği kaynakları ve teknik analizler.',
