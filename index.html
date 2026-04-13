@@ -846,68 +846,109 @@ nav.scrolled{
     <!-- ── MAIN CONTENT ── -->
     <div class="reports-main">
 
-      <!-- ┄ 31 Mar 2026 — Latest ┄ -->
-      <div class="date-group" id="g-31">
+      <!-- ┄ 13 Apr 2026 — Latest ┄ -->
+      <div class="date-group" id="g-13apr">
         <div class="date-divider">
           <div class="dd-line"></div>
           <div class="dd-pill">
             <span class="dd-dot active"></span>
-            <span class="dd-text" data-en="31 Mar 2026" data-tr="31 Mar 2026">31 Mar 2026</span>
+            <span class="dd-text" data-en="13 Apr 2026" data-tr="13 Nis 2026">13 Apr 2026</span>
             <span class="dd-cnt" data-en="1 report · Latest" data-tr="1 Rapor · Son">1 report · Latest</span>
           </div>
           <div class="dd-line"></div>
         </div>
-        <a class="featured reveal" href="r/axios-sc/">
+        <a class="featured reveal" href="r/bluehammer/">
           <div class="featured-body">
             <div>
               <div class="featured-label"><span class="dot"></span><span data-en="Latest Report" data-tr="Son Rapor">Latest Report</span></div>
               <div style="margin-top:14px">
-                <div class="featured-cve">THREAT — npm Supply Chain · 31 March 2026</div>
-                <div class="featured-title" data-en="Axios npm Supply Chain RAT Dropper" data-tr="Axios npm Tedarik Zinciri RAT Dropper">Axios npm Supply Chain RAT Dropper</div>
+                <div class="featured-cve">ZERO-DAY — Windows Defender LPE · UNPATCHED · 3 April 2026</div>
+                <div class="featured-title" data-en="BlueHammer — Windows Defender LPE Zero-Day" data-tr="BlueHammer — Windows Defender LPE Sıfır-Günü">BlueHammer — Windows Defender LPE Zero-Day</div>
               </div>
               <p class="featured-desc" style="margin-top:12px"
-                data-en="Malicious axios@1.14.1 and @0.30.4 deliver a cross-platform Remote Access Trojan via XOR-obfuscated postinstall hooks. The payload fingerprints the host OS and deploys platform-specific binaries across Windows, Linux, and macOS. C2 beacon to sfrclak.com:8000 using a fake IE8 User-Agent."
-                data-tr="Kötü amaçlı axios@1.14.1 ve @0.30.4, XOR ile gizlenmiş postinstall hook'lar aracılığıyla çapraz platform Uzaktan Erişim Trojanı iletir. Payload, host OS'u tespit ederek Windows, Linux ve macOS'a özel ikili dosyalar dağıtır. Sahte IE8 User-Agent kullanarak sfrclak.com:8000'e C2 beacon gönderir.">
-                Malicious axios@1.14.1 and @0.30.4 deliver a cross-platform Remote Access Trojan via XOR-obfuscated postinstall hooks. The payload fingerprints the host OS and deploys platform-specific binaries across Windows, Linux, and macOS. C2 beacon to sfrclak.com:8000 using a fake IE8 User-Agent.
+                data-en="TOCTOU race condition in Windows Defender's signature-update mechanism abuses VSS, Cloud Files API, and oplocks to dump SAM hashes and escalate any local user to NT AUTHORITY\SYSTEM. No CVE assigned. No patch available. Recompile from source bypasses Defender signature detection."
+                data-tr="Windows Defender imza güncelleme mekanizmasındaki TOCTOU yarış koşulu, SAM hash'lerini dökmek ve yerel kullanıcıyı NT AUTHORITY\SYSTEM'e yükseltmek için VSS, Cloud Files API ve oplock'ları istismar eder. CVE atanmadı. Yama yok. Kaynaktan yeniden derleme, Defender imza tespitini atlatır.">
+                TOCTOU race condition in Windows Defender's signature-update mechanism abuses VSS, Cloud Files API, and oplocks to dump SAM hashes and escalate any local user to NT AUTHORITY\SYSTEM. No CVE assigned. No patch available.
               </p>
             </div>
             <div class="featured-meta">
               <div class="featured-tags">
-                <span class="ftag">T1195.001</span>
-                <span class="ftag">T1140</span>
-                <span class="ftag">T1059</span>
-                <span class="ftag">npm</span>
-                <span class="ftag">10 Platforms</span>
+                <span class="ftag">T1068</span>
+                <span class="ftag">T1003.002</span>
+                <span class="ftag">T1550.002</span>
+                <span class="ftag">Windows LPE</span>
+                <span class="ftag">Zero-Day</span>
               </div>
               <span class="featured-arrow" data-en="Read report →" data-tr="Raporu Oku →">Read report →</span>
             </div>
           </div>
           <div class="featured-visual">
             <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="100" cy="100" r="80" stroke="#e85d04" stroke-width=".8" opacity=".2"/>
-              <circle cx="100" cy="100" r="58" stroke="#e85d04" stroke-width=".8" opacity=".3"/>
-              <circle cx="100" cy="100" r="36" stroke="#e85d04" stroke-width=".8" opacity=".4"/>
-              <circle cx="100" cy="100" r="14" stroke="#e85d04" stroke-width=".8" opacity=".6"/>
-              <line x1="100" y1="20" x2="100" y2="180" stroke="#e85d04" stroke-width=".6" opacity=".25"/>
-              <line x1="20" y1="100" x2="180" y2="100" stroke="#e85d04" stroke-width=".6" opacity=".25"/>
-              <line x1="43" y1="43" x2="157" y2="157" stroke="#e85d04" stroke-width=".4" opacity=".15"/>
-              <line x1="157" y1="43" x2="43" y2="157" stroke="#e85d04" stroke-width=".4" opacity=".15"/>
-              <path d="M100 100 L100 20 A80 80 0 0 1 180 100 Z" fill="rgba(232,93,4,0.07)">
-                <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="5s" repeatCount="indefinite"/>
+              <circle cx="100" cy="100" r="80" stroke="#ef233c" stroke-width=".8" opacity=".2"/>
+              <circle cx="100" cy="100" r="58" stroke="#ef233c" stroke-width=".8" opacity=".3"/>
+              <circle cx="100" cy="100" r="36" stroke="#ef233c" stroke-width=".8" opacity=".4"/>
+              <circle cx="100" cy="100" r="14" stroke="#ef233c" stroke-width=".8" opacity=".6"/>
+              <line x1="100" y1="20" x2="100" y2="180" stroke="#ef233c" stroke-width=".6" opacity=".25"/>
+              <line x1="20" y1="100" x2="180" y2="100" stroke="#ef233c" stroke-width=".6" opacity=".25"/>
+              <line x1="43" y1="43" x2="157" y2="157" stroke="#ef233c" stroke-width=".4" opacity=".18"/>
+              <line x1="157" y1="43" x2="43" y2="157" stroke="#ef233c" stroke-width=".4" opacity=".18"/>
+              <path d="M100 100 L100 20 A80 80 0 0 1 180 100 Z" fill="rgba(239,35,60,0.07)">
+                <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="4s" repeatCount="indefinite"/>
               </path>
-              <circle cx="140" cy="55" r="4" fill="#ef233c" opacity=".8">
-                <animate attributeName="opacity" values="0.8;0.2;0.8" dur="1.5s" repeatCount="indefinite"/>
+              <circle cx="140" cy="55" r="5" fill="#ef233c" opacity=".9">
+                <animate attributeName="opacity" values="0.9;0.2;0.9" dur="1.2s" repeatCount="indefinite"/>
               </circle>
-              <circle cx="68" cy="130" r="3" fill="#ef233c" opacity=".6">
-                <animate attributeName="opacity" values="0.6;0.1;0.6" dur="2s" begin=".7s" repeatCount="indefinite"/>
+              <circle cx="68" cy="130" r="4" fill="#ef233c" opacity=".7">
+                <animate attributeName="opacity" values="0.7;0.1;0.7" dur="1.8s" begin=".5s" repeatCount="indefinite"/>
               </circle>
-              <circle cx="115" cy="78" r="2.5" fill="#f48c06" opacity=".7">
-                <animate attributeName="opacity" values="0.7;0.15;0.7" dur="1.8s" begin=".3s" repeatCount="indefinite"/>
+              <circle cx="115" cy="78" r="3" fill="#ef233c" opacity=".8">
+                <animate attributeName="opacity" values="0.8;0.15;0.8" dur="1.5s" begin=".3s" repeatCount="indefinite"/>
               </circle>
-              <circle cx="100" cy="100" r="4" fill="#f48c06"/>
+              <circle cx="100" cy="100" r="5" fill="#ef233c"/>
             </svg>
           </div>
         </a>
+      </div>
+
+      <!-- ┄ 31 Mar 2026 ┄ -->
+      <div class="date-group" id="g-31">
+        <div class="date-divider">
+          <div class="dd-line"></div>
+          <div class="dd-pill">
+            <span class="dd-dot"></span>
+            <span class="dd-text" data-en="31 Mar 2026" data-tr="31 Mar 2026">31 Mar 2026</span>
+            <span class="dd-cnt" data-en="1 report" data-tr="1 rapor">1 report</span>
+          </div>
+          <div class="dd-line"></div>
+        </div>
+        <div class="rg">
+        <a class="rcard reveal" href="r/axios-sc/" data-sev="critical">
+          <div class="rcard-top">
+            <div class="rcard-badges">
+              <span class="badge b-crit">CRITICAL</span>
+              <span class="badge b-actor">Supply Chain</span>
+            </div>
+            <span class="rcard-date">31 Mar 2026</span>
+          </div>
+          <div>
+            <div class="rcard-cve">THREAT — npm RAT Dropper</div>
+            <div class="rcard-title" data-en="Axios npm Supply Chain RAT Dropper" data-tr="Axios npm Tedarik Zinciri RAT Dropper">Axios npm Supply Chain RAT Dropper</div>
+          </div>
+          <div class="rcard-desc"
+            data-en="Malicious axios@1.14.1 and @0.30.4 deliver a cross-platform RAT via XOR-obfuscated postinstall hooks. C2 beacon using fake IE8 User-Agent."
+            data-tr="Kötü amaçlı axios@1.14.1 ve @0.30.4, XOR ile gizlenmiş postinstall hook'lar aracılığıyla çapraz platform RAT iletir. Sahte IE8 User-Agent ile C2 beacon.">
+            Malicious axios@1.14.1 and @0.30.4 deliver a cross-platform RAT via XOR-obfuscated postinstall hooks. C2 beacon using fake IE8 User-Agent.
+          </div>
+          <div class="rcard-tags">
+            <span class="tag">T1195.001</span><span class="tag">T1140</span><span class="tag">T1059.007</span>
+            <span class="tag">npm</span><span class="tag">RAT</span>
+          </div>
+          <div class="rcard-foot">
+            <span class="rcard-foot-l" data-en="10 platform rules" data-tr="10 platform kuralı">10 platform rules</span>
+            <span class="rcard-arr">→</span>
+          </div>
+        </a>
+        </div>
       </div>
 
       <!-- ┄ 27 Mar 2026 ┄ -->

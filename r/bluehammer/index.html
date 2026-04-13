@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlueHammer — Windows Defender LPE Zero-Day | TI-DE</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='36' y2='36' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23e85d04'/%3E%3Cstop offset='100%25' stop-color='%23f48c06'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M18 2L4 7v10c0 8.5 5.9 16.4 14 18.5C26.1 33.4 32 25.5 32 17V7L18 2Z' fill='url(%23g)' opacity='.9'/%3E%3Ccircle cx='18' cy='18' r='6' stroke='%23fff' stroke-width='1.2' fill='none' opacity='.7'/%3E%3Ccircle cx='18' cy='18' r='2.5' fill='%23fff' opacity='.9'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../../assets/report.css" />
+</head>
+<body>
+
+<!-- BACK BAR -->
+<div class="back-bar">
+  <a href="https://mazlumbaydar.github.io/TI-DE/">TI-DE</a>
+  <span class="sep">/</span>
+  <a href="https://mazlumbaydar.github.io/TI-DE/">Reports</a>
+  <span class="sep">/</span>
+  <span class="current">BlueHammer — Windows Defender LPE Zero-Day</span>
+</div>
+
+<div id="prog"></div>
+
+<!-- NAVBAR -->
+<nav id="nav">
+  <a class="nav-brand" href="https://mazlumbaydar.github.io/TI-DE/">TI-DE</a>
+  <ul class="nav-links">
+    <li><a href="#overview"     data-en="Overview"   data-tr="Genel Bakış">Overview</a></li>
+    <li><a href="#attack-chain" data-en="Attack"     data-tr="Saldırı">Attack</a></li>
+    <li><a href="#simulation"   data-en="Simulation" data-tr="Simülasyon">Simulation</a></li>
+    <li><a href="#timeline"     data-en="Timeline"   data-tr="Zaman Çizelgesi">Timeline</a></li>
+    <li><a href="#detection"    data-en="Detection"  data-tr="Tespit">Detection</a></li>
+    <li><a href="#recommendations" data-en="Response" data-tr="Yanıt">Response</a></li>
+  </ul>
+  <div class="nav-controls">
+    <div class="lang-switcher"><button class="lang-opt" id="langOptEn" onclick="applyLang('en')"><img src="https://flagcdn.com/gb.svg" alt="EN" class="flag-img">EN</button><button class="lang-opt" id="langOptTr" onclick="applyLang('tr')"><img src="https://flagcdn.com/tr.svg" alt="TR" class="flag-img">TR</button></div>
+    <button class="nav-ctrl" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">☀ Light</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge-sev critical">
+    <span class="live-dot"></span>
+    CRITICAL &mdash; Windows Defender LPE &mdash; Zero-Day &mdash; UNPATCHED &mdash; 3 April 2026
+  </div>
+  <h1 class="hero-title" id="heroTitle">BlueHammer<br>/ Windows Defender LPE Zero-Day</h1>
+  <p class="hero-sub" id="heroSub">TOCTOU race condition in Windows Defender's signature-update mechanism abuses VSS, Cloud Files API, and oplocks to dump SAM hashes and escalate a low-privileged user to NT AUTHORITY\SYSTEM. No CVE. No patch.</p>
+  <div class="meta-strip">
+    <div class="meta-chip">Date: <span>3 April 2026</span></div>
+    <div class="meta-chip">CVE: <span style="color:var(--red);font-weight:700">Not Assigned</span></div>
+    <div class="meta-chip">Targets: <span>Windows 10 / 11</span></div>
+    <div class="meta-chip">Patch: <span style="color:var(--red);font-weight:700">NONE</span></div>
+    <div class="meta-chip">Author: <span>Nightmare-Eclipse (PoC)</span></div>
+  </div>
+</section>
+
+<main>
+
+  <!-- ══ STATS ══ -->
+  <div class="stat-grid reveal" id="overview">
+    <div class="stat-card">
+      <div class="stat-num" data-t="6">0</div>
+      <div class="stat-label" id="sl0">Attack Steps</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-t="7">0</div>
+      <div class="stat-label" id="sl1">MITRE TTPs</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-t="11">0</div>
+      <div class="stat-label" id="sl2">Detection Rules</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-t="0">0</div>
+      <div class="stat-label" id="sl3">Days Patched</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="visitCount">—</div>
+      <div class="stat-label" id="sl4">Readers</div>
+    </div>
+  </div>
+
+  <!-- ══ BACKGROUND ══ -->
+  <div class="reveal" id="background">
+    <div class="section-label" id="bgLabel">Background</div>
+    <h2 id="bgTitle">What Happened</h2>
+
+    <p id="bgP1">On 3 April 2026, a disgruntled security researcher operating under the alias <strong>Nightmare-Eclipse</strong> publicly dropped a functional Windows local privilege escalation exploit on GitHub. The vulnerability, named <strong>BlueHammer</strong>, targets a <strong>time-of-check to time-of-use (TOCTOU) race condition</strong> in Microsoft Defender's signature-update workflow. Microsoft had been notified through MSRC but the researcher — frustrated with the response process — chose full public disclosure.</p>
+
+    <p id="bgP2">BlueHammer chains four legitimate Windows components: <strong>Microsoft Defender's update process</strong>, the <strong>Volume Shadow Copy Service (VSS)</strong>, the <strong>Cloud Files API</strong>, and <strong>opportunistic locks (oplocks)</strong>. The exploit registers a fake Cloud Files sync root, identifies Defender by PID, then triggers a signature update. During the update, Defender creates a VSS snapshot before it holds exclusive control — the race window. The attacker intercepts this via an oplock, traverses the snapshot to reach the SAM hive, and extracts NTLM hashes. A final GUID-named temporary service escalates the process to <code>NT AUTHORITY\SYSTEM</code>.</p>
+
+    <p id="bgP3">As of April 13, 2026, <strong>no patch exists and no CVE has been assigned</strong>. Microsoft pushed a Defender signature update (<code>Exploit:Win32/DfndrPEBluHmr.BB</code>) that detects the original PoC binary — but because the exploit abuses <em>legitimate component behavior</em>, recompiling from slightly modified source bypasses the signature entirely. The Howler Cell team at Cyderes independently verified and fixed bugs in the original PoC, running the exploit end-to-end against fully-patched Windows 10 and 11 systems.</p>
+
+    <div class="warn-box" id="bgWarn">
+      <strong>BlueHammer requires only local access — no admin, no UAC bypass needed.</strong> Any user account on an unmitigated Windows 10/11 host can escalate to SYSTEM. Treat all shared Windows endpoints as at-risk until Microsoft issues a patch.
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-card">
+        <div class="detail-card-title" id="ddTitle1">Vulnerability Details</div>
+        <div class="detail-row"><div class="detail-key">Name</div><div class="detail-val">BlueHammer</div></div>
+        <div class="detail-row"><div class="detail-key">CVE</div><div class="detail-val" style="color:var(--red)">Not assigned</div></div>
+        <div class="detail-row"><div class="detail-key">Type</div><div class="detail-val">LPE — TOCTOU Race Condition</div></div>
+        <div class="detail-row"><div class="detail-key">Component</div><div class="detail-val">Windows Defender + VSS + Cloud Files</div></div>
+        <div class="detail-row"><div class="detail-key">Required Access</div><div class="detail-val" style="color:var(--red)">Local, Low Privilege</div></div>
+        <div class="detail-row"><div class="detail-key">Outcome</div><div class="detail-val" style="color:var(--red)">NT AUTHORITY\SYSTEM</div></div>
+        <div class="detail-row"><div class="detail-key">Patch</div><div class="detail-val" style="color:var(--red);font-weight:700">NONE</div></div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-card-title" id="ddTitle2">Affected Platforms</div>
+        <div class="detail-row"><div class="detail-key">Windows 10</div><div class="detail-val" style="color:var(--red)">Vulnerable (all editions)</div></div>
+        <div class="detail-row"><div class="detail-key">Windows 11</div><div class="detail-val" style="color:var(--red)">Vulnerable (all editions)</div></div>
+        <div class="detail-row"><div class="detail-key">Windows Server</div><div class="detail-val" style="color:var(--green)">Not reliably affected</div></div>
+        <div class="detail-row"><div class="detail-key">Defender Required</div><div class="detail-val">Yes (MsMpEng.exe running)</div></div>
+        <div class="detail-row"><div class="detail-key">VSS Required</div><div class="detail-val">Yes (enabled by default)</div></div>
+        <div class="detail-row"><div class="detail-key">Defender Sig. Detection</div><div class="detail-val"><code>Exploit:Win32/DfndrPEBluHmr.BB</code></div></div>
+        <div class="detail-row"><div class="detail-key">Bypass</div><div class="detail-val" style="color:var(--red)">Recompile source → sig bypass</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ATTACK CHAIN ══ -->
+  <div class="reveal" id="attack-chain">
+    <div class="team-label team-red">&#128308; Red Team</div>
+    <div class="section-label" id="acLabel">Attack Flow</div>
+    <h2 id="acTitle">Attack Chain &mdash; 6 Steps</h2>
+
+    <div class="chain-container" id="chainSteps">
+
+      <div class="chain-step" style="--delay:0s">
+        <div class="chain-icon" style="border-color:var(--accent);color:var(--accent)">&#128736;</div>
+        <div class="chain-content">
+          <div class="chain-title" id="cs1t">Step 1 &mdash; Register Fake Cloud Files Sync Root</div>
+          <div class="chain-desc" id="cs1d">Attacker registers a malicious Cloud Files sync root via the Windows Cloud Files API (<code>CfRegisterSyncRoot</code>). A callback is registered that targets <strong>MsMpEng.exe</strong> (Defender) by PID. This callback can selectively stall or freeze Defender's file I/O operations — the foundation of the race condition. No elevation required to call <code>CfRegisterSyncRoot</code>.</div>
+          <span class="chain-ttp">T1106 &mdash; Native API</span>
+          <span class="chain-ttp" style="margin-left:4px">T1562.001 &mdash; Impair Defenses</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:var(--accent2);color:var(--accent2)">&#128260;</div>
+        <div class="chain-content">
+          <div class="chain-title" id="cs2t">Step 2 &mdash; Trigger Defender Signature Update</div>
+          <div class="chain-desc" id="cs2d">The exploit triggers a Windows Defender signature update. During this process, Defender calls <code>VolSnap</code> to create a VSS snapshot <strong>before acquiring exclusive control</strong> over it. This creates the TOCTOU window: Defender has created the snapshot but has not yet locked it down, leaving a brief period where a low-privileged process can race to access the snapshot contents.</div>
+          <span class="chain-ttp">T1490 &mdash; Inhibit System Recovery (VSS abuse)</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:var(--accent3);color:var(--accent3)">&#128275;</div>
+        <div class="chain-content">
+          <div class="chain-title" id="cs3t">Step 3 &mdash; Oplock Race + VSS Snapshot Interception</div>
+          <div class="chain-desc" id="cs3d">An opportunistic lock (oplock) is placed on the VSS snapshot path. When Defender accesses the snapshot, the oplock fires and hands control to the attacker's callback. The attacker uses <code>NtQueryDirectoryObject</code> to enumerate <code>HarddiskVolumeShadowCopy*</code> entries and intercepts the snapshot mid-access. This is the core TOCTOU exploitation stage — winning the race grants read access to the snapshot as if the attacker were the high-privileged Defender process.</div>
+          <span class="chain-ttp">T1106 &mdash; Native API</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:#a8dadc;color:#a8dadc">&#128190;</div>
+        <div class="chain-content">
+          <div class="chain-title" id="cs4t">Step 4 &mdash; SAM Hive Extraction</div>
+          <div class="chain-desc" id="cs4d">Through the intercepted VSS snapshot, the attacker traverses to <code>Windows\System32\config\SAM</code>. The SAM hive contains NTLM password hashes for all local accounts, including the local Administrator. Under normal circumstances, the SAM is locked by the OS and inaccessible to non-SYSTEM processes. The shadow copy path bypasses this lock entirely — the attacker reads the SAM hive to disk without any privileged API call.</div>
+          <span class="chain-ttp">T1003.002 &mdash; OS Credential Dumping: SAM</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:var(--red);color:var(--red)">&#128273;</div>
+        <div class="chain-content">
+          <div class="chain-title" id="cs5t">Step 5 &mdash; NTLM Hash Extraction</div>
+          <div class="chain-desc" id="cs5d">The extracted SAM hive is parsed offline using standard tools (e.g., <code>impacket-secretsdump</code> or <code>mimikatz lsadump::sam</code>) to recover NTLM hashes. No live LSASS interaction is required — the SAM parsing happens entirely from the file on disk. The local Administrator NTLM hash is then usable for pass-the-hash attacks against remote systems on the same network.</div>
+          <span class="chain-ttp">T1003.002 &mdash; SAM Credential Dumping</span>
+          <span class="chain-ttp" style="margin-left:4px">T1078.003 &mdash; Local Accounts</span>
+        </div>
+      </div>
+
+      <div class="chain-step">
+        <div class="chain-icon" style="border-color:#e63946;color:#e63946">&#9889;</div>
+        <div class="chain-content">
+          <div class="chain-title" id="cs6t">Step 6 &mdash; GUID Service → SYSTEM + Pass-the-Hash</div>
+          <div class="chain-desc" id="cs6d">The final stage creates a short-lived Windows service with a random GUID name (<code>svchost_{random-guid}</code>) via <code>CreateService</code> / <code>StartService</code>. The service binary executes the attacker's payload as <code>NT AUTHORITY\SYSTEM</code>. The service is deleted immediately after execution to reduce forensic artifacts. With SYSTEM access and recovered NTLM hashes, pass-the-hash enables lateral movement across all hosts sharing the same local admin password hash.</div>
+          <span class="chain-ttp">T1068 &mdash; Exploitation for Privilege Escalation</span>
+          <span class="chain-ttp" style="margin-left:4px">T1550.002 &mdash; Pass the Hash</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ SIMULATION ══ -->
+  <div class="reveal" id="simulation">
+    <div class="team-label team-red">&#128308; Red Team</div>
+    <div class="section-label" id="simLabel">Live Attack Simulation</div>
+    <h2 id="simTitle">Attack Flow &mdash; Step-by-Step Visualization</h2>
+    <p id="simDesc">Follow the BlueHammer exploit chain from Cloud Files sync root registration through TOCTOU race, SAM extraction, and SYSTEM escalation. Click nodes or dots to jump to any step.</p>
+
+    <div class="atk-viz">
+      <div class="atk-viz-top">
+        <div>
+          <div class="section-label" style="margin:0 0 4px">Attack Flow</div>
+          <div style="font-size:0.82rem;color:var(--muted)">Cloud Files Hook &rarr; Defender Update &rarr; VSS Race &rarr; SAM Dump &rarr; NTLM &rarr; SYSTEM</div>
+        </div>
+        <div class="atk-btns">
+          <button class="atk-play step-btn" id="atkStepBtn" onclick="atvGoTo(_atvIdx+1)">STEP &rarr;</button>
+          <button class="atk-play" id="atkPlayBtn" onclick="atvRun()">&#9654; AUTO</button>
+        </div>
+      </div>
+
+      <div class="atk-pipeline">
+        <div class="atk-node" id="vn0" onclick="atvGoTo(0)" title="Step 1">
+          <div class="atk-node-box">&#128736;</div>
+          <div class="atk-node-label">Cloud<br>Files Hook</div>
+        </div>
+        <div class="atk-connector" id="vc0">
+          <svg viewBox="0 0 60 24"><path class="conn-line" d="M2 12 L52 12"/><polygon class="conn-arrow" points="52,8 60,12 52,16"/></svg>
+          <div class="atk-pkt orange"></div>
+        </div>
+        <div class="atk-node" id="vn1" onclick="atvGoTo(1)" title="Step 2">
+          <div class="atk-node-box">&#128260;</div>
+          <div class="atk-node-label">Defender<br>Update</div>
+        </div>
+        <div class="atk-connector" id="vc1">
+          <svg viewBox="0 0 60 24"><path class="conn-line" d="M2 12 L52 12"/><polygon class="conn-arrow" points="52,8 60,12 52,16"/></svg>
+          <div class="atk-pkt orange"></div>
+        </div>
+        <div class="atk-node" id="vn2" onclick="atvGoTo(2)" title="Step 3">
+          <div class="atk-node-box">&#128275;</div>
+          <div class="atk-node-label">VSS<br>Race</div>
+        </div>
+        <div class="atk-connector" id="vc2">
+          <svg viewBox="0 0 60 24"><path class="conn-line" d="M2 12 L52 12"/><polygon class="conn-arrow" points="52,8 60,12 52,16"/></svg>
+          <div class="atk-pkt red"></div>
+        </div>
+        <div class="atk-node" id="vn3" onclick="atvGoTo(3)" title="Step 4">
+          <div class="atk-node-box">&#128190;</div>
+          <div class="atk-node-label">SAM<br>Dump</div>
+        </div>
+        <div class="atk-connector" id="vc3">
+          <svg viewBox="0 0 60 24"><path class="conn-line" d="M2 12 L52 12"/><polygon class="conn-arrow" points="52,8 60,12 52,16"/></svg>
+          <div class="atk-pkt red"></div>
+        </div>
+        <div class="atk-node" id="vn4" onclick="atvGoTo(4)" title="Step 5">
+          <div class="atk-node-box">&#128273;</div>
+          <div class="atk-node-label">NTLM<br>Hashes</div>
+        </div>
+        <div class="atk-connector" id="vc4">
+          <svg viewBox="0 0 60 24"><path class="conn-line" d="M2 12 L52 12"/><polygon class="conn-arrow" points="52,8 60,12 52,16"/></svg>
+          <div class="atk-pkt red"></div>
+        </div>
+        <div class="atk-node" id="vn5" onclick="atvGoTo(5)" title="Step 6">
+          <div class="atk-node-box">&#9889;</div>
+          <div class="atk-node-label">SYSTEM<br>+ PtH</div>
+        </div>
+      </div>
+
+      <div class="atk-detail" id="atkDetail">
+        <div class="atk-detail-step" id="atkDetailStep" data-en="&#9654; SIMULATION READY" data-tr="&#9654; SİMÜLASYON HAZIR">&#9654; SIMULATION READY</div>
+        <div class="atk-detail-text" id="atkDetailText">Press AUTO to run the full BlueHammer exploit chain automatically, or use STEP to advance manually.</div>
+      </div>
+
+      <div class="atk-explain" id="atkExplain" style="display:none">
+        <div class="atk-explain-label">Analyst Note</div>
+        <div id="atkExplainText"></div>
+      </div>
+
+      <div class="atk-progress">
+        <div class="atk-dot" onclick="atvGoTo(0)"></div>
+        <div class="atk-dot" onclick="atvGoTo(1)"></div>
+        <div class="atk-dot" onclick="atvGoTo(2)"></div>
+        <div class="atk-dot" onclick="atvGoTo(3)"></div>
+        <div class="atk-dot" onclick="atvGoTo(4)"></div>
+        <div class="atk-dot" onclick="atvGoTo(5)"></div>
+        <span class="atk-prog-label" id="atkProgLabel">0 / 6</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MITRE TIMELINE ══ -->
+  <div class="reveal" id="timeline">
+    <div class="team-label team-red">&#128308; Red Team</div>
+    <div class="section-label" id="tlLabel">Threat Intelligence</div>
+    <h2 id="tlTitle">MITRE ATT&amp;CK Timeline</h2>
+
+    <div class="mtt">
+
+      <div class="mtt-item">
+        <div class="mtt-tactic" data-en="Privilege Escalation" data-tr="Yetki Yükseltme">Privilege Escalation</div>
+        <div class="mtt-technique-title" data-en="Exploitation for Privilege Escalation — BlueHammer TOCTOU Chain" data-tr="Yetki Yükseltme için İstismar — BlueHammer TOCTOU Zinciri">Exploitation for Privilege Escalation — BlueHammer TOCTOU Chain</div>
+        <div class="mtt-tids"><span class="mtt-tid">T1068</span></div>
+        <div class="mtt-desc" data-en="&lt;strong&gt;Technique:&lt;/strong&gt; TOCTOU race condition in Windows Defender's signature-update mechanism. Defender creates a VSS snapshot before acquiring exclusive ownership — the attacker races to intercept the snapshot during this window via an oplock. No administrative privileges required; any local user can trigger the update and win the race." data-tr="&lt;strong&gt;Teknik:&lt;/strong&gt; Windows Defender imza güncelleme mekanizmasındaki TOCTOU yarış koşulu. Defender, özel sahipliği almadan önce bir VSS anlık görüntüsü oluşturur — saldırgan, bir oplock aracılığıyla bu pencerede anlık görüntüyü ele geçirmek için yarışır. Yönetici ayrıcalığı gerekmez; herhangi bir yerel kullanıcı güncellemeyi tetikleyebilir."><strong>Technique:</strong> TOCTOU race condition in Windows Defender's signature-update mechanism. Defender creates a VSS snapshot before acquiring exclusive ownership — the attacker races to intercept the snapshot during this window via an oplock. No administrative privileges required; any local user can trigger the update and win the race.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title" data-en="Evidence Artifacts" data-tr="Adli Kanıt Eserleri">Evidence Artifacts</span>
+            <span class="mtt-evidence-src">Windows Event Log / ETW</span>
+          </div>
+          <div class="mtt-evidence-body">MsMpEng.exe initiating VSS snapshot creation (VolSnap)
+NtQueryDirectoryObject on \Device\HarddiskVolumeShadowCopy* from non-SYSTEM process
+Oplock break notification from VSS path</div>
+        </div>
+        <div class="mtt-annotation" data-en="&lt;strong&gt;Detection Note:&lt;/strong&gt; Any non-SYSTEM, non-MsMpEng process enumerating HarddiskVolumeShadowCopy objects via NtQueryDirectoryObject is a direct indicator of BlueHammer-style reconnaissance." data-tr="&lt;strong&gt;Tespit Notu:&lt;/strong&gt; NtQueryDirectoryObject ile HarddiskVolumeShadowCopy nesnelerini sıralayan SYSTEM veya MsMpEng dışındaki herhangi bir süreç, BlueHammer tarzı keşfin doğrudan göstergesidir."><strong>Detection Note:</strong> Any non-SYSTEM, non-MsMpEng process enumerating HarddiskVolumeShadowCopy objects via NtQueryDirectoryObject is a direct indicator of BlueHammer-style reconnaissance.</div>
+      </div>
+
+      <div class="mtt-item">
+        <div class="mtt-tactic" data-en="Defense Evasion" data-tr="Savunmadan Kaçınma">Defense Evasion</div>
+        <div class="mtt-technique-title" data-en="Impair Defenses — Freeze Defender via Cloud Files Callback" data-tr="Savunmayı Bozma — Cloud Files Callback ile Defender'ı Dondurma">Impair Defenses — Freeze Defender via Cloud Files Callback</div>
+        <div class="mtt-tids"><span class="mtt-tid">T1562.001</span><span class="mtt-tid" style="margin-left:4px">T1106</span></div>
+        <div class="mtt-desc" data-en="&lt;strong&gt;T1562.001:&lt;/strong&gt; Registers a fake Cloud Files sync root (SyncRootManager) with a callback that identifies Defender by PID and selectively stalls its I/O — effectively freezing Defender during the race window without disabling it outright, which would trigger alerts. &lt;strong&gt;T1106:&lt;/strong&gt; Abuses CfRegisterSyncRoot (Cloud Files API), NtQueryDirectoryObject, and opportunistic lock APIs — all legitimate Windows syscalls, no malicious binary required." data-tr="&lt;strong&gt;T1562.001:&lt;/strong&gt; Defender'ı PID ile tanımlayan ve I/O'sunu seçici olarak durduran bir callback ile sahte Cloud Files sync root (SyncRootManager) kaydeder — Defender'ı tamamen devre dışı bırakmadan etkili biçimde dondurur. &lt;strong&gt;T1106:&lt;/strong&gt; CfRegisterSyncRoot, NtQueryDirectoryObject ve oplock API'lerini kötüye kullanır — bunların tümü meşru Windows syscall'larıdır."><strong>T1562.001:</strong> Registers a fake Cloud Files sync root (SyncRootManager) with a callback that identifies Defender by PID and selectively stalls its I/O. <strong>T1106:</strong> Abuses CfRegisterSyncRoot, NtQueryDirectoryObject, and opportunistic lock APIs — all legitimate Windows syscalls.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title" data-en="Evidence Artifacts" data-tr="Adli Kanıt Eserleri">Evidence Artifacts</span>
+            <span class="mtt-evidence-src">Registry / ETW / CfAPI</span>
+          </div>
+          <div class="mtt-evidence-body">Unexpected entry in HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SyncRootManager
+CfRegisterSyncRoot called by non-OneDrive/non-Teams process
+RPC call to IMpService from non-MsMpEng.exe process</div>
+        </div>
+        <div class="mtt-annotation" data-en="&lt;strong&gt;Detection Note:&lt;/strong&gt; Monitor SyncRootManager registry for unexpected entries. Any process other than OneDrive, Teams, or SharePoint registering a sync root is anomalous and warrants immediate investigation." data-tr="&lt;strong&gt;Tespit Notu:&lt;/strong&gt; SyncRootManager kaydı için beklenmedik girişleri izleyin. OneDrive, Teams veya SharePoint dışında bir sync root kaydeden her süreç anormaldir."><strong>Detection Note:</strong> Monitor SyncRootManager registry for unexpected entries. Any process other than OneDrive, Teams, or SharePoint registering a sync root is anomalous.</div>
+      </div>
+
+      <div class="mtt-item">
+        <div class="mtt-tactic" data-en="Credential Access" data-tr="Kimlik Bilgisi Erişimi">Credential Access</div>
+        <div class="mtt-technique-title" data-en="OS Credential Dumping — SAM via VSS Shadow Copy" data-tr="OS Kimlik Bilgisi Dökümü — VSS Gölge Kopyası Üzerinden SAM">OS Credential Dumping — SAM via VSS Shadow Copy</div>
+        <div class="mtt-tids"><span class="mtt-tid">T1003.002</span></div>
+        <div class="mtt-desc" data-en="&lt;strong&gt;T1003.002:&lt;/strong&gt; The intercepted VSS snapshot provides read access to Windows\System32\config\SAM — bypassing the OS lock on the live SAM hive. The SAM is extracted to a temp file and parsed offline (impacket-secretsdump, mimikatz lsadump::sam) to recover NTLM hashes for all local accounts. No LSASS injection. No MiniDump. No AV trigger." data-tr="&lt;strong&gt;T1003.002:&lt;/strong&gt; Ele geçirilen VSS anlık görüntüsü, canlı SAM kovanı üzerindeki OS kilidini atlayarak Windows\System32\config\SAM'a okuma erişimi sağlar. SAM geçici bir dosyaya çıkarılır ve tüm yerel hesaplar için NTLM hash'leri kurtarmak üzere çevrimdışı ayrıştırılır."><strong>T1003.002:</strong> The intercepted VSS snapshot provides read access to Windows\System32\config\SAM — bypassing the OS lock on the live SAM hive. Parsed offline with impacket-secretsdump or mimikatz to recover NTLM hashes. No LSASS injection required.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title" data-en="Evidence Artifacts" data-tr="Adli Kanıt Eserleri">Evidence Artifacts</span>
+            <span class="mtt-evidence-src">File audit / Sysmon Event 11</span>
+          </div>
+          <div class="mtt-evidence-body">File create in %TEMP% with name matching SAM hive artifact pattern
+samlib.dll loaded by non-LSASS process (direct indicator)
+LSA boot key registry access from low-privileged process</div>
+        </div>
+        <div class="mtt-annotation" data-en="&lt;strong&gt;Detection Note:&lt;/strong&gt; samlib.dll loaded by any process other than lsass.exe is a high-fidelity, near-zero-FP indicator of SAM credential dumping activity." data-tr="&lt;strong&gt;Tespit Notu:&lt;/strong&gt; lsass.exe dışındaki herhangi bir süreç tarafından yüklenen samlib.dll, SAM kimlik bilgisi döküm etkinliğinin yüksek doğruluklu, neredeyse sıfır yanlış pozitifli bir göstergesidir."><strong>Detection Note:</strong> samlib.dll loaded by any process other than lsass.exe is a high-fidelity, near-zero-FP indicator of SAM credential dumping activity.</div>
+      </div>
+
+      <div class="mtt-item">
+        <div class="mtt-tactic" data-en="Lateral Movement" data-tr="Yanal Hareket">Lateral Movement</div>
+        <div class="mtt-technique-title" data-en="Use Alternate Authentication Material — Pass the Hash" data-tr="Alternatif Kimlik Doğrulama Materyali Kullanımı — Hash Geçirme">Use Alternate Authentication Material — Pass the Hash</div>
+        <div class="mtt-tids"><span class="mtt-tid">T1550.002</span><span class="mtt-tid" style="margin-left:4px">T1078.003</span></div>
+        <div class="mtt-desc" data-en="&lt;strong&gt;T1550.002:&lt;/strong&gt; Recovered local Administrator NTLM hash enables pass-the-hash (PtH) attacks against remote systems sharing the same local admin password — common in enterprise environments using identical local admin credentials. &lt;strong&gt;T1078.003:&lt;/strong&gt; Valid local account credentials (NTLM hash) used for authentication without plaintext password." data-tr="&lt;strong&gt;T1550.002:&lt;/strong&gt; Kurtarılan yerel Yönetici NTLM hash'i, aynı yerel yönetici parolasını paylaşan uzak sistemlere karşı pass-the-hash saldırılarını mümkün kılar. &lt;strong&gt;T1078.003:&lt;/strong&gt; Düz metin parola olmadan kimlik doğrulama için geçerli yerel hesap kimlik bilgileri (NTLM hash) kullanılır."><strong>T1550.002:</strong> Recovered local Administrator NTLM hash enables pass-the-hash attacks against remote systems sharing the same local admin password. <strong>T1078.003:</strong> Valid local account credentials used without plaintext password.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title" data-en="Evidence Artifacts" data-tr="Adli Kanıt Eserleri">Evidence Artifacts</span>
+            <span class="mtt-evidence-src">Windows Security Event Log / Domain Controller</span>
+          </div>
+          <div class="mtt-evidence-body">Event ID 4624 (Logon) — LogonType 3, NtLmSsp, local admin account
+Event ID 4625 (Failed Logon) — multiple hosts in short succession (hash spray)
+Lateral tool transfer artifacts if wmiexec/psexec used post-PtH</div>
+        </div>
+        <div class="mtt-annotation" data-en="&lt;strong&gt;Detection Note:&lt;/strong&gt; Enforce LAPS (Local Administrator Password Solution) to randomize local admin passwords per machine — this eliminates the lateral movement path entirely even if NTLM hashes are recovered." data-tr="&lt;strong&gt;Tespit Notu:&lt;/strong&gt; Makine başına yerel yönetici parolalarını rastgeleleştirmek için LAPS uygulayın — bu, NTLM hash'leri kurtarılsa bile yanal hareket yolunu tamamen ortadan kaldırır."><strong>Detection Note:</strong> Enforce LAPS to randomize local admin passwords per machine — eliminates lateral movement path even if NTLM hashes are recovered.</div>
+      </div>
+
+      <div class="mtt-item">
+        <div class="mtt-tactic" data-en="Execution" data-tr="Yürütme">Execution</div>
+        <div class="mtt-technique-title" data-en="GUID-Named Temporary Service — SYSTEM Execution" data-tr="GUID Adlı Geçici Servis — SYSTEM Yürütme">GUID-Named Temporary Service — SYSTEM Execution</div>
+        <div class="mtt-tids"><span class="mtt-tid">T1068</span><span class="mtt-tid" style="margin-left:4px">T1106</span></div>
+        <div class="mtt-desc" data-en="&lt;strong&gt;Final stage:&lt;/strong&gt; Creates a short-lived Windows service named with a random GUID (e.g., &lt;code&gt;{4f2a8e3b-...}\\svc&lt;/code&gt;) via CreateService/StartService. The service runs the attacker's payload as NT AUTHORITY\\SYSTEM and is immediately deleted post-execution to reduce artifacts. GUID naming is deliberate — avoids name-based detection rules." data-tr="&lt;strong&gt;Son aşama:&lt;/strong&gt; CreateService/StartService aracılığıyla rastgele GUID adlı kısa ömürlü bir Windows servisi oluşturur. Servis, saldırganın yükünü NT AUTHORITY\\SYSTEM olarak çalıştırır ve izleri azaltmak için yürütmeden hemen sonra silinir. GUID adlandırması bilinçlidir — ad tabanlı tespit kurallarından kaçınır."><strong>Final stage:</strong> Creates a short-lived Windows service with a random GUID name via CreateService/StartService. Runs attacker payload as NT AUTHORITY\SYSTEM. Deleted immediately post-execution to reduce artifacts. GUID naming bypasses name-based detection rules.</div>
+        <div class="mtt-evidence">
+          <div class="mtt-evidence-hd">
+            <span class="mtt-evidence-title" data-en="Evidence Artifacts" data-tr="Adli Kanıt Eserleri">Evidence Artifacts</span>
+            <span class="mtt-evidence-src">System Event Log / Sysmon / EDR</span>
+          </div>
+          <div class="mtt-evidence-body">Event ID 7045 — New Service Installed with GUID-format name
+Service binary path in %TEMP% or non-standard location
+Service created and deleted within seconds (short TTL)
+Child process of services.exe with SYSTEM token and GUID parent service name</div>
+        </div>
+        <div class="mtt-annotation" data-en="&lt;strong&gt;Detection Note:&lt;/strong&gt; Alert on Windows services with GUID-format names (matching pattern &lt;code&gt;\\{[0-9a-f]{8}-[0-9a-f]{4}-...\\}&lt;/code&gt;) — no legitimate Windows component creates GUID-named services at runtime." data-tr="&lt;strong&gt;Tespit Notu:&lt;/strong&gt; GUID biçimli adlara sahip Windows servisleri için uyarı oluşturun — hiçbir meşru Windows bileşeni çalışma zamanında GUID adlı servisler oluşturmaz."><strong>Detection Note:</strong> Alert on services with GUID-format names. No legitimate Windows component creates GUID-named services at runtime.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ DETECTION ══ -->
+  <div class="reveal" id="detection">
+    <div class="team-label team-blue">&#128309; Blue Team</div>
+    <div class="section-label" id="detLabel">Detection Engineering</div>
+    <h2 id="detTitle">Detection Rules &amp; Threat Hunting</h2>
+
+    <div class="det-tabs">
+      <div class="det-tab active" onclick="switchDetTab(this,'det-rules')" data-en="&#128268; Detection Rules" data-tr="&#128268; Tespit Kuralları">&#128268; Detection Rules</div>
+      <div class="det-tab" onclick="switchDetTab(this,'det-hunt')" data-en="&#128270; Threat Hunting" data-tr="&#128270; Tehdit Avı">&#128270; Threat Hunting</div>
+    </div>
+
+    <!-- PANE 1: DETECTION RULES -->
+    <div class="det-pane active" id="det-rules">
+    <p id="detDesc">All rules are <strong>TTP-based and behavioral</strong>. Rules sourced from <a href="https://github.com/technoherder/BlueHammerFix" target="_blank" rel="noopener" style="color:var(--accent2)">technoherder/BlueHammerFix</a> (community, 7 Sigma + 4 YARA) with additional platform translations by TI-DE.</p>
+
+    <!-- EDR GROUP -->
+    <div class="rule-group">
+      <div class="rule-group-hd">
+        <span class="rgb-siem">Sigma</span>
+        <span class="rule-group-label">Rules 1&ndash;4: Core BlueHammer Behavioral Detections</span>
+      </div>
+
+      <!-- Rule 1: samlib.dll by non-LSASS -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Sigma (YAML)</span>
+            samlib.dll Loaded by Non-LSASS Process — SAM Dump Indicator
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="th-note" style="margin:12px 0 4px"><strong>&#128279; Community Rule (technoherder/BlueHammerFix):</strong> Sourced from <a href="https://github.com/technoherder/BlueHammerFix" target="_blank" rel="noopener" style="color:var(--accent2)">github.com/technoherder/BlueHammerFix</a> — BlueHammer detection rule set, 7 Sigma rules mapped to MITRE ATT&CK.</div>
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              bluehammer_samlib_nonlsass.yml — T1003.002
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt"># Source: technoherder/BlueHammerFix — github.com/technoherder/BlueHammerFix
+# BlueHammer detection: samlib.dll loaded by non-LSASS process (SAM credential dump indicator)</span>
+<span class="kw">title</span>: samlib.dll Loaded by Non-LSASS Process
+<span class="kw">id</span>: <span class="num">bh-001-samlib-nonlsass</span>
+<span class="kw">status</span>: stable
+<span class="kw">description</span>: Detects samlib.dll being loaded by any process other than lsass.exe.
+  samlib.dll is the Security Account Manager library — loading it outside LSASS
+  is a direct indicator of SAM credential dumping (T1003.002), as used in BlueHammer.
+<span class="kw">author</span>: technoherder/BlueHammerFix — community rule
+<span class="kw">date</span>: <span class="num">2026/04/05</span>
+<span class="kw">tags</span>:
+  - attack.credential_access
+  - attack.t1003.002
+<span class="kw">logsource</span>:
+  category: image_load
+  product: windows
+<span class="kw">detection</span>:
+  selection:
+    ImageLoaded|endswith: <span class="str">'\samlib.dll'</span>
+  filter_lsass:
+    Image|endswith: <span class="str">'\lsass.exe'</span>
+  condition: selection and not filter_lsass
+<span class="kw">falsepositives</span>:
+  - Forensic tools (should be run in controlled environments only)
+<span class="kw">level</span>: high</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 2: GUID-named service -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Sigma (YAML)</span>
+            GUID-Named Temporary Service Creation — BlueHammer Final Stage
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              bluehammer_guid_service.yml — T1068
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt"># Source: technoherder/BlueHammerFix — github.com/technoherder/BlueHammerFix
+# BlueHammer final-stage detection: GUID-named service (Event ID 7045)</span>
+<span class="kw">title</span>: GUID-Named Windows Service Created
+<span class="kw">id</span>: <span class="num">bh-002-guid-service</span>
+<span class="kw">status</span>: stable
+<span class="kw">description</span>: Detects creation of a Windows service whose name matches a GUID pattern.
+  BlueHammer's final stage creates a short-lived GUID-named service to achieve
+  SYSTEM execution. No legitimate Windows component creates GUID-named services at runtime.
+<span class="kw">author</span>: technoherder/BlueHammerFix — community rule
+<span class="kw">date</span>: <span class="num">2026/04/05</span>
+<span class="kw">tags</span>:
+  - attack.privilege_escalation
+  - attack.t1068
+<span class="kw">logsource</span>:
+  product: windows
+  service: system
+<span class="kw">detection</span>:
+  selection:
+    EventID: <span class="num">7045</span>
+    ServiceName|re: <span class="str">'^[{]?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}[}]?'</span>
+  condition: selection
+<span class="kw">falsepositives</span>:
+  - None known — GUID service names are not used by any legitimate Windows component
+<span class="kw">level</span>: critical</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 3: VSS enumeration from non-SYSTEM -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Sigma (YAML)</span>
+            VSS Shadow Copy Enumeration by Non-System Process — BlueHammer Recon
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              bluehammer_vss_enum.yml — T1490 / T1068
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt"># Source: technoherder/BlueHammerFix — github.com/technoherder/BlueHammerFix
+# BlueHammer VSS reconnaissance: NtQueryDirectoryObject targeting shadow copies</span>
+<span class="kw">title</span>: VSS Shadow Copy Enumeration by Non-System Process
+<span class="kw">id</span>: <span class="num">bh-003-vss-enum</span>
+<span class="kw">status</span>: stable
+<span class="kw">description</span>: Detects non-SYSTEM processes accessing HarddiskVolumeShadowCopy device paths.
+  BlueHammer uses NtQueryDirectoryObject to enumerate VSS snapshots before
+  intercepting one via oplock. Low-privileged enumeration of shadow copies
+  is a direct indicator of BlueHammer-style exploitation.
+<span class="kw">author</span>: technoherder/BlueHammerFix — community rule
+<span class="kw">date</span>: <span class="num">2026/04/05</span>
+<span class="kw">tags</span>:
+  - attack.privilege_escalation
+  - attack.t1068
+  - attack.t1490
+<span class="kw">logsource</span>:
+  category: file_access
+  product: windows
+<span class="kw">detection</span>:
+  selection:
+    TargetFilename|contains: <span class="str">'\HarddiskVolumeShadowCopy'</span>
+  filter_system:
+    User|contains:
+      - <span class="str">'SYSTEM'</span>
+      - <span class="str">'MsMpEng'</span>
+      - <span class="str">'vssvc'</span>
+  condition: selection and not filter_system
+<span class="kw">falsepositives</span>:
+  - Backup software (Veeam, Acronis) — tune with process name allowlist
+<span class="kw">level</span>: high</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 4: SyncRootManager anomaly -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">Sigma (YAML)</span>
+            Unexpected Cloud Files Sync Root Registration — SyncRootManager
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              bluehammer_syncroot.yml — T1562.001
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt"># Source: technoherder/BlueHammerFix — github.com/technoherder/BlueHammerFix
+# BlueHammer Cloud Files API abuse: unexpected SyncRootManager registry entry</span>
+<span class="kw">title</span>: Unexpected Cloud Files Sync Root Registration
+<span class="kw">id</span>: <span class="num">bh-004-syncroot</span>
+<span class="kw">status</span>: stable
+<span class="kw">description</span>: Detects registry writes to the SyncRootManager key by unexpected processes.
+  BlueHammer registers a fake Cloud Files sync root to install a callback targeting
+  MsMpEng.exe. Legitimate providers are OneDrive, Teams, and SharePoint only.
+<span class="kw">author</span>: technoherder/BlueHammerFix — community rule
+<span class="kw">date</span>: <span class="num">2026/04/05</span>
+<span class="kw">tags</span>:
+  - attack.defense_evasion
+  - attack.t1562.001
+<span class="kw">logsource</span>:
+  category: registry_set
+  product: windows
+<span class="kw">detection</span>:
+  selection:
+    TargetObject|contains: <span class="str">'SyncRootManager'</span>
+  filter_legit:
+    Image|contains:
+      - <span class="str">'\OneDrive.exe'</span>
+      - <span class="str">'\Teams.exe'</span>
+      - <span class="str">'\SharePoint'</span>
+      - <span class="str">'\explorer.exe'</span>
+  condition: selection and not filter_legit
+<span class="kw">falsepositives</span>:
+  - Third-party cloud sync clients (Box, Dropbox) — add to filter_legit
+<span class="kw">level</span>: high</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /Sigma group -->
+
+    <!-- KQL GROUP -->
+    <div class="rule-group" style="margin-top:24px">
+      <div class="rule-group-hd">
+        <span class="rgb-kql">KQL</span>
+        <span class="rule-group-label">Rules 5&ndash;6: Microsoft Sentinel / Defender XDR</span>
+      </div>
+
+      <!-- Rule 5: KQL samlib -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">KQL</span>
+            samlib.dll Load by Non-LSASS — Sentinel / Defender XDR
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              bluehammer_samlib.kql — T1003.002
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt">// Source: TI-DE — KQL translation of technoherder/BlueHammerFix Sigma rule bh-001
+// Microsoft Sentinel / Defender XDR — T1003.002 BlueHammer SAM dump detection</span>
+DeviceImageLoadEvents
+| where FileName =~ <span class="str">"samlib.dll"</span>
+| where InitiatingProcessFileName !~ <span class="str">"lsass.exe"</span>
+| where InitiatingProcessFileName !~ <span class="str">"svchost.exe"</span>
+| project
+    Timestamp,
+    DeviceName,
+    InitiatingProcessFileName,
+    InitiatingProcessCommandLine,
+    InitiatingProcessAccountName,
+    FileName,
+    FolderPath
+| extend Severity = <span class="str">"High"</span>,
+         Rule = <span class="str">"BH-001: samlib.dll by non-LSASS — BlueHammer SAM dump"</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 6: KQL GUID service -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">KQL</span>
+            GUID-Named Service Creation — Sentinel Analytics Rule
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              bluehammer_guid_service.kql — T1068
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt">// Source: TI-DE — KQL translation of technoherder/BlueHammerFix Sigma rule bh-002
+// Detects BlueHammer GUID-named service (Event ID 7045) in Sentinel</span>
+SecurityEvent
+| where EventID == <span class="num">7045</span>
+| where ServiceName matches regex <span class="str">@"^[{]?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}[}]?"</span>
+| project
+    TimeGenerated,
+    Computer,
+    ServiceName,
+    ServiceFileName,
+    ServiceType,
+    ServiceStartType,
+    Account
+| extend Severity = <span class="str">"Critical"</span>,
+         Rule = <span class="str">"BH-002: GUID-named service — BlueHammer SYSTEM escalation"</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /KQL group -->
+
+    <!-- YARA GROUP -->
+    <div class="rule-group" style="margin-top:24px">
+      <div class="rule-group-hd">
+        <span class="rgb-yara">YARA</span>
+        <span class="rule-group-label">Rules 7&ndash;8: Binary &amp; Behavioral Pattern Detection</span>
+      </div>
+
+      <!-- Rule 7: YARA behavioral -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">YARA</span>
+            BlueHammer PoC Binary + Behavioral Strings
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="th-note" style="margin:12px 0 4px"><strong>&#128279; Community Rule (technoherder/BlueHammerFix):</strong> 4 YARA rules from <a href="https://github.com/technoherder/BlueHammerFix" target="_blank" rel="noopener" style="color:var(--accent2)">github.com/technoherder/BlueHammerFix</a>. Rule below covers original PoC strings and Cloud Files API patterns used in all known variants.</div>
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              bluehammer_behavioral.yar — technoherder/BlueHammerFix
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt">/* Source: technoherder/BlueHammerFix — github.com/technoherder/BlueHammerFix
+   BlueHammer behavioral YARA — Cloud Files API + VSS + SAM path patterns
+   Covers original PoC and recompiled variants sharing the same API call sequence */</span>
+<span class="kw">rule</span> BlueHammer_Behavioral {
+    <span class="kw">meta</span>:
+        description = <span class="str">"Detects BlueHammer LPE exploit via Cloud Files API + VSS + SAM access patterns"</span>
+        author      = <span class="str">"technoherder/BlueHammerFix"</span>
+        date        = <span class="str">"2026-04-05"</span>
+        reference   = <span class="str">"https://github.com/technoherder/BlueHammerFix"</span>
+        mitre       = <span class="str">"T1068, T1003.002, T1562.001"</span>
+    <span class="kw">strings</span>:
+        <span class="cmt">// Cloud Files API abuse</span>
+        $cf1 = <span class="str">"CfRegisterSyncRoot"</span> ascii wide
+        $cf2 = <span class="str">"SyncRootManager"</span> ascii wide
+        $cf3 = <span class="str">"CF_CALLBACK_TYPE"</span> ascii wide
+        <span class="cmt">// VSS / shadow copy targeting</span>
+        $vss1 = <span class="str">"HarddiskVolumeShadowCopy"</span> ascii wide
+        $vss2 = <span class="str">"NtQueryDirectoryObject"</span> ascii wide
+        $vss3 = <span class="str">"\\\\?\\GLOBALROOT\\Device\\"</span> ascii wide
+        <span class="cmt">// SAM credential access</span>
+        $sam1 = <span class="str">"\\System32\\config\\SAM"</span> ascii wide nocase
+        $sam2 = <span class="str">"samlib.dll"</span> ascii wide
+        <span class="cmt">// GUID service creation</span>
+        $svc1 = <span class="str">"CreateServiceW"</span> ascii wide
+        $svc2 = <span class="str">"StartServiceW"</span> ascii wide
+        <span class="cmt">// MsMpEng targeting</span>
+        $mpeng = <span class="str">"MsMpEng.exe"</span> ascii wide
+    <span class="kw">condition</span>:
+        uint16(0) == 0x5A4D and
+        (2 of ($cf*)) and
+        (1 of ($vss*)) and
+        (1 of ($sam*)) and
+        (1 of ($svc*)) and
+        $mpeng
+}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 8: YARA PoC hash/PDB -->
+      <div class="rule-card" onclick="toggleRule(this,event)">
+        <div class="rule-header">
+          <div class="rule-title">
+            <span class="platform-badge">YARA</span>
+            BlueHammer Original PoC Binary — PDB + Import Hash
+          </div>
+          <div class="rule-toggle">&#9660;</div>
+        </div>
+        <div class="rule-body">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+              bluehammer_poc_binary.yar — technoherder/BlueHammerFix
+              <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+            </div>
+            <div class="code-body"><span class="cmt">/* Source: technoherder/BlueHammerFix — github.com/technoherder/BlueHammerFix
+   Targets the original PoC binary released by Nightmare-Eclipse on GitHub.
+   NOTE: Recompiled variants bypass this rule — use bluehammer_behavioral.yar for coverage */</span>
+<span class="kw">rule</span> BlueHammer_PoC_Original {
+    <span class="kw">meta</span>:
+        description = <span class="str">"Detects the original BlueHammer PoC binary by Nightmare-Eclipse (April 3, 2026)"</span>
+        author      = <span class="str">"technoherder/BlueHammerFix"</span>
+        date        = <span class="str">"2026-04-05"</span>
+        reference   = <span class="str">"https://github.com/technoherder/BlueHammerFix"</span>
+        note        = <span class="str">"Recompiled variants bypass this — pair with bluehammer_behavioral.yar"</span>
+    <span class="kw">strings</span>:
+        $pdb  = <span class="str">"BlueHammer"</span> ascii wide
+        $proj = <span class="str">"Nightmare-Eclipse"</span> ascii wide
+        $api1 = <span class="str">"CfRegisterSyncRoot"</span> ascii wide
+        $api2 = <span class="str">"RtlAdjustPrivilege"</span> ascii wide
+        $api3 = <span class="str">"NtQueryDirectoryObject"</span> ascii wide
+        $api4 = <span class="str">"NtSetSecurityObject"</span> ascii wide
+    <span class="kw">condition</span>:
+        uint16(0) == 0x5A4D and
+        filesize &lt; 2MB and
+        ($pdb or $proj) and
+        3 of ($api*)
+}</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /YARA group -->
+
+    </div><!-- /det-pane: det-rules -->
+
+    <!-- PANE 2: THREAT HUNTING -->
+    <div class="det-pane" id="det-hunt">
+
+    <div class="rule-group">
+      <div class="rule-group-hd">
+        <span class="rgb-hunt">Endpoint Hunt</span>
+        <span class="rule-group-label">BlueHammer Behavioral Indicators — EDR / Event Log</span>
+      </div>
+
+      <div class="th-card">
+        <div class="th-card-title">Hunt 1 — samlib.dll Image Load Audit</div>
+        <div class="th-card-body">Search all endpoint image load telemetry for <code>samlib.dll</code> loaded by any process other than <code>lsass.exe</code>. This is near-zero false positive on enterprise endpoints. Cross-reference with VSS access timestamps to correlate with BlueHammer timing.</div>
+        <div class="code-block" style="margin-top:10px">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+            Defender XDR — samlib.dll hunt
+            <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+          </div>
+          <div class="code-body"><span class="cmt">// Threat Hunt: samlib.dll loaded outside LSASS — look back 30 days</span>
+DeviceImageLoadEvents
+| where Timestamp > ago(<span class="num">30d</span>)
+| where FileName =~ <span class="str">"samlib.dll"</span>
+| where InitiatingProcessFileName !~ <span class="str">"lsass.exe"</span>
+| summarize
+    count(),
+    FirstSeen = min(Timestamp),
+    LastSeen  = max(Timestamp),
+    Processes = make_set(InitiatingProcessFileName)
+    by DeviceName
+| sort by count_ desc</div>
+        </div>
+      </div>
+
+      <div class="th-card">
+        <div class="th-card-title">Hunt 2 — Short-Lived GUID Services (Event 7045)</div>
+        <div class="th-card-body">Query Windows System event log for Event ID 7045 (new service installed) where the service name matches a GUID pattern. BlueHammer services are typically created and deleted within seconds — look for 7045 with no corresponding long-running service entry.</div>
+        <div class="code-block" style="margin-top:10px">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+            Sentinel — GUID service hunt (Event 7045)
+            <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+          </div>
+          <div class="code-body"><span class="cmt">// Threat Hunt: GUID-named services — 30-day lookback</span>
+SecurityEvent
+| where TimeGenerated > ago(<span class="num">30d</span>)
+| where EventID == <span class="num">7045</span>
+| where ServiceName matches regex <span class="str">@"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"</span>
+| project TimeGenerated, Computer, ServiceName, ServiceFileName, Account
+| sort by TimeGenerated desc</div>
+        </div>
+      </div>
+
+      <div class="th-card">
+        <div class="th-card-title">Hunt 3 — SyncRootManager Registry Anomalies</div>
+        <div class="th-card-body">Query registry event telemetry for writes to the SyncRootManager key by unexpected processes. BlueHammer registers a sync root before each exploitation attempt. Entries that don't belong to OneDrive, Teams, or known cloud sync clients are high-priority leads.</div>
+        <div class="code-block" style="margin-top:10px">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot" style="background:#ff5f57"></span><span class="code-dot" style="background:#febc2e"></span><span class="code-dot" style="background:#28c840"></span></div>
+            Defender XDR — SyncRootManager registry hunt
+            <button class="copy-btn" onclick="copyCode(this,event)">Copy</button>
+          </div>
+          <div class="code-body"><span class="cmt">// Threat Hunt: unexpected SyncRootManager registry writes</span>
+DeviceRegistryEvents
+| where Timestamp > ago(<span class="num">30d</span>)
+| where RegistryKey contains <span class="str">"SyncRootManager"</span>
+| where ActionType in (<span class="str">"RegistryKeyCreated"</span>, <span class="str">"RegistryValueSet"</span>)
+| where InitiatingProcessFileName !in~ (
+    <span class="str">"OneDrive.exe"</span>, <span class="str">"Teams.exe"</span>, <span class="str">"explorer.exe"</span>, <span class="str">"svchost.exe"</span>)
+| project Timestamp, DeviceName, RegistryKey, RegistryValueName,
+          InitiatingProcessFileName, InitiatingProcessCommandLine
+| sort by Timestamp desc</div>
+        </div>
+      </div>
+
+      <div class="th-guide">
+        <strong>&#128268; Log öncelik sırası (henüz almıyorsan)</strong><br>
+        &bull; <strong>Sysmon Event 7</strong> (Image Load) — samlib.dll tespiti için kritik.<br>
+        &bull; <strong>Windows System Log Event 7045</strong> — GUID servis tespiti, her Windows'ta varsayılan açık.<br>
+        &bull; <strong>Sysmon Event 13</strong> (Registry Value Set) — SyncRootManager anomali tespiti.<br>
+        &bull; <strong>Sysmon Event 11</strong> (File Create) — %TEMP%'te SAM artefaktı.<br>
+        Öneri sırası: Sysmon 7 &gt; System 7045 &gt; Sysmon 13 &gt; EDR image load telemetry.
+      </div>
+
+    </div><!-- /Endpoint Hunt group -->
+
+    </div><!-- /det-pane: det-hunt -->
+
+  </div>
+
+  <!-- ══ RESPONSE ══ -->
+  <div class="reveal" id="recommendations">
+    <div class="team-label team-blue">&#128309; Blue Team</div>
+    <div class="section-label" id="recLabel">Incident Response</div>
+    <h2 id="recTitle">Response Actions</h2>
+    <div class="rec-grid">
+
+      <div class="rec-card">
+        <div class="rec-icon">&#128737;</div>
+        <div class="rec-title" id="rc1t">Deploy LAPS Immediately</div>
+        <div class="rec-desc" id="rc1d">Enable <strong>Local Administrator Password Solution (LAPS)</strong> on all Windows 10/11 endpoints. LAPS randomizes the local admin password per machine — even if BlueHammer recovers NTLM hashes, pass-the-hash lateral movement fails because no two machines share the same hash. This is the single most impactful mitigation available before a patch exists.</div>
+      </div>
+
+      <div class="rec-card">
+        <div class="rec-icon">&#128275;</div>
+        <div class="rec-title" id="rc2t">Disable VSS on Non-Critical Endpoints</div>
+        <div class="rec-desc" id="rc2d">VSS (Volume Shadow Copy Service) is a required component of the BlueHammer exploit chain. On endpoints where VSS is not needed for backup: <code>sc config VSS start= disabled</code> and <code>sc stop VSS</code>. Verify with backup teams before disabling. On endpoints where VSS is required, ensure strict process isolation monitoring.</div>
+      </div>
+
+      <div class="rec-card">
+        <div class="rec-icon">&#128065;</div>
+        <div class="rec-title" id="rc3t">Enable Sysmon Event 7 (Image Load)</div>
+        <div class="rec-desc" id="rc3d">Deploy or update your Sysmon configuration to enable <strong>Event ID 7 (Image Load)</strong> with a filter matching <code>samlib.dll</code>. This single log source catches BlueHammer's SAM credential dump stage with near-zero false positives. Alert immediately on any process other than <code>lsass.exe</code> loading samlib.dll.</div>
+      </div>
+
+      <div class="rec-card">
+        <div class="rec-icon">&#128268;</div>
+        <div class="rec-title" id="rc4t">Alert on Event 7045 — GUID Service Names</div>
+        <div class="rec-desc" id="rc4d">Create a SIEM alert for <strong>Windows System Event ID 7045</strong> (New Service Installed) where the service name matches GUID format. This event is generated by default on all Windows systems — no additional logging required. No legitimate Windows component creates GUID-named services at runtime. Every hit is a true positive.</div>
+      </div>
+
+      <div class="rec-card">
+        <div class="rec-icon">&#128202;</div>
+        <div class="rec-title" id="rc5t">Hunt for Historical Exploitation Artifacts</div>
+        <div class="rec-desc" id="rc5d">Run retrospective hunts across 30–90 days of endpoint telemetry using the queries in the Detection section. Focus on: (1) samlib.dll image loads, (2) GUID-named service 7045 events, (3) SyncRootManager registry writes, (4) %TEMP% files matching SAM hive artifacts. Correlate timing with Defender update events.</div>
+      </div>
+
+      <div class="rec-card">
+        <div class="rec-icon">&#9888;</div>
+        <div class="rec-title" id="rc6t">Do Not Rely on Defender Signature Detection Alone</div>
+        <div class="rec-desc" id="rc6d">Microsoft's Defender signature <code>Exploit:Win32/DfndrPEBluHmr.BB</code> detects only the <em>original</em> compiled PoC binary. Because BlueHammer abuses legitimate Windows component behavior — not any specific binary — recompiling from source bypasses the signature entirely. Behavioral detection (samlib.dll load, GUID services, VSS enumeration) is the only reliable coverage.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ WRITE-UPS ══ -->
+  <div class="reveal" id="writeups">
+    <div class="section-label" id="wuLabel">Research &amp; References</div>
+    <h2 id="wuTitle">Technical Write-ups</h2>
+    <p id="wuDesc">Published research, detection engineering resources, and technical analysis on the BlueHammer Windows Defender LPE zero-day.</p>
+
+    <div class="poc-card" style="margin-bottom:16px">
+      <span class="poc-tag">&#128279; GitHub</span>
+      <div class="poc-card-title">technoherder/BlueHammerFix — 7 Sigma + 4 YARA Rules</div>
+      <div class="poc-card-src">technoherder &bull; GitHub</div>
+      <div class="poc-card-desc">Community detection engineering repository with bug-fixed PoC analysis, 7 Sigma rules, 4 YARA rules, and MITRE ATT&CK-mapped technical report for the BlueHammer Windows Defender LPE.</div>
+      <a class="poc-link" href="https://github.com/technoherder/BlueHammerFix" target="_blank" rel="noopener">View on GitHub &nearr;</a>
+    </div>
+
+    <div class="poc-card" style="margin-bottom:16px">
+      <span class="poc-tag">&#128196; Analysis</span>
+      <div class="poc-card-title">BlueHammer and the Windows Defender Race to SYSTEM — Penligent</div>
+      <div class="poc-card-src">Penligent &bull; Hacking Labs</div>
+      <div class="poc-card-desc">Deep technical analysis of the TOCTOU race condition: Cloud Files API internals, VSS oplock mechanics, SAM hive extraction path, and GUID service escalation chain.</div>
+      <a class="poc-link" href="https://www.penligent.ai/hackinglabs/bluehammer-and-the-windows-defender-race-to-system" target="_blank" rel="noopener">Read Write-up &nearr;</a>
+    </div>
+
+    <div class="poc-card" style="margin-bottom:16px">
+      <span class="poc-tag">&#128196; Analysis</span>
+      <div class="poc-card-title">BlueHammer: Inside the Windows Zero-Day — Cyderes Howler Cell</div>
+      <div class="poc-card-src">Cyderes &bull; Howler Cell</div>
+      <div class="poc-card-desc">Cyderes Howler Cell independently verified and fixed bugs in the original PoC, running the exploit end-to-end against patched Windows 10 and 11. Includes detection guidance and IR recommendations.</div>
+      <a class="poc-link" href="https://www.cyderes.com/howler-cell/windows-zero-day-bluehammer" target="_blank" rel="noopener">Read Write-up &nearr;</a>
+    </div>
+
+    <div class="poc-card" style="margin-bottom:16px">
+      <span class="poc-tag">&#128240; News</span>
+      <div class="poc-card-title">Disgruntled Researcher Leaks "BlueHammer" Windows Zero-Day — BleepingComputer</div>
+      <div class="poc-card-src">BleepingComputer</div>
+      <div class="poc-card-desc">Disclosure context, researcher motivation, MSRC response timeline, and initial threat assessment from BleepingComputer's security reporting team.</div>
+      <a class="poc-link" href="https://www.bleepingcomputer.com/news/security/disgruntled-researcher-leaks-bluehammer-windows-zero-day-exploit/" target="_blank" rel="noopener">Read Article &nearr;</a>
+    </div>
+
+    <div class="poc-card" style="margin-bottom:16px">
+      <span class="poc-tag">&#128240; News</span>
+      <div class="poc-card-title">BlueHammer Windows Zero-Day Exploit Leaked — Help Net Security</div>
+      <div class="poc-card-src">Help Net Security &bull; April 8, 2026</div>
+      <div class="poc-card-desc">Enterprise risk assessment, affected platform scope, and immediate mitigation guidance for security teams responding to the BlueHammer disclosure.</div>
+      <a class="poc-link" href="https://www.helpnetsecurity.com/2026/04/08/bluehammer-windows-zero-day-exploit-leaked/" target="_blank" rel="noopener">Read Article &nearr;</a>
+    </div>
+
+  </div>
+
+</main>
+
+<!-- BACK TO TOP -->
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#8679;</button>
+
+<script>
+/* ═══════════════ LANGUAGE ═══════════════ */
+const LANG_KEY = 'ti-de-lang';
+let _lang = localStorage.getItem(LANG_KEY) || 'en';
+
+const TR = {
+  heroTitle:    'BlueHammer<br>/ Windows Defender LPE Sıfır-Gün',
+  heroSub:      'Windows Defender imza güncelleme mekanizmasındaki TOCTOU yarış koşulu; VSS, Cloud Files API ve oplock\'ları istismar ederek düşük yetkili kullanıcıyı NT AUTHORITY\\SYSTEM\'e yükseltir. CVE yok. Yama yok.',
+  bgLabel:      'Arka Plan',
+  bgTitle:      'Ne Oldu',
+  bgP1:         '3 Nisan 2026\'da <strong>Nightmare-Eclipse</strong> takma adıyla çalışan memnuniyetsiz bir güvenlik araştırmacısı, GitHub\'da çalışan bir Windows yerel ayrıcalık yükseltme exploiti yayınladı. <strong>BlueHammer</strong> adı verilen açık, Microsoft Defender\'ın imza güncelleme iş akışındaki <strong>TOCTOU (kontrol zamanı/kullanım zamanı) yarış koşulunu</strong> hedefliyor. Araştırmacı, MSRC süreci konusundaki hayal kırıklığından dolayı tam kamuya açıklama yolunu tercih etti.',
+  bgP2:         'BlueHammer dört meşru Windows bileşenini zincirliyor: <strong>Microsoft Defender\'ın güncelleme süreci</strong>, <strong>Birim Gölge Kopyalama Servisi (VSS)</strong>, <strong>Cloud Files API</strong> ve <strong>fırsatçı kilitler (oplock)</strong>. Exploit, sahte bir Cloud Files sync root kaydeder, Defender\'ı PID ile hedefler, ardından bir imza güncellemesini tetikler. Güncelleme sırasında Defender, özel kontrolü almadan önce bir VSS anlık görüntüsü oluşturur — bu yarış penceresidir. Saldırgan bunu oplock aracılığıyla engeller, SAM kovansına ulaşır ve NTLM hash\'lerini çıkarır. Son aşamada, süreci <code>NT AUTHORITY\\SYSTEM</code>\'e yükselten geçici bir GUID adlı servis oluşturulur.',
+  bgP3:         '13 Nisan 2026 itibarıyla <strong>yama bulunmamakta ve CVE atanmamıştır</strong>. Microsoft, orijinal PoC binary\'yi tespit eden bir Defender imza güncellemesi yayınladı (<code>Exploit:Win32/DfndrPEBluHmr.BB</code>) — ancak exploit <em>meşru bileşen davranışını</em> istismar ettiğinden, hafifçe değiştirilmiş kaynaktan yeniden derleme imzayı tamamen atlatır. Cyderes\'in Howler Cell ekibi, orijinal PoC\'daki hataları bağımsız olarak doğruladı ve düzeltti; tam yamalı Windows 10 ve 11 sistemlerine karşı exploiti uçtan uca çalıştırdı.',
+  bgWarn:       '<strong>BlueHammer yalnızca yerel erişim gerektirir — admin veya UAC bypass gerekmez.</strong> Hafifletilmemiş Windows 10/11 sistemlerdeki herhangi bir kullanıcı hesabı SYSTEM\'e yükselebilir. Microsoft bir yama yayınlayana kadar tüm paylaşılan Windows uç noktalarını riskli kabul edin.',
+  ddTitle1:     'Güvenlik Açığı Detayları',
+  ddTitle2:     'Etkilenen Platformlar',
+  acLabel:      'Saldırı Akışı',
+  acTitle:      'Saldırı Zinciri &mdash; 6 Adım',
+  cs1t:         'Adım 1 &mdash; Sahte Cloud Files Sync Root Kaydı',
+  cs1d:         'Saldırgan, Windows Cloud Files API (<code>CfRegisterSyncRoot</code>) aracılığıyla kötü amaçlı bir Cloud Files sync root kaydeder. <strong>MsMpEng.exe\'yi</strong> (Defender) PID ile hedefleyen bir callback kaydedilir. Bu callback, Defender\'ın dosya G/Ç işlemlerini seçici olarak durdurabilen veya dondurabilen mekanizmadır. <code>CfRegisterSyncRoot</code>\'u çağırmak için yetki yükseltme gerekmez.',
+  cs2t:         'Adım 2 &mdash; Defender İmza Güncellemesini Tetikleme',
+  cs2d:         'Exploit, bir Windows Defender imza güncellemesini tetikler. Bu süreçte Defender, <strong>özel sahipliği almadan önce</strong> bir VSS anlık görüntüsü oluşturmak için <code>VolSnap</code>\'ı çağırır. Bu TOCTOU penceresini yaratır: Defender anlık görüntüyü oluşturmuştur ancak henüz kilitlememiştir, düşük yetkili bir sürecin anlık görüntü içeriğine erişmek için yarışabileceği kısa bir pencere bırakır.',
+  cs3t:         'Adım 3 &mdash; Oplock Yarışı + VSS Anlık Görüntü Müdahalesi',
+  cs3d:         'VSS anlık görüntü yoluna fırsatçı bir kilit (oplock) yerleştirilir. Defender anlık görüntüye eriştiğinde, oplock tetiklenir ve kontrolü saldırganın callback\'ine verir. Saldırgan, <code>HarddiskVolumeShadowCopy*</code> girişlerini numaralandırmak için <code>NtQueryDirectoryObject</code>\'i kullanır ve anlık görüntüyü erişim ortasında engeller.',
+  cs4t:         'Adım 4 &mdash; SAM Kovansı Çıkarma',
+  cs4d:         'Ele geçirilen VSS anlık görüntüsü aracılığıyla saldırgan <code>Windows\\System32\\config\\SAM</code>\'a ulaşır. SAM kovansı, yerel Yönetici dahil tüm yerel hesaplar için NTLM parola hash\'lerini içerir. Gölge kopya yolu bu kilidi tamamen atlatır.',
+  cs5t:         'Adım 5 &mdash; NTLM Hash Çıkarma',
+  cs5d:         'Çıkarılan SAM kovansı, NTLM hash\'lerini kurtarmak için çevrimdışı ayrıştırılır (<code>impacket-secretsdump</code> veya <code>mimikatz lsadump::sam</code>). Canlı LSASS etkileşimi gerekmez. Yerel Yönetici NTLM hash\'i, aynı ağdaki uzak sistemlere karşı pass-the-hash saldırıları için kullanılabilir.',
+  cs6t:         'Adım 6 &mdash; GUID Servisi → SYSTEM + Pass-the-Hash',
+  cs6d:         'Son aşama, <code>CreateService</code>/<code>StartService</code> aracılığıyla rastgele GUID adlı kısa ömürlü bir Windows servisi oluşturur. Servis, saldırganın yükünü <code>NT AUTHORITY\\SYSTEM</code> olarak çalıştırır. Servis, adli kanıtları azaltmak için yürütmeden hemen sonra silinir. GUID adlandırması kasıtlıdır — ad tabanlı tespit kurallarından kaçınır.',
+  simLabel:     'Canlı Saldırı Simülasyonu',
+  simTitle:     'Saldırı Akışı &mdash; Adım Adım Görselleştirme',
+  simDesc:      'BlueHammer exploit zincirini Cloud Files sync root kaydından TOCTOU yarışı, SAM çıkarma ve SYSTEM yükseltmeye kadar takip edin.',
+  tlLabel:      'Tehdit İstihbaratı',
+  tlTitle:      'MITRE ATT&CK Zaman Çizelgesi',
+  detLabel:     'Tespit Mühendisliği',
+  detTitle:     'Tespit Kuralları &amp; Tehdit Avı',
+  detDesc:      'Tüm kurallar <strong>TTP tabanlı ve davranışsaldır</strong>. Kurallar <a href="https://github.com/technoherder/BlueHammerFix" target="_blank" rel="noopener" style="color:var(--accent2)">technoherder/BlueHammerFix</a> topluluğundan (7 Sigma + 4 YARA) alınmış olup TI-DE tarafından platform çevirileri eklenmiştir.',
+  recLabel:     'Olay Müdahalesi',
+  recTitle:     'Yanıt Eylemleri',
+  rc1t:         'LAPS\'ı Hemen Dağıtın',
+  rc1d:         'Tüm Windows 10/11 uç noktalarında <strong>Yerel Yönetici Parola Çözümü (LAPS)</strong>\'ı etkinleştirin. LAPS, makine başına yerel yönetici parolasını rastgeleleştirir — BlueHammer NTLM hash\'lerini kurtarsa bile, iki makine aynı hash\'i paylaşmadığından pass-the-hash yanal hareketi başarısız olur.',
+  rc2t:         'Kritik Olmayan Uç Noktalarda VSS\'yi Devre Dışı Bırakın',
+  rc2d:         'VSS, BlueHammer exploit zincirinin gerekli bir bileşenidir. Yedekleme için VSS gerekmeyen uç noktalarda: <code>sc config VSS start= disabled</code> ve <code>sc stop VSS</code>. Devre dışı bırakmadan önce yedekleme ekipleriyle doğrulayın.',
+  rc3t:         'Sysmon Event 7 (Image Load) Etkinleştirin',
+  rc3d:         '<code>samlib.dll</code>\'yi eşleştiren bir filtreyle <strong>Event ID 7 (Image Load)</strong>\'u etkinleştirmek için Sysmon yapılandırmanızı dağıtın veya güncelleyin. Bu tek log kaynağı, BlueHammer\'ın SAM kimlik bilgisi döküm aşamasını neredeyse sıfır yanlış pozitifle yakalar.',
+  rc4t:         'Event 7045 — GUID Servis Adları için Uyarı Oluşturun',
+  rc4d:         'Servis adı GUID formatıyla eşleşen <strong>Windows System Event ID 7045</strong> için bir SIEM uyarısı oluşturun. Hiçbir meşru Windows bileşeni çalışma zamanında GUID adlı servisler oluşturmaz. Her isabet gerçek pozitifdır.',
+  rc5t:         'Geçmiş İstismar Artefaktlarını Avlayın',
+  rc5d:         'Tespit bölümündeki sorguları kullanarak 30–90 günlük uç nokta telemetrisi üzerinde geriye dönük avlar yapın. Odaklanılacak noktalar: (1) samlib.dll image load\'ları, (2) GUID adlı servis 7045 olayları, (3) SyncRootManager kayıt yazmaları, (4) SAM kovansı artefaktlarıyla eşleşen %TEMP% dosyaları.',
+  rc6t:         'Yalnızca Defender İmza Tespitine Güvenmeyin',
+  rc6d:         'Microsoft\'un Defender imzası <code>Exploit:Win32/DfndrPEBluHmr.BB</code>, yalnızca <em>orijinal</em> derlenmiş PoC binary\'yi tespit eder. BlueHammer meşru Windows bileşeni davranışını istismar ettiğinden, kaynaktan yeniden derleme imzayı tamamen atlatır. Davranışsal tespit (samlib.dll yüklemesi, GUID servisleri, VSS numaralandırması) tek güvenilir kapsamdır.',
+  wuLabel:      'Araştırma &amp; Kaynaklar',
+  wuTitle:      'Teknik Analizler',
+  wuDesc:       'BlueHammer Windows Defender LPE sıfır-günü hakkında yayımlanmış araştırmalar, tespit mühendisliği kaynakları ve teknik analizler.',
+  sl0: 'Saldırı Adımı',
+  sl1: 'MITRE TTP',
+  sl2: 'Tespit Kuralı',
+  sl3: 'Yama Günü',
+  sl4: 'Okuyucu',
+};
+
+function applyLang(lang) {
+  _lang = lang;
+  localStorage.setItem(LANG_KEY, lang);
+  const enBtn = document.getElementById('langOptEn');
+  const trBtn = document.getElementById('langOptTr');
+  if (enBtn) enBtn.classList.toggle('active', lang === 'en');
+  if (trBtn) trBtn.classList.toggle('active', lang === 'tr');
+  if (lang === 'tr') {
+    Object.keys(TR).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = TR[id];
+    });
+    document.querySelectorAll('[data-tr]').forEach(el => {
+      if (el.dataset.tr) el.innerHTML = el.dataset.tr;
+    });
+  } else {
+    Object.keys(_enCache).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = _enCache[id];
+    });
+    document.querySelectorAll('[data-en]').forEach(el => {
+      if (!el.id || !_enCache[el.id]) el.innerHTML = el.dataset.en;
+    });
+  }
+  if (_atvIdx >= 0) atvRender(_atvIdx);
+}
+
+const _enCache = {};
+document.addEventListener('DOMContentLoaded', () => {
+  Object.keys(TR).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) _enCache[id] = el.innerHTML;
+  });
+  if (_lang === 'tr') applyLang('tr');
+  else applyLang('en');
+});
+
+/* ═══════════════ THEME ═══════════════ */
+const THEME_KEY = 'ti-de-report-theme';
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem(THEME_KEY, theme);
+  const btn = document.getElementById('themeBtn');
+  if (btn) btn.textContent = theme === 'dark' ? '\u2600 Light' : '\uD83C\uDF19 Dark';
+}
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+  applyTheme(cur === 'dark' ? 'light' : 'dark');
+}
+(function() { applyTheme(localStorage.getItem(THEME_KEY) || 'dark'); })();
+
+/* ═══════════════ VISIT COUNTER ═══════════════ */
+fetch('https://api.countapi.xyz/hit/mazlumbaydar-tide/bluehammer')
+  .then(r => r.json())
+  .then(d => { const el = document.getElementById('visitCount'); if (el && d.value) el.textContent = d.value.toLocaleString(); })
+  .catch(() => {});
+
+/* ═══════════════ SCROLL PROGRESS ═══════════════ */
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = h.scrollHeight - h.clientHeight;
+  document.getElementById('prog').style.width = (pct ? (h.scrollTop / pct * 100) : 0) + '%';
+  const bt = document.getElementById('backTop');
+  if (bt) bt.style.opacity = h.scrollTop > 400 ? '1' : '0';
+});
+
+/* ═══════════════ NAV SCROLL ═══════════════ */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  if (nav) nav.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+/* ═══════════════ REVEAL ON SCROLL ═══════════════ */
+const revealEls = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+revealEls.forEach(el => revealObs.observe(el));
+
+/* ═══════════════ STAT COUNTER ═══════════════ */
+document.querySelectorAll('.stat-num[data-t]').forEach(el => {
+  const target = parseInt(el.dataset.t, 10);
+  if (!target) return;
+  let cur = 0;
+  const step = Math.ceil(target / 30);
+  const timer = setInterval(() => {
+    cur = Math.min(cur + step, target);
+    el.textContent = cur;
+    if (cur >= target) clearInterval(timer);
+  }, 40);
+});
+
+/* ═══════════════ DETECTION TABS ═══════════════ */
+function switchDetTab(btn, paneId) {
+  document.querySelectorAll('.det-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.det-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const pane = document.getElementById(paneId);
+  if (pane) pane.classList.add('active');
+}
+
+/* ═══════════════ RULE CARD TOGGLE ═══════════════ */
+function toggleRule(card, event) {
+  if (event && event.target.closest('.copy-btn')) return;
+  card.classList.toggle('open');
+}
+
+/* ═══════════════ COPY CODE ═══════════════ */
+function copyCode(btn, e) {
+  if (e) e.stopPropagation();
+  const body = btn.closest('.code-block').querySelector('.code-body');
+  if (!body) return;
+  navigator.clipboard.writeText(body.innerText).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = orig; }, 1800);
+  });
+}
+
+/* ═══════════════ ATTACK SIMULATION ═══════════════ */
+let _atvIdx = -1;
+let _atvTimer = null;
+
+const ATV_STEPS = [
+  {
+    label: 'Step 1 — Cloud Files Hook',
+    labelTr: 'Adım 1 — Cloud Files Hook',
+    text: 'CfRegisterSyncRoot called. Fake sync root registered targeting MsMpEng.exe by PID. Callback installed — ready to stall Defender I/O during the race window.',
+    textTr: 'CfRegisterSyncRoot çağrıldı. MsMpEng.exe\'yi PID ile hedefleyen sahte sync root kaydedildi. Callback kuruldu — yarış penceresinde Defender G/Ç\'sini durdurmaya hazır.',
+    explain: 'CfRegisterSyncRoot requires no elevation — any standard user can call it. This is what makes BlueHammer unique: the attacker weaponizes a file sync API designed for OneDrive/Teams.',
+    explainTr: 'CfRegisterSyncRoot için yetki yükseltme gerekmez — herhangi bir standart kullanıcı çağırabilir. Bu BlueHammer\'ı benzersiz kılan şeydir: saldırgan OneDrive/Teams için tasarlanmış bir dosya senkronizasyon API\'sini silaha dönüştürür.',
+    node: 0
+  },
+  {
+    label: 'Step 2 — Defender Update Triggered',
+    labelTr: 'Adım 2 — Defender Güncellemesi Tetiklendi',
+    text: 'Windows Defender signature update initiated. MsMpEng.exe calls VolSnap → VSS snapshot created BEFORE exclusive lock acquired. TOCTOU window opens.',
+    textTr: 'Windows Defender imza güncellemesi başlatıldı. MsMpEng.exe, VolSnap\'ı çağırır → özel kilit alınmadan ÖNCE VSS anlık görüntüsü oluşturuldu. TOCTOU penceresi açılıyor.',
+    explain: 'The race window is milliseconds wide. BlueHammer uses high-frequency polling + oplock callbacks to reliably win it. The Cyderes team confirmed it works on fully-patched Win10/11.',
+    explainTr: 'Yarış penceresi milisaniye genişliğindedir. BlueHammer, onu güvenilir şekilde kazanmak için yüksek frekanslı sorgulama + oplock callback\'leri kullanır.',
+    node: 1
+  },
+  {
+    label: 'Step 3 — Oplock Race Won',
+    labelTr: 'Adım 3 — Oplock Yarışı Kazanıldı',
+    text: 'Oplock placed on VSS snapshot path. Defender accesses snapshot → oplock fires → attacker\'s callback executes. NtQueryDirectoryObject enumerates HarddiskVolumeShadowCopy entries. Race won.',
+    textTr: 'VSS anlık görüntü yoluna oplock yerleştirildi. Defender anlık görüntüye erişir → oplock tetiklenir → saldırganın callback\'i çalışır. NtQueryDirectoryObject, HarddiskVolumeShadowCopy girişlerini listeler. Yarış kazanıldı.',
+    explain: 'Detection signal: non-SYSTEM process calling NtQueryDirectoryObject targeting \\Device\\HarddiskVolumeShadowCopy* is a direct BlueHammer indicator — no legitimate user application does this.',
+    explainTr: 'Tespit sinyali: \\Device\\HarddiskVolumeShadowCopy*\'ı hedefleyen SYSTEM dışı sürecin NtQueryDirectoryObject çağrısı, doğrudan BlueHammer göstergesidir.',
+    node: 2
+  },
+  {
+    label: 'Step 4 — SAM Hive Extracted',
+    labelTr: 'Adım 4 — SAM Kovansı Çıkarıldı',
+    text: 'Traversing shadow copy → Windows\\System32\\config\\SAM reached. OS lock bypassed via snapshot path. SAM hive written to %TEMP%\\*.dat. samlib.dll loaded for parsing.',
+    textTr: 'Gölge kopya geçildi → Windows\\System32\\config\\SAM\'a ulaşıldı. İşletim sistemi kilidi anlık görüntü yolu ile atlatıldı. SAM kovansı %TEMP%\\*.dat\'a yazıldı. samlib.dll ayrıştırma için yüklendi.',
+    explain: 'samlib.dll loaded by any process other than lsass.exe = critical alert. This is the highest-confidence BlueHammer indicator and has zero false positives in normal enterprise operation.',
+    explainTr: 'lsass.exe dışındaki herhangi bir süreç tarafından yüklenen samlib.dll = kritik uyarı. Normal kurumsal işlemde sıfır yanlış pozitiflidir.',
+    node: 3
+  },
+  {
+    label: 'Step 5 — NTLM Hashes Recovered',
+    labelTr: 'Adım 5 — NTLM Hash\'leri Kurtarıldı',
+    text: 'SAM hive parsed offline. Local Administrator NTLM hash recovered. No LSASS touch, no MiniDump, no AV trigger. Hash ready for pass-the-hash against remote hosts.',
+    textTr: 'SAM kovansı çevrimdışı ayrıştırıldı. Yerel Yönetici NTLM hash\'i kurtarıldı. LSASS dokunuşu yok, MiniDump yok, AV tetiklenmesi yok. Hash, uzak sistemlere pass-the-hash için hazır.',
+    explain: 'The only preventive control here is LAPS: if every machine has a unique local admin password (hash), a recovered hash from one machine cannot be replayed on any other.',
+    explainTr: 'Buradaki tek önleyici kontrol LAPS\'tır: her makinenin benzersiz bir yerel yönetici parolası (hash) varsa, bir makineden kurtarılan hash başka bir makinede tekrar oynatılamaz.',
+    node: 4
+  },
+  {
+    label: 'Step 6 — SYSTEM + Pass-the-Hash',
+    labelTr: 'Adım 6 — SYSTEM + Pass-the-Hash',
+    text: 'GUID-named service created → payload runs as NT AUTHORITY\\SYSTEM. Service deleted immediately. NTLM hash sprayed via PtH → lateral movement across all hosts sharing same local admin hash.',
+    textTr: 'GUID adlı servis oluşturuldu → yük NT AUTHORITY\\SYSTEM olarak çalıştı. Servis hemen silindi. NTLM hash, PtH aracılığıyla yayıldı → aynı yerel yönetici hash\'ini paylaşan tüm sistemlerde yanal hareket.',
+    explain: 'Event ID 7045 with a GUID-format service name is a critical, zero-false-positive alert. The service is deleted within seconds — you may only see 7045 without a corresponding service stop event.',
+    explainTr: 'GUID biçimli servis adına sahip Event ID 7045, kritik, sıfır yanlış pozitifli bir uyarıdır. Servis saniyeler içinde silinir — yalnızca karşılık gelen servis durdurma olayı olmadan 7045 görebilirsiniz.',
+    node: 5
+  }
+];
+
+function atvRender(idx) {
+  const step = ATV_STEPS[idx];
+  const isTr = _lang === 'tr';
+  // update nodes
+  document.querySelectorAll('.atk-node').forEach((n, i) => {
+    n.classList.toggle('active', i === step.node);
+    n.classList.toggle('done',   i < step.node);
+  });
+  document.querySelectorAll('.atk-connector').forEach((c, i) => {
+    c.classList.toggle('active', i === step.node - 1 || i === step.node);
+    c.classList.toggle('done',   i < step.node - 1);
+  });
+  document.querySelectorAll('.atk-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === idx);
+    d.classList.toggle('done',   i < idx);
+  });
+  const ds = document.getElementById('atkDetailStep');
+  const dt = document.getElementById('atkDetailText');
+  const ex = document.getElementById('atkExplain');
+  const et = document.getElementById('atkExplainText');
+  const pl = document.getElementById('atkProgLabel');
+  const sb = document.getElementById('atkStepBtn');
+  if (ds) ds.textContent = isTr ? step.labelTr : step.label;
+  if (dt) dt.textContent = isTr ? step.textTr : step.text;
+  if (ex) ex.style.display = 'block';
+  if (et) et.textContent = isTr ? step.explainTr : step.explain;
+  if (pl) pl.textContent = (idx + 1) + ' / ' + ATV_STEPS.length;
+  if (sb) sb.textContent = idx >= ATV_STEPS.length - 1 ? 'RESET' : 'STEP \u2192';
+}
+
+function atvGoTo(idx) {
+  if (_atvTimer) { clearInterval(_atvTimer); _atvTimer = null; document.getElementById('atkPlayBtn').textContent = '\u25B6 AUTO'; }
+  if (idx >= ATV_STEPS.length) idx = -1;
+  if (idx < 0) {
+    _atvIdx = -1;
+    document.querySelectorAll('.atk-node,.atk-connector,.atk-dot').forEach(el => el.classList.remove('active','done'));
+    const ds = document.getElementById('atkDetailStep'); if (ds) ds.textContent = _lang==='tr' ? '\u25B6 S\u0130M\u00dcLASYON HAZIR' : '\u25B6 SIMULATION READY';
+    const dt = document.getElementById('atkDetailText'); if (dt) dt.textContent = _lang==='tr' ? 'Tam saldırı zincirini otomatik çalıştırmak için AUTO\'ya basın veya manuel ilerlemek için STEP\'i kullanın.' : 'Press AUTO to run the full attack chain, or use STEP to advance manually.';
+    const ex = document.getElementById('atkExplain'); if (ex) ex.style.display = 'none';
+    const pl = document.getElementById('atkProgLabel'); if (pl) pl.textContent = '0 / ' + ATV_STEPS.length;
+    const sb = document.getElementById('atkStepBtn'); if (sb) sb.textContent = 'STEP \u2192';
+    return;
+  }
+  _atvIdx = idx;
+  atvRender(idx);
+}
+
+function atvRun() {
+  if (_atvTimer) { clearInterval(_atvTimer); _atvTimer = null; document.getElementById('atkPlayBtn').textContent = '\u25B6 AUTO'; return; }
+  if (_atvIdx >= ATV_STEPS.length - 1) atvGoTo(-1);
+  document.getElementById('atkPlayBtn').textContent = '\u23F8 PAUSE';
+  _atvTimer = setInterval(() => {
+    const next = _atvIdx + 1;
+    if (next >= ATV_STEPS.length) { clearInterval(_atvTimer); _atvTimer = null; document.getElementById('atkPlayBtn').textContent = '\u25B6 AUTO'; return; }
+    _atvIdx = next;
+    atvRender(next);
+  }, 2200);
+  atvGoTo(_atvIdx + 1);
+}
+</script>
+</body>
+</html>
