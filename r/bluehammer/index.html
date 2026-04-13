@@ -202,7 +202,7 @@
           <div style="font-size:0.82rem;color:var(--muted)">Cloud Files Hook &rarr; Defender Update &rarr; VSS Race &rarr; SAM Dump &rarr; NTLM &rarr; SYSTEM</div>
         </div>
         <div class="atk-btns">
-          <button class="atk-play step-btn" id="atkStepBtn" onclick="atvGoTo(_atvIdx+1)">STEP &rarr;</button>
+          <button class="atk-play step-btn" id="atkStepBtn" onclick="atvStepClick()">STEP &rarr;</button>
           <button class="atk-play" id="atkPlayBtn" onclick="atvRun()">&#9654; AUTO</button>
         </div>
       </div>
@@ -1661,6 +1661,8 @@ function copyCode(btn, e) {
 /* ═══════════════ ATTACK SIMULATION ═══════════════ */
 let _atvIdx = -1;
 let _atvTimer = null;
+const ATV_NODES = ['vn0','vn1','vn2','vn3','vn4','vn5'];
+const ATV_CONNS = ['vc0','vc1','vc2','vc3','vc4'];
 
 const ATV_STEPS = [
   {
@@ -1722,19 +1724,30 @@ const ATV_STEPS = [
 function atvRender(idx) {
   const step = ATV_STEPS[idx];
   const isTr = _lang === 'tr';
-  // update nodes
-  document.querySelectorAll('.atk-node').forEach((n, i) => {
-    n.classList.toggle('active', i === step.node);
-    n.classList.toggle('done',   i < step.node);
+
+  // Nodes: active = current, safe = already passed
+  ATV_NODES.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('active','safe','pwned');
+    if (i === step.node) el.classList.add('active');
+    else if (i < step.node) el.classList.add('safe');
   });
-  document.querySelectorAll('.atk-connector').forEach((c, i) => {
-    c.classList.toggle('active', i === step.node - 1 || i === step.node);
-    c.classList.toggle('done',   i < step.node - 1);
+
+  // Connectors: active = the connector leading INTO current node
+  ATV_CONNS.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('active','danger');
+    if (i === step.node - 1) el.classList.add('active');
+    else if (i < step.node - 1) el.classList.add('active');
   });
+
+  // Dots: current class (CSS: .atk-dot.current), done for passed
   document.querySelectorAll('.atk-dot').forEach((d, i) => {
-    d.classList.toggle('active', i === idx);
-    d.classList.toggle('done',   i < idx);
+    d.className = 'atk-dot' + (i < idx ? ' done' : i === idx ? ' current' : '');
   });
+
   const ds = document.getElementById('atkDetailStep');
   const dt = document.getElementById('atkDetailText');
   const ex = document.getElementById('atkExplain');
@@ -1749,34 +1762,58 @@ function atvRender(idx) {
   if (sb) sb.textContent = idx >= ATV_STEPS.length - 1 ? 'RESET' : 'STEP \u2192';
 }
 
+function atvReset() {
+  _atvIdx = -1;
+  ATV_NODES.forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('active','safe','pwned'); });
+  ATV_CONNS.forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('active','danger'); });
+  document.querySelectorAll('.atk-dot').forEach(d => { d.className = 'atk-dot'; });
+  const ds = document.getElementById('atkDetailStep'); if (ds) ds.textContent = _lang==='tr' ? '\u25B6 S\u0130M\u00dcLASYON HAZIR' : '\u25B6 SIMULATION READY';
+  const dt = document.getElementById('atkDetailText'); if (dt) dt.textContent = _lang==='tr' ? 'Tam saldırı zincirini otomatik çalıştırmak için AUTO\'ya basın veya manuel ilerlemek için STEP\'i kullanın.' : 'Press AUTO to run the full attack chain, or use STEP to advance manually.';
+  const ex = document.getElementById('atkExplain'); if (ex) ex.style.display = 'none';
+  const pl = document.getElementById('atkProgLabel'); if (pl) pl.textContent = '0 / ' + ATV_STEPS.length;
+  const sb = document.getElementById('atkStepBtn'); if (sb) sb.textContent = 'STEP \u2192';
+  const pb = document.getElementById('atkPlayBtn'); if (pb) pb.textContent = '\u25B6 AUTO';
+}
+
 function atvGoTo(idx) {
-  if (_atvTimer) { clearInterval(_atvTimer); _atvTimer = null; document.getElementById('atkPlayBtn').textContent = '\u25B6 AUTO'; }
-  if (idx >= ATV_STEPS.length) idx = -1;
-  if (idx < 0) {
-    _atvIdx = -1;
-    document.querySelectorAll('.atk-node,.atk-connector,.atk-dot').forEach(el => el.classList.remove('active','done'));
-    const ds = document.getElementById('atkDetailStep'); if (ds) ds.textContent = _lang==='tr' ? '\u25B6 S\u0130M\u00dcLASYON HAZIR' : '\u25B6 SIMULATION READY';
-    const dt = document.getElementById('atkDetailText'); if (dt) dt.textContent = _lang==='tr' ? 'Tam saldırı zincirini otomatik çalıştırmak için AUTO\'ya basın veya manuel ilerlemek için STEP\'i kullanın.' : 'Press AUTO to run the full attack chain, or use STEP to advance manually.';
-    const ex = document.getElementById('atkExplain'); if (ex) ex.style.display = 'none';
-    const pl = document.getElementById('atkProgLabel'); if (pl) pl.textContent = '0 / ' + ATV_STEPS.length;
-    const sb = document.getElementById('atkStepBtn'); if (sb) sb.textContent = 'STEP \u2192';
-    return;
-  }
+  // NOTE: does NOT clear timer — timer management is separate
+  if (idx < 0 || idx >= ATV_STEPS.length) { atvReset(); return; }
   _atvIdx = idx;
   atvRender(idx);
 }
 
+function atvStepClick() {
+  // STEP button: stop auto, go to next step
+  if (_atvTimer) { clearInterval(_atvTimer); _atvTimer = null; const pb = document.getElementById('atkPlayBtn'); if (pb) pb.textContent = '\u25B6 AUTO'; }
+  const next = _atvIdx + 1;
+  if (next >= ATV_STEPS.length) { atvReset(); return; }
+  atvGoTo(next);
+}
+
 function atvRun() {
-  if (_atvTimer) { clearInterval(_atvTimer); _atvTimer = null; document.getElementById('atkPlayBtn').textContent = '\u25B6 AUTO'; return; }
-  if (_atvIdx >= ATV_STEPS.length - 1) atvGoTo(-1);
-  document.getElementById('atkPlayBtn').textContent = '\u23F8 PAUSE';
+  // Toggle auto play / pause
+  if (_atvTimer) {
+    clearInterval(_atvTimer); _atvTimer = null;
+    const pb = document.getElementById('atkPlayBtn'); if (pb) pb.textContent = '\u25B6 AUTO';
+    return;
+  }
+  // If at end, reset first
+  if (_atvIdx >= ATV_STEPS.length - 1) { atvReset(); }
+  const pb = document.getElementById('atkPlayBtn'); if (pb) pb.textContent = '\u23F8 PAUSE';
+  // Show first step immediately
+  _atvIdx++;
+  if (_atvIdx < ATV_STEPS.length) atvRender(_atvIdx);
+  // Then advance every 2200ms
   _atvTimer = setInterval(() => {
-    const next = _atvIdx + 1;
-    if (next >= ATV_STEPS.length) { clearInterval(_atvTimer); _atvTimer = null; document.getElementById('atkPlayBtn').textContent = '\u25B6 AUTO'; return; }
-    _atvIdx = next;
-    atvRender(next);
+    _atvIdx++;
+    if (_atvIdx >= ATV_STEPS.length) {
+      clearInterval(_atvTimer); _atvTimer = null;
+      const pb = document.getElementById('atkPlayBtn'); if (pb) pb.textContent = '\u25B6 AUTO';
+      _atvIdx = ATV_STEPS.length - 1;
+      return;
+    }
+    atvRender(_atvIdx);
   }, 2200);
-  atvGoTo(_atvIdx + 1);
 }
 </script>
 </body>
